@@ -1,0 +1,6 @@
+.lake/
+logs/
+scratch/
+snapshots/
+__pycache__/
+*.olean

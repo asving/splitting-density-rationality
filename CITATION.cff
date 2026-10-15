@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+title: "splitting-density-rationality (Lean namespace SurfaceBlowup): a Lean 4 formalization of universal factorization-type laws and reciprocity for random polynomials over complete DVRs"
+message: "If you use this formalization, please cite the companion paper and this repository."
+type: software
+authors:
+  - name: "Claude Fable 5.1 (Anthropic)"
+  - name: "GPT-6 Astra (OpenAI)"
+  - family-names: "G"
+    given-names: "Asvin"
+    affiliation: "Astera Institute"
+    orcid: ""
+    # role: directed the work
+license: Apache-2.0
+version: 1.0.0
+date-released: "2026-10-15"
+repository-code: "https://github.com/asving/splitting-density-rationality"
+url: "https://asving.github.io/claude/random-polynomials-local-surfaces/"
