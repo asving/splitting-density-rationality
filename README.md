@@ -264,7 +264,7 @@ with a `Provenance:` line naming the original nodes.
 
 ## Companion paper and site
 
-The informal proof, with every statement linked to its Lean declaration, is at <https://asving.github.io/claude/random-polynomials-local-surfaces/>. The Prove2Me certification of the same development is published under the namespace `TypeDensity`.
+The informal proof, with every statement linked to its Lean declaration, is at <https://asving.github.io/claude/splitting-type-density/>. The Prove2Me certification of the same development is published under the namespace `TypeDensity`.
 
 ## Building
 
