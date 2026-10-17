@@ -123,8 +123,8 @@ characteristic: `𝔽_q⟦X⟧` with the coefficientwise topology, giving the fo
 ## License
 
 Released under the Apache 2.0 license (file `LICENSE`); every file carries the Mathlib-style
-copyright/authors header. Authors: Asvin G, Claude (Anthropic), GPT-6-Astra (OpenAI).
-**OWNER: confirm license** (Apache 2.0 was chosen to match Mathlib; not yet confirmed).
+copyright/authors header. Authors: Asvin G, Claude (Anthropic), GPT-6-Astra (OpenAI). Apache 2.0 was
+chosen to match Mathlib and confirmed by the owner on 2026-10-17.
 
 ## Building
 
