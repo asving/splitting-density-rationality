@@ -11,7 +11,7 @@ authors:
     orcid: ""
     # role: directed the work
 license: Apache-2.0
-version: 1.0.0
-date-released: "2026-10-15"
+version: 1.1.0
+date-released: 2026-10-17
 repository-code: "https://github.com/asving/splitting-density-rationality"
 url: "https://asving.github.io/claude/splitting-type-density/"

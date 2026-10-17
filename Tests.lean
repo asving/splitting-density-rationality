@@ -5,13 +5,15 @@ Authors: Asvin G, Claude (Anthropic), GPT-6-Astra (OpenAI)
 -/
 import Tests.NonVacuity
 import Tests.Regression
+import Tests.Cluster
 
 /-!
 # Tests for `SurfaceBlowup`
 
 Root of the `Tests` library: non-vacuity of the hypotheses of `SurfaceBlowup.main_dvr`
 (`Tests.NonVacuity`) and regression guards pinning the universal density expressions to known values
-(`Tests.Regression`).
+(`Tests.Regression`), and the quadratic cluster law as a regression guard for the cluster density
+(`Tests.Cluster`).
 
 Provenance: the regression guards are ported from the certified tree's quadratic/cubic/quartic
 helper files; the non-vacuity examples are new.

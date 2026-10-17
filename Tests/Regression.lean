@@ -1017,7 +1017,7 @@ private theorem returnWeight_eval (q : ℚ) (c : ℕ) :
 
 /-- The tangent-point patterns of `S(a;2)`: a transverse tangent with a node, a double point, a
 point of contact two (a self pattern) and a point of degree two. -/
-private theorem single_two_law (a : ℕ) (ha : 0 < a) (q : ℚ) (hq : 1 < q) (σ : FactorType) :
+theorem single_two_law (a : ℕ) (ha : 0 < a) (q : ℚ) (hq : 1 < q) (σ : FactorType) :
     coeffAt q (stateLaw (.single a 2)) σ = (if σ = {(2*a,1)} then q/(q+1) else 0) +
       (if σ = {(a,1),(a,1)} then 1/(2*(q+1)) else 0) +
       (if σ = {(a,2)} then 1/(2*(q+1)) else 0) := by

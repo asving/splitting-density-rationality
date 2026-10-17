@@ -5,6 +5,28 @@ All cycles: Lean v4.33.1, Mathlib `0df444a360eaa60ab8c11dca51a86af692955474`. Ma
 Quot.sound]` throughout; statements kernel-checked against the certified trees after every wave
 (`Checks/run_checks.sh`, 3x KERNEL_OK). Detailed logs: `CAPTAIN.md`.
 
+## v1.1.0 (2026-10-17) — Theorem 1.1 cluster clause and the étale convention
+
+Two gaps between the paper's Theorem 1.1 / Remark 1.3 and the formal statements are closed; no existing
+statement changed and no frozen file was edited (`Tests/Regression.lean`: `single_two_law` made public).
+
+- `SurfaceBlowup/Cluster/{Defs,Main}.lean` (211 lines): `clusterCell`, `clusterExpr n σ := lawCoeff (rootLaw n) σ`
+  (`B_{n,σ}`), `clusterDensity` (normalized Haar restriction to monic polynomials reducing to `X^n`, published
+  type predicate); `main_dvr_cluster` (all `n`, including `n = 0`), `clusterDensity_eq_etale`,
+  `cluster_formula_regular`, `recip_cluster`. Proof: cluster cell = image of `Oⁿ` under `z ↦ π·z`; Haar
+  scaling by `q⁻ⁿ` cancels in the ratio; null bridge via `monic_inseparable_null`; `root_cell_law`.
+- `SurfaceBlowup/Etale/{Defs,Main,Algebra}.lean` (257 lines): `IsEtaleForm` (nonzero, degree drop ≤ 1,
+  separable dehomogenization), `etaleMonicDensity`, `etaleProjectiveDensity`; `binary_nonEtale_null`,
+  `monicDensity_eq_etale`, `projectiveDensity_eq_etale`, `main_dvr_etale`,
+  `etaleMonicDensity_eq_algebraType` (event phrased as `Algebra.Etale` + `HasAlgebraType`).
+- `Tests/Cluster.lean` (59 lines): quadratic cluster law `q/(q+1)`, `1/(2(q+1))`, `1/(2(q+1))` from
+  `main_dvr_cluster`.
+- `Checks/Axioms.lean` now prints 12 theorems; `tools/release_check.sh` expects 12. Statement-preservation
+  check unchanged (3 certified statements).
+- Provenance: statements designed by the orchestrating session from the paper's (1.1), (7.1), Remark 1.3;
+  independent statement review by Codex (`final/codex_checks/STATEMENT_CHECK_astra.md`, PASS); proofs by two
+  Opus 5.5 provers in isolated copies (`work_cluster`, `work_etale`; notes `NOTES_A.md`, `NOTES_B.md`).
+
 ## Counts
 
 | state | files | lines | non-ws bytes | theorems | warnings | Mathlib-linter hits | decls > 100 lines |

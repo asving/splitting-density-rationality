@@ -13,7 +13,7 @@ grep -q 'Build completed successfully' logs/release_build.log && ok "$(grep 'Bui
 echo "== (2) axioms"
 taskset -c 0-15 lake env lean Checks/Axioms.lean > logs/release_axioms.log 2>&1
 n=$(grep -c "depends on axioms: \[propext, Classical.choice, Quot.sound\]" logs/release_axioms.log)
-[ "$n" = 4 ] && ok "4/4 main theorems use only [propext, Classical.choice, Quot.sound]" || bad "axioms ($n/4)"
+[ "$n" = 12 ] && ok "12/12 main theorems use only [propext, Classical.choice, Quot.sound]" || bad "axioms ($n/12)"
 echo "== (3) statement preservation"
 ./Checks/run_checks.sh > logs/release_preservation.log 2>&1
 k=$(grep -c '^KERNEL_OK' logs/release_preservation.log)

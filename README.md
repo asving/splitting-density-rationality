@@ -21,6 +21,9 @@ All in namespace `SurfaceBlowup`:
 | `main_field_form` | `SurfaceBlowup/Main.lean` | the published rational-function form for rings of integers of unramified finite `K/ℚ_p` |
 | `main_field_form_ramified` | `SurfaceBlowup/Main.lean` | the same for arbitrary finite `K/ℚ_p` |
 | `recip_main` | `SurfaceBlowup/Reciprocity/Main.lean` | reciprocity: `A_n(q) = B_n(1/q)` and `R_n(1/q) = R_n(q)` |
+| `main_dvr_cluster` (v1.1) | `SurfaceBlowup/Cluster/Main.lean` | the cluster clause: `clusterDensity O n σ = densityValue (clusterExpr n σ) q`, where `clusterDensity` is the normalized Haar probability on monic polynomials reducing to `X^n` and `clusterExpr n σ = lawCoeff (rootLaw n) σ` is `B_{n,σ}` |
+| `cluster_formula_regular`, `recip_cluster` (v1.1) | `SurfaceBlowup/Cluster/Main.lean` | `B_{n,σ}` is regular at every prime power; `A_{n,σ}(q) = B_{n,σ}(1/q)` in the paper's notation |
+| `main_dvr_etale` (v1.1) | `SurfaceBlowup/Etale/Main.lean` | the monic and projective laws with the events restricted to étale algebras (`etaleMonicDensity`, `etaleProjectiveDensity`); with `monicDensity_eq_etale`, `projectiveDensity_eq_etale`, `clusterDensity_eq_etale` and `binary_nonEtale_null`: the reduced-algebra and étale type conventions agree off a Haar-null set |
 
 `#print axioms` for all four: `[propext, Classical.choice, Quot.sound]` (`Checks/Axioms.lean`).
 
@@ -96,7 +99,10 @@ Lean checks proofs, not statements. Everything a reader must audit to trust the 
 **`SurfaceBlowup/Basic.lean`** (~500 lines): the definitions of factorization types, the rational
 expressions `Expr`, laws, recursion states, `stateLaw`, `monicExpr`, `projectiveExpr`, the densities
 `monicDensity`, `projectiveDensity`, and `densityValue`, plus the main-theorem statements themselves
-in `Main.lean` / `Reciprocity/Main.lean`. Every other file only contains proofs and auxiliary
+in `Main.lean` / `Reciprocity/Main.lean`. Version 1.1 extends the boundary by two short files of
+definitions, **`SurfaceBlowup/Cluster/Defs.lean`** (`clusterCell`, `clusterExpr`, `clusterDensity`) and
+**`SurfaceBlowup/Etale/Defs.lean`** (`IsEtaleForm`, `etaleMonicDensity`, `etaleProjectiveDensity`), and the
+statements in `Cluster/Main.lean` / `Etale/Main.lean`. Every other file only contains proofs and auxiliary
 definitions that do not occur in the main statements.
 
 `Checks/run_checks.sh` verifies, at the kernel level, that the statements of `main_dvr`,
@@ -110,7 +116,8 @@ the certified ones (the rest being the dropped propositions), and type-checks
 
 The regression guards in `Tests/` pin the definitions to known numbers, e.g.
 `(monicExpr 4 {(4,1)}).eval 2 = 107/1533`, and derive density corollaries from `main_dvr`.
-`Tests/NonVacuity.lean` shows that the hypotheses of `main_dvr` are satisfiable in equal
+`Tests/Cluster.lean` derives the quadratic cluster law (`q/(q+1)`, `1/(2(q+1))`, `1/(2(q+1))`) from
+`main_dvr_cluster`. `Tests/NonVacuity.lean` shows that the hypotheses of `main_dvr` are satisfiable in equal
 characteristic: `𝔽_q⟦X⟧` with the coefficientwise topology, giving the formulas for `𝔽_p⟦X⟧`.
 
 ## License
@@ -123,7 +130,7 @@ copyright/authors header. Authors: Asvin G, Claude (Anthropic), GPT-6-Astra (Ope
 
     lake exe cache get        # Mathlib oleans (first time only)
     lake build                # builds SurfaceBlowup and Tests (~8800 jobs; ~8 min on 16 cores)
-    lake env lean Checks/Axioms.lean
+    lake env lean Checks/Axioms.lean   # 12 main theorems, each [propext, Classical.choice, Quot.sound]
     ./Checks/run_checks.sh    # needs the certified trees next to this one (see the script)
 
 or all of it at once: `tools/release_check.sh` (build, axioms, statement preservation, forbidden-token
@@ -204,6 +211,11 @@ Dependencies flow roughly top to bottom. Each module has a docstring with its ma
 | `Blowup/PointTransport` | 1284 | Transport of points between blow-up charts |
 | `Blowup/StrictNormalizer` | 1497 | Strict transforms and the strict normalizer |
 | `Blowup/TwoChartCurveData` | 1389 | Two-chart curve data |
+| `Cluster/Defs` | 56 | v1.1: the cluster cell, the cluster law `B_{n,σ}` and the cluster density |
+| `Cluster/Main` | 155 | v1.1: the cluster clause of the type-law theorem, its regularity and reciprocity |
+| `Etale/Defs` | 60 | v1.1: étale binary forms and the étale-convention densities |
+| `Etale/Main` | 139 | v1.1: the non-étale locus is null; the published densities equal the étale ones |
+| `Etale/Algebra` | 58 | v1.1: the étale monic density with the event phrased by algebra types |
 | `Formula/FiniteFieldCounts` | 78 | Counting over finite fields |
 | `Formula/LawAlgebra` | 914 | Expression and law algebra, children of tangent patterns |
 | `Formula/PatternCounts` | 661 | Counting divisors with a given tangent pattern |
@@ -261,15 +273,3 @@ densities because the exceptional loci are Haar-null.
 Obtained from a certified tree of ~1200 one-theorem files (`final/monolith_gen`) by mechanical merging
 along the usage DAG and three golfing cycles (see `CHANGELOG.md`, `CAPTAIN.md`, `HANDOFF.md`). Module docstrings end
 with a `Provenance:` line naming the original nodes.
-
-## Companion paper and site
-
-The informal proof, with every statement linked to its Lean declaration, is at <https://asving.github.io/claude/splitting-type-density/>. The Prove2Me certification of the same development is published under the namespace `TypeDensity`.
-
-## Building
-
-```
-lake exe cache get   # Mathlib cache for the pinned commit
-lake build           # SurfaceBlowup and Tests
-lake env lean Checks/Axioms.lean
-```
