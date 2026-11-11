@@ -147,7 +147,7 @@ docstrings of the named lemmas split out of long proofs.)
   template: still FAILS on `HasPolynomialType` (route-F statement), as it must.
 - **License and headers.** Mathlib-style copyright header on all 64 `.lean` files of `SurfaceBlowup/`,
   `Tests/`, both roots, and `Checks/template.lean` (Authors: Asvin G, Claude (Anthropic), GPT-6-Astra
-  (OpenAI)); `LICENSE` = Apache 2.0 text (copied from Mathlib's). OWNER: confirm license.
+  (OpenAI)); `LICENSE` = Apache 2.0 text (copied from Mathlib's); the license was confirmed on 2026-10-17.
 - Whitespace tidy in the (formerly frozen) statement text of `Main.lean`.
 - `tools/release_check.sh`: preservation step also requires 3x `CONCLUSION_IDENTICAL`; warnings step now
   requires 0 warnings.

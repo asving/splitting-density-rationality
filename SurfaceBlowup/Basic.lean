@@ -18,7 +18,7 @@ import Mathlib.Topology.Algebra.Nonarchimedean.AdicTopology
 Every definition occurring in the statements of the main theorems `SurfaceBlowup.main_dvr`,
 `SurfaceBlowup.main_field_form` and `SurfaceBlowup.recip_main` lives in this file, and nothing else
 does except the internal route-F densities at the end. These definitions are, constant for constant,
-the owner-signed published definitions (Prove2Me nodes N001–N010, namespace `SurfaceBlowupV2`),
+the published definitions (Prove2Me nodes N001–N010, namespace `SurfaceBlowupV2`),
 renamed into `SurfaceBlowup`; `Checks/run_checks.sh` verifies this at the kernel level against the
 certified trees. They must not be edited beyond comments and docstrings.
 

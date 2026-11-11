@@ -91,7 +91,7 @@ theorem recip_main (n : ℕ) (hn : 0 < n) (σ : FactorType) :
       ((projectiveExpr n σ).subst (.inv .var)).rational := by ...
 ```
 
-Compared with the certified (owner-signed) statements, the hypotheses `0 < n`, `ValidType σ`,
+Compared with the certified statements, the hypotheses `0 < n`, `ValidType σ`,
 `typeDegree σ = n` of `main_dvr` / `main_field_form` / `main_field_form_ramified` and `ValidType σ`,
 `typeDegree σ = n` of `recip_main` were dropped in cycle 4a (none was used by the proofs), so the
 theorems are strictly stronger; `0 < n` of `recip_main` is used and kept. `Checks/run_checks.sh`
