@@ -86,7 +86,7 @@ theorem affine_type_event_unit_scaling (O : Type) [CommRing O] [IsDomain O] [IsL
     exact hc (hres'.symm.trans ((IsLocalRing.residue_eq_zero_iff _).2
       ((IsLocalRing.mem_maximalIdeal _).2 hnu)))
   have hpn : projectiveNormalize O n G μ a = dropCoord μ (normalizeAt μ a) := by
-    unfold projectiveNormalize; rw [if_pos ha]
+    unfold projectiveNormalize; rw [ite_eq_left ha]
   have hins : insertOne μ (projectiveNormalize O n G μ a) = normalizeAt μ a := by
     rw [hpn]
     unfold insertOne dropCoord
@@ -119,7 +119,6 @@ theorem array_enumeration (k : Type) [Field k] (n : ℕ) (D : ExceptionalDivisor
     rw [← Nat.card_eq_fintype_card, ← Nat.card_eq_fintype_card]
     have h1 : Nat.card {j // ℓ₁ j = x} = Ls.count x := by
       convert list_get_fiber_card _ Ls x using 2
-      exact lawful_beq_subsingleton _ _
     rw [h1]
     by_cases hx : ∃ δ r, x = (δ, State.single 1 r)
     · obtain ⟨δ, r, rfl⟩ := hx
@@ -186,23 +185,23 @@ private lemma affinePolynomial_coeff (O : Type) [CommRing O] [IsDomain O] {n : �
   split_ifs with h
   · rw [Finset.sum_eq_single ⟨k,h⟩]
     · simp
-    · intro b _ hb; rw [if_neg]; · simp
+    · intro b _ hb; rw [ite_eq_right]; · simp
       intro e; apply hb; ext; simp [e]
     · simp
-  · apply Finset.sum_eq_zero; intro i _; rw [if_neg]; · simp
+  · apply Finset.sum_eq_zero; intro i _; rw [ite_eq_right]; · simp
     omega
 
 private lemma affinePolynomial_natDegree_le (O : Type) [CommRing O] [IsDomain O] {n : ℕ}
     (a : Fin (n + 1) → O) : (affinePolynomial O a).natDegree ≤ n := by
   rw [natDegree_le_iff_coeff_eq_zero]
-  intro k hk; rw [affinePolynomial_coeff, dif_neg]; omega
+  intro k hk; rw [affinePolynomial_coeff, dite_eq_right]; omega
 
 private lemma affinePolynomial_natDegree_eq (O : Type) [CommRing O] [IsDomain O] {n : ℕ}
     (a : Fin (n + 1) → O) (h : a (Fin.last n) ≠ 0) :
     (affinePolynomial O a).natDegree = n ∧ (affinePolynomial O a).leadingCoeff = algebraMap O
       (BaseField O) (a (Fin.last n)) := by
   have hc : (affinePolynomial O a).coeff n = algebraMap O (BaseField O) (a (Fin.last n)) := by
-    rw [affinePolynomial_coeff, dif_pos (by omega)]; rfl
+    rw [affinePolynomial_coeff, dite_eq_left (by omega)]; rfl
   have hne : (affinePolynomial O a).coeff n ≠ 0 := by
     rw [hc]; exact (map_ne_zero_iff _ (IsFractionRing.injective O (BaseField O))).mpr h
   have hd := natDegree_eq_of_le_of_coeff_ne_zero (affinePolynomial_natDegree_le O a) hne
@@ -213,8 +212,8 @@ private lemma affinePolynomial_eq_init (O : Type) [CommRing O] [IsDomain O] {m :
     affinePolynomial O a = affinePolynomial O (Fin.init a) := by
   ext k; rw [affinePolynomial_coeff, affinePolynomial_coeff]
   by_cases hk : k < m + 1
-  · rw [dif_pos (by omega), dif_pos hk]; rfl
-  · rw [dif_neg hk]; split_ifs with h2
+  · rw [dite_eq_left (by omega), dite_eq_left hk]; rfl
+  · rw [dite_eq_right hk]; split_ifs with h2
     · have : k = m+1 := by omega
       subst this
       have e : a ⟨m+1, h2⟩ = 0 := h
@@ -262,7 +261,7 @@ theorem binary_type_event_decomposition (O : Type) [CommRing O] [IsDomain O] (σ
     have hdeg : ∀ b : Fin (m+1) → O, affinePolynomial O b ≠ 0 →
         (affinePolynomial O b).natDegree = m → b (Fin.last m) ≠ 0 := fun b hne hd hb ↦ by
       refine hne (leadingCoeff_eq_zero.1 ?_)
-      rw [leadingCoeff, hd, affinePolynomial_coeff, dif_pos (by omega)]
+      rw [leadingCoeff, hd, affinePolynomial_coeff, dite_eq_left (by omega)]
       exact (congrArg _ hb).trans (map_zero _)
     constructor
     · rintro ⟨⟨hp, hne, -, hle, τ, hτ, hσ⟩, h0⟩
@@ -276,7 +275,7 @@ theorem binary_type_event_decomposition (O : Type) [CommRing O] [IsDomain O] (σ
       have her : σ.erase (1,1) = τ := by rw [hσ, add_comm, Multiset.singleton_add,
           Multiset.erase_cons_head]
       refine ⟨h0, ?_⟩
-      rw [if_pos hmem]
+      rw [ite_eq_left hmem]
       refine ⟨⟨hb, ?_⟩, (hprim a h0).mp hp⟩
       rw [her, ← hl]; exact hτ
     · rintro ⟨h0, hs⟩
@@ -423,9 +422,9 @@ theorem divisor_array_exists_unique (k : Type) [Field k] (n : ℕ) (D : Exceptio
     have hB : D Q ≤ n := by nlinarith
     rw [Finset.sum_eq_single_of_mem (⟨directionDegree k Q - 1, by omega⟩, ⟨D Q - 1, by omega⟩)
       (Finset.mem_univ _)]
-    · rw [if_pos]; simp only; constructor <;> omega
+    · rw [ite_eq_left]; simp only; constructor <;> omega
     · intro ij _ hne
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨h1, h2⟩
       apply hne
       ext <;> simp <;> omega
@@ -527,9 +526,9 @@ private theorem exceptionalDegree_eq_patternWeight (k : Type) [Field k] (n : ℕ
   have hB := (hb Q hD0).2
   rw [Finset.sum_eq_single_of_mem (⟨directionDegree k Q - 1, by omega⟩, ⟨D Q - 1, by omega⟩)
     (Finset.mem_univ _)]
-  · rw [if_pos]; simp only; constructor <;> omega
+  · rw [ite_eq_left]; simp only; constructor <;> omega
   · intro ij _ hne
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h1, h2⟩
     apply hne
     ext <;> simp <;> omega
@@ -578,7 +577,7 @@ private theorem divisorOfColoring_apply [Finite k]
     divisorOfColoring k S n g q.1 = (g i q).elim 0 (fun j => j.val + 1) := by
   change divisorOfColoringFun k S n g q.1 = _
   have hex : ∃ i : Fin n, q.1 ∈ S ∧ directionDegree k q.1 = i.val + 1 := ⟨i, q.2⟩
-  simp only [divisorOfColoringFun, dif_pos hex]
+  simp only [divisorOfColoringFun, dite_eq_left hex]
   have key : ∀ (i' : Fin n) (hi' : q.1 ∈ S ∧ directionDegree k q.1 = i'.val + 1), i' = i →
       (g i' ⟨q.1, hi'⟩).elim 0 (fun j => j.val + 1) = (g i q).elim 0 (fun j => j.val + 1) := by
     rintro _ _ rfl; rfl
@@ -593,7 +592,7 @@ private theorem divisorOfColoring_eq_zero [Finite k]
     (h : ¬ (∃ i : Fin n, Q ∈ S ∧ directionDegree k Q = i.val + 1)) :
     divisorOfColoring k S n g Q = 0 := by
   change divisorOfColoringFun k S n g Q = 0
-  simp only [divisorOfColoringFun, dif_neg h]
+  simp only [divisorOfColoringFun, dite_eq_right h]
 
 private theorem divisorOfColoring_supp [Finite k]
     (g : ∀ i : Fin n, DegPoints k S n i → Option (Fin n)) :
@@ -615,7 +614,7 @@ private theorem divisorOfColoring_bound [Finite k]
     refine ⟨by omega, ?_⟩
     cases g i ⟨Q, hi⟩ with
     | none => simp
-    | some j => have := j.2; simp; try omega
+    | some j => simp
   · exact absurd (divisorOfColoring_eq_zero k S n g Q h) hQ
 
 private theorem divisorOfColoring_hasArray [Finite k] (m : Pattern n)
@@ -831,7 +830,7 @@ theorem divisor_vector_properties (k : Type) [Field k] (n : ℕ) (D : Exceptiona
     by_cases h : none ∈ D.support
     · rw [Finset.sum_eq_single none]
       · simp
-      · intro b _ hb; exact if_neg (Ne.symm hb)
+      · intro b _ hb; exact ite_eq_right (Ne.symm hb)
       · intro h'; exact absurd h h'
     · have : D none = 0 := by simpa using h
       simp [this]
@@ -866,7 +865,7 @@ private lemma formPoly_coeff {A : Type} [CommRing A] {d : ℕ} (v : Fin (d + 1) 
   simp only [formPoly, finsetSum_coeff, coeff_C_mul, coeff_X_pow]
   rw [Finset.sum_eq_single i]
   · simp
-  · intro b _ hb; rw [if_neg (fun h => hb (Fin.ext h).symm), mul_zero]
+  · intro b _ hb; rw [ite_eq_right (fun h => hb (Fin.ext h).symm), mul_zero]
   · simp
 
 /-- The form polynomial of a vector of length `d + 1` has degree at most `d`. -/
@@ -1025,7 +1024,7 @@ private theorem form_product_mem_affineTypeEvent_iff (O : Type) [CommRing O] [Is
   have hred : insertOne μ (reducedFormProduct O d ν g μ a) =
       fun i : Fin ((∑ j, d j) + 1) ↦ u * Q.coeff i := by
     unfold reducedFormProduct
-    rw [if_pos hcell]
+    rw [ite_eq_left hcell]
     have := Fin.insertNth_self_removeNth μ
       (normalizeAt μ (formProd d fun j ↦ insertOne (ν j) (a j)))
     rw [normalizeAt, Pi.smul_apply, smul_eq_mul, Ring.inverse_mul_cancel
@@ -1076,11 +1075,11 @@ private theorem form_product_type_iff (O : Type) [CommRing O] [IsDomain O]
     simp only [p, formPoly_map]; exact congrArg formPoly (hcell j).2
   have hpfin : ∀ j, inf j = false → p j = monicPolyO (a j) := fun j hj ↦ by
     have hcl := hclass j
-    rw [if_neg (by simp [hj])] at hcl
+    rw [ite_eq_right (by simp [hj])] at hcl
     simp only [p, hcl, formPoly_insertOne_last]
   have hpinf : ∀ j, inf j = true → (p j).map (IsLocalRing.residue O) = 1 := fun j hj ↦ by
     have hcl := hclass j
-    rw [if_pos hj] at hcl
+    rw [ite_eq_left hj] at hcl
     rw [hpred, hcl.2, formPoly_single_zero]
   have hmon : ∀ j, (monicPolyO (a j)).Monic := fun j ↦ (monic_poly_reconstruct O _ (a j)).1
   have hblock : ∀ j (t : FactorType),
@@ -1089,9 +1088,9 @@ private theorem form_product_type_iff (O : Type) [CommRing O] [IsDomain O]
     intro j t
     by_cases hj : inf j = true
     · have hcl := hclass j
-      rw [if_pos hj] at hcl ⊢
+      rw [ite_eq_left hj] at hcl ⊢
       simp only [infinityBlockEvent, Set.mem_ofPred_eq, F, c, p, hcl.1, ι]
-    · rw [if_neg hj]
+    · rw [ite_eq_right hj]
       obtain ⟨hm, hd, -⟩ := monic_poly_reconstruct O _ (a j)
       have hc1 : c j = 1 := by simp only [c, hpfin j (by simpa using hj), ← hd]; exact hm
       simp [typeEvent, hF, hc1, hpfin j (by simpa using hj), ι, monicPolyO_map_fraction]

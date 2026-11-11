@@ -82,7 +82,7 @@ theorem clusterExpr_allSafe (n : ℕ) (σ : FactorType) : (clusterExpr n σ).all
   refine expression_sum_safe _ _ fun x hx => ?_
   obtain ⟨z, hz, rfl⟩ := List.mem_map.mp hx
   by_cases h : z.1 = σ
-  · simp only [h, if_true]; exact hL z hz q hq
+  · simp only [h, ite_true]; exact hL z hz q hq
   · simp [h, Expr.safe]
 
 /-- **The cluster rational function evaluates correctly.** At every prime power `q`, the rational

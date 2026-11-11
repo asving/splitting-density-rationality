@@ -691,7 +691,7 @@ private theorem finite_support_localization_recovers (A : Type) [CommRing A] [Is
       iInf_le _ i
     calc _ ≤ ((J i).comap (completedPointMap A (P i))).map (algebraMap A R) := Ideal.map_mono h1
       _ = K := by rw [hIi]; exact IsLocalization.map_under (P i).primeCompl R K
-  · have hs : ∀ j, j ≠ i → ∃ s ∈ P j, s ∉ P i := fun j hj ↦ SetLike.not_le_iff_exists.1 fun h ↦
+  · have hs : ∀ j, j ≠ i → ∃ s ∈ P j, s ∉ P i := fun j hj ↦ IsConcreteLE.not_le_iff_exists.1 fun h ↦
       hj (hP (Ideal.IsMaximal.eq_of_le inferInstance (Ideal.IsMaximal.ne_top inferInstance) h))
     choose! s hs using hs
     set t := ∏ j ∈ Finset.univ.erase i, s j ^ L j

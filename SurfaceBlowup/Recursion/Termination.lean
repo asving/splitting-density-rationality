@@ -5,7 +5,7 @@ Authors: Asvin G, Claude (Anthropic), GPT-6-Astra (OpenAI)
 -/
 import SurfaceBlowup.Measure.MemberCharts
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.LinearAlgebra.Dimension.Torsion.Finite
 
 /-!
@@ -445,8 +445,8 @@ theorem global_function_of_two_chart_curve_data (R : Type) [CommRing R] (t x : R
     (hreg : RegularParameterPair R t x) (hregSwap : RegularParameterPair R x t) (d : ℕ)
     (FA : ℕ → BlowupChart R t x) (hFA : ∀ j : ℕ, leftLevelKernel D j = Ideal.span
     {Ideal.Quotient.mk ((Ideal.span {chartBase R t x t})^j) (FA j)}) (FB : ℕ → BlowupChart R x t)
-    (hFB : ∀ j : ℕ, rightLevelKernel D j = Ideal.span {Ideal.Quotient.mk
-    ((Ideal.span {chartBase R x t x})^j) (FB j)}) (hnorm : ∃ u : Rˣ,
+    (hFB : ∀ j : ℕ, rightLevelKernel D j = Ideal.span
+    {Ideal.Quotient.mk ((Ideal.span {chartBase R x t x})^j) (FB j)}) (hnorm : ∃ u : Rˣ,
     (algebraMap (BlowupChart R t x) (BlowupOverlap R t x)) (FA 1) - algebraMap R
     (BlowupOverlap R t x) (u : R) * ((overlapSlope R t x)^d * beta.right (FB 1)) ∈
     (Ideal.span {overlapException R t x})) :
@@ -543,7 +543,7 @@ theorem homogeneous_divisor_of_polynomial (k : Type) [Field k] (d : ℕ) (H : Po
       mul_inv_cancel₀ (Polynomial.leadingCoeff_ne_zero.mpr hH), Polynomial.C_1, one_mul]
   · simp [infinityDirection, M, g]
   · intro φ
-    simp only [Finsupp.add_apply, Finsupp.single_apply, reduceCtorEq, if_false, zero_add,
+    simp only [Finsupp.add_apply, Finsupp.single_apply, reduceCtorEq, ite_false, zero_add,
       Multiset.toFinsupp_apply]
     rw [← Multiset.count_map_eq_count' (Option.map Subtype.val) M
       (Option.map_injective Subtype.val_injective), hMmap]
@@ -829,7 +829,7 @@ theorem child_ideal_set_map_iff_stateSet (m : ConcreteMember) (c : m.cellIndex)
   rcases Q with _ | φ
   · obtain rfl := hB' (Or.inl rfl)
     cases s0 <;>
-    · simp only [pointChildState, infinityDirection, if_true, StateShape, stateContactT,
+    · simp only [pointChildState, infinityDirection, ite_true, StateShape, stateContactT,
         stateContactX] at hshape ⊢
       obtain ⟨rfl, rfl, -⟩ := hshape
       simp [zeroDirection]
@@ -837,17 +837,18 @@ theorem child_ideal_set_map_iff_stateSet (m : ConcreteMember) (c : m.cellIndex)
     simp [infinityDirection]
   cases s0 with
   | single a0 c0 =>
-    simp only [pointChildState, if_neg hne, StateShape, stateContactT, stateContactX] at hshape ⊢
+    simp only [pointChildState, ite_eq_right hne, StateShape, stateContactT,
+      stateContactX] at hshape ⊢
     obtain ⟨rfl, rfl, -⟩ := hshape
     simp
   | crossing a0 b0 c0 h0 =>
     by_cases hz : (some φ : ClosedDirection (ResidueField m.R)) = zeroDirection _
     · obtain rfl := hB' (Or.inr hz)
-      simp only [pointChildState, if_neg hne, if_pos hz, StateShape, stateContactT,
+      simp only [pointChildState, ite_eq_right hne, ite_eq_left hz, StateShape, stateContactT,
         stateContactX] at hshape ⊢
       obtain ⟨rfl, rfl, -⟩ := hshape
       simp [hz, zeroDirection]
-    · simp only [pointChildState, if_neg hne, if_neg hz, StateShape, stateContactT,
+    · simp only [pointChildState, ite_eq_right hne, ite_eq_right hz, StateShape, stateContactT,
         stateContactX] at hshape ⊢
       obtain ⟨rfl, rfl, -⟩ := hshape
       simp [hz]

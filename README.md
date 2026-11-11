@@ -8,8 +8,9 @@ ring with finite residue field of cardinality `q` (any characteristic, any ramif
 rational functions, given by a finite recursion over blow-ups of a regular arithmetic surface.
 A second result is a reciprocity law for these rational functions.
 
-Toolchain: Lean `v4.33.1`, Mathlib `0df444a360eaa60ab8c11dca51a86af692955474` (pinned in
-`lakefile.lean` / `lake-manifest.json`).
+Toolchain: Lean `v4.35.0`, Mathlib `56a005855ea17e0b0958f73ec801ae140b0a1679` (tag `v4.35.0`; pinned in
+`lakefile.lean` / `lake-manifest.json`). Versions up to v1.2.0 use Lean `v4.33.1` with Mathlib
+`0df444a360eaa60ab8c11dca51a86af692955474`, which is also the environment of the Prove2Me tree.
 
 ## Main theorems
 
@@ -147,7 +148,9 @@ chosen to match Mathlib and confirmed by the owner on 2026-10-17.
     ./Checks/run_checks.sh    # needs the certified trees next to this one (see the script)
 
 or all of it at once: `tools/release_check.sh` (build, axioms, statement preservation, forbidden-token
-grep, warning count; logs in `logs/release_*.log`). Other tools: `tools/StmtDump.lean` (hashes of the
+grep, warning count; logs in `logs/release_*.log`). `tools/release_check_local.sh` is the variant for a
+machine without the certified trees: it compares the source text of every statement with v1.2.0
+(`tools/stmt_text.py`) and kernel-term hashes with the dump of the current release. Other tools: `tools/StmtDump.lean` (hashes of the
 type of every public declaration and the body of every definition; diff two dumps to prove a
 refactor changed no statement), `tools/lint_census.sh` (Mathlib standard linters, per file),
 `tools/longest_decls.py`, `tools/chk.sh` (check a file against a private frozen olean directory).
@@ -207,26 +210,26 @@ Dependencies flow roughly top to bottom. Each module has a docstring with its ma
 
 | module | lines | title |
 |---|---:|---|
-| `Algebra/AlgebraType` | 644 | Algebra types and integral closures over a discrete valuation ring |
+| `Algebra/AlgebraType` | 645 | Algebra types and integral closures over a discrete valuation ring |
 | `Algebra/FactorInvariant` | 324 | Invariance of factor invariants and uniqueness of algebra types |
-| `Assembly/Formulas` | 139 | The density formulas for the route-F densities |
-| `Assembly/MonicCells` | 1342 | Monic, projective and divisor cells |
+| `Assembly/Formulas` | 140 | The density formulas for the route-F densities |
+| `Assembly/MonicCells` | 1343 | Monic, projective and divisor cells |
 | `Assembly/NullBridges` | 490 | Strict-transform measures, type events and the projective null bridge |
-| `Assembly/TypeEvents` | 1330 | Type events and divisor counts |
+| `Assembly/TypeEvents` | 1329 | Type events and divisor counts |
 | `Basic` | 503 | Statement-level definitions (the trust boundary) |
 | `Blowup/CechStability` | 312 | Stability of the finite Čech coefficients |
 | `Blowup/Charts` | 1158 | Blow-up charts, the exceptional line, and curve data |
 | `Blowup/CurveOrders` | 1050 | Curve orders, the exceptional line, and finitely supported local data |
-| `Blowup/CurveSections` | 1110 | Curve sections on the two-chart blow-up |
+| `Blowup/CurveSections` | 1115 | Curve sections on the two-chart blow-up |
 | `Blowup/Directions` | 154 | Closed points and divisors on the exceptional line |
-| `Blowup/DivisorPoints` | 1459 | Exceptional divisor points of two-chart curve data |
-| `Blowup/ExceptionalLayers` | 842 | Exceptional layers of the point blow-up |
+| `Blowup/DivisorPoints` | 1461 | Exceptional divisor points of two-chart curve data |
+| `Blowup/ExceptionalLayers` | 843 | Exceptional layers of the point blow-up |
 | `Blowup/FixedTangentCellBijection` | 480 | Strict transforms give a bijection on a fixed tangent cell |
 | `Blowup/H0Comparison` | 1245 | Comparing surface functions with Čech data on the blow-up |
-| `Blowup/NilpotentGluing` | 1490 | Nilpotent gluing of exceptional levels |
-| `Blowup/PointTransport` | 1284 | Transport of points between blow-up charts |
+| `Blowup/NilpotentGluing` | 1492 | Nilpotent gluing of exceptional levels |
+| `Blowup/PointTransport` | 1283 | Transport of points between blow-up charts |
 | `Blowup/StrictNormalizer` | 1497 | Strict transforms and the strict normalizer |
-| `Blowup/TwoChartCurveData` | 1389 | Two-chart curve data |
+| `Blowup/TwoChartCurveData` | 1390 | Two-chart curve data |
 | `Corollaries/Nonneg` | 199 | v1.2: nonnegativity of the universal expressions, real-valued forms of the main theorems |
 | `Corollaries/RationalForm` | 230 | v1.2: the three laws as rational functions, and reciprocity as an automorphism of `ℚ(q)` |
 | `Cluster/Defs` | 56 | v1.1: the cluster cell, the cluster law `B_{n,σ}` and the cluster density |
@@ -244,29 +247,29 @@ Dependencies flow roughly top to bottom. Each module has a docstring with its ma
 | `Measure/AdicCylinders` | 989 | Adic congruences, adic cylinders and division charts |
 | `Measure/AdicTransport` | 323 | Adic congruences, adic perturbations and transport of cylinder measures |
 | `Measure/Atlas` | 315 | Ideal-chart atlases and atlas independence of the state measure |
-| `Measure/Haar` | 376 | Haar measures on unramified extensions and strict-transform normalizations |
+| `Measure/Haar` | 375 | Haar measures on unramified extensions and strict-transform normalizations |
 | `Measure/HenselProducts` | 1267 | Hensel factorization, finite products and coefficient measures |
 | `Measure/MemberBoxes` | 601 | Measure of member boxes |
 | `Measure/MemberCharts` | 602 | Charts of concrete members and the inseparable locus |
 | `Measure/Normalizer` | 381 | Generator normalization and residue-ideal counts |
-| `Measure/PrimitiveLocus` | 381 | The primitive locus, state measures, and integral closures |
+| `Measure/PrimitiveLocus` | 382 | The primitive locus, state measures, and integral closures |
 | `Measure/StateVolumes` | 209 | Single-state residue ideal counts and Haar-measure transport |
-| `Reciprocity/Defs` | 1044 | Reciprocity: definitions and basic lemmas |
-| `Reciprocity/Main` | 301 | The reciprocity law (Theorem R) |
-| `Reciprocity/Patterns` | 1045 | Pattern sums, crossing factorization and unitarity |
+| `Reciprocity/Defs` | 1049 | Reciprocity: definitions and basic lemmas |
+| `Reciprocity/Main` | 302 | The reciprocity law (Theorem R) |
+| `Reciprocity/Patterns` | 1047 | Pattern sums, crossing factorization and unitarity |
 | `Reciprocity/Plethysm` | 1034 | Plethystic calculus for the reciprocity law |
-| `Reciprocity/Quantum` | 920 | Reciprocity: the quantum torus, dilations and reciprocal substitution |
+| `Reciprocity/Quantum` | 919 | Reciprocity: the quantum torus, dilations and reciprocal substitution |
 | `Recursion/ChildMembers` | 1215 | Child members and terminal states of the blowup recursion |
-| `Recursion/Events` | 922 | Return and exit events of the blowup recursion |
-| `Recursion/Members` | 1427 | Members of the recursion universe |
-| `Recursion/OrderDefect` | 1151 | Order defects and child data for the blowup recursion |
-| `Recursion/RootCellLaw` | 1365 | The root cell law |
-| `Recursion/Termination` | 1316 | Termination of the recursion |
+| `Recursion/Events` | 923 | Return and exit events of the blowup recursion |
+| `Recursion/Members` | 1426 | Members of the recursion universe |
+| `Recursion/OrderDefect` | 1150 | Order defects and child data for the blowup recursion |
+| `Recursion/RootCellLaw` | 1366 | The root cell law |
+| `Recursion/Termination` | 1317 | Termination of the recursion |
 | `Surfaces/ChartCompletions` | 894 | Completions of the blow-up charts of the concrete surface |
-| `Surfaces/Completeness` | 414 | Completeness of the concrete surface |
+| `Surfaces/Completeness` | 413 | Completeness of the concrete surface |
 | `Surfaces/ConcreteAtlas` | 725 | Ideal atlases and curve data on the concrete surface |
 | `Surfaces/ConcretePoints` | 439 | Closed points on the blow-up of the concrete surface |
-| `Surfaces/ConcreteStrictTransforms` | 486 | Volumes and strict transforms on the concrete surface |
+| `Surfaces/ConcreteStrictTransforms` | 488 | Volumes and strict transforms on the concrete surface |
 | `Surfaces/Lengths` | 1284 | Concrete surfaces, chart substitutions and lengths |
 | `Surfaces/PowerSeries` | 1011 | Power series, residue bases and the local structure of concrete surfaces |
 | `Surfaces/Regularity` | 691 | Regularity of the concrete surface |
@@ -275,11 +278,11 @@ Dependencies flow roughly top to bottom. Each module has a docstring with its ma
 | `Unramified/Extension` | 1160 | Binary forms, factor cells and unramified extensions |
 | `Unramified/FactorCells` | 547 | Factor cells: residue cells of factor products and root-field isomorphisms |
 | `Unramified/FrobeniusDescent` | 1189 | Frobenius descent for unramified extensions |
-| `Unramified/HomogeneousCells` | 781 | Measure-preserving maps between homogeneous cells |
+| `Unramified/HomogeneousCells` | 782 | Measure-preserving maps between homogeneous cells |
 | `Unramified/LocalDescent` | 190 | Local lengths and finite quotients of completions |
 | `Unramified/PolynomialTypes` | 1251 | Polynomial types, form products and residue cells |
 
-Total: 71 modules, 51038 lines (plus root `SurfaceBlowup.lean`); `Tests/`: 4 files, 2339 lines.
+Total: 71 modules, 51060 lines (plus root `SurfaceBlowup.lean`); `Tests/`: 4 files, 2341 lines.
 
 Internally the proof runs on route-F densities (`monicDensityF`, `projectiveDensityF`, defined at the
 end of `Basic.lean`, which add the condition that integral closures in root fields are finite); the

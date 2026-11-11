@@ -1,16 +1,20 @@
 #!/bin/bash
 # Portable variant of tools/release_check.sh, for a machine that has this repository but not the
 # certified one-theorem-per-file trees. Run from the repository root:
-#   tools/release_check_local.sh [REFERENCE_DUMP]
+#   tools/release_check_local.sh
 #   (1) `lake build SurfaceBlowup Tests`, (2) `#print axioms` (Checks/Axioms.lean: 22 main theorems;
-#   Checks/AxiomsCorollaries.lean: the 25 public theorems added in v1.2.0), (3) statement dump
-#   (tools/StmtDump.lean) compared with REFERENCE_DUMP (default Checks/reference/stmt_dump_v1_1_0.tsv,
-#   the dump of tag v1.1.0): every constant of the reference must be present with the same type and
-#   value hashes; new constants are counted, (4) grep for forbidden tokens, (5) zero build warnings.
+#   Checks/AxiomsCorollaries.lean: the 25 public theorems added in v1.2.0), (3) statements:
+#   (3a) source text of every statement compared with the v1.2.0 reference
+#   (tools/stmt_text.py, Checks/reference/stmt_text_v1_2_0.json; differences in whitespace are
+#   counted, any other difference must be listed in Checks/reference/stmt_text_rewrites_v1_3_0.json),
+#   (3b) kernel-term hashes (tools/StmtDump.lean) compared with the dump of v1.3.0
+#   (Checks/reference/stmt_dump_v1_3_0.tsv; same toolchain, so hashes are comparable),
+#   (4) grep for forbidden tokens, (5) zero build warnings.
 # Step (3) replaces the statement-preservation check against the certified trees (Checks/run_checks.sh),
-# which needs those trees. It shows that no statement or definition changed since the reference release;
-# it does not re-derive the certified statements. Logs go to logs/. Exit code 0 iff everything passes.
-ref=${1:-Checks/reference/stmt_dump_v1_1_0.tsv}
+# which needs those trees. Hashes change with Lean and Mathlib, so across the port from Lean v4.33.1 to
+# v4.35.0 the evidence is (3a); Checks/reference/stmt_dump_v1_1_0.tsv is the hash dump of v1.1.0 on the
+# old toolchain, kept for the record. Logs go to logs/. Exit code 0 iff everything passes.
+ref=${1:-Checks/reference/stmt_dump_v1_3_0.tsv}
 mkdir -p logs
 fail=0; ok() { echo "PASS: $1"; }; bad() { echo "FAIL: $1"; fail=1; }
 echo "== (1) lake build"
@@ -26,13 +30,17 @@ lake env lean Checks/AxiomsCorollaries.lean > logs/release_axioms_corollaries.lo
 n=$(grep -c "depends on axioms: \[propext, Classical.choice, Quot.sound\]" logs/release_axioms_corollaries.log)
 t=$(grep -c "depends on axioms\|does not depend on any axioms" logs/release_axioms_corollaries.log)
 [ "$n" = 25 ] && [ "$t" = 25 ] && ok "25/25 public theorems added in v1.2.0 use only [propext, Classical.choice, Quot.sound]" || bad "axioms of the v1.2.0 theorems ($n/25)"
-echo "== (3) statements unchanged since $(basename "$ref")"
+echo "== (3) statements"
+python3 -I tools/stmt_text.py compare Checks/reference/stmt_text_v1_2_0.json \
+  --allow Checks/reference/stmt_text_rewrites_v1_3_0.json > logs/release_stmt_text.log 2>&1 \
+  && ok "source text vs v1.2.0: $(sed -n 2p logs/release_stmt_text.log)" \
+  || bad "statement text (see logs/release_stmt_text.log): $(sed -n 2p logs/release_stmt_text.log)"
 STMT_DUMP=logs/release_stmt_dump.tsv lake env lean tools/StmtDump.lean > logs/release_stmt_dump.log 2>&1
 r=$(wc -l < "$ref" | tr -d ' ')
 same=$(comm -12 <(sort "$ref") <(sort logs/release_stmt_dump.tsv) | wc -l | tr -d ' ')
 new=$(comm -13 <(cut -f2 "$ref" | sort) <(cut -f2 logs/release_stmt_dump.tsv | sort) | wc -l | tr -d ' ')
 [ -s logs/release_stmt_dump.tsv ] && [ "$same" = "$r" ] \
-  && ok "$same/$r constants of the reference have identical type and value hashes; $new new constants" \
+  && ok "kernel-term hashes vs $(basename "$ref"): $same/$r constants identical; $new new constants" \
   || bad "statement dump: $same/$r reference constants unchanged"
 echo "== (4) forbidden tokens"
 g=$(grep -rnE '\bsorry\b|\bnative_decide\b|^\s*(private )?axiom\b|maxHeartbeats|(^|[;(]\s*)admit\b' \

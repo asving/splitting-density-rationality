@@ -182,9 +182,9 @@ theorem two_chart_level_generators_agree_on_overlap (R : Type) [CommRing R] (t x
     BlowupChart R x t) (hFB : ∀ j : ℕ, rightLevelKernel D j =
     Ideal.span {Ideal.Quotient.mk ((Ideal.span {chartBase R x t x})^j) (FB j)}) (j : ℕ) :
     Ideal.span {Ideal.Quotient.mk ((Ideal.span {overlapException R t x})^j)
-      ((algebraMap (BlowupChart R t x) (BlowupOverlap R t x)) (FA j))} =
+                  ((algebraMap (BlowupChart R t x) (BlowupOverlap R t x)) (FA j))} =
       Ideal.span {Ideal.Quotient.mk ((Ideal.span {overlapException R t x})^j)
-        (beta.right (FB j))} := by
+                    (beta.right (FB j))} := by
   obtain ⟨h1, h2⟩ := two_chart_kernels_agree_on_overlap R t x beta D j
   have e1 := span_mk_map_eq_map_map (algebraMap (BlowupChart R t x) (BlowupOverlap R t x))
     (chartBase R t x t) (overlapException R t x) (by simp [overlapException]) j (leftKernel D j)
@@ -716,9 +716,10 @@ completed local ring as `xᵈ · (local equation) · unit`. -/
 private theorem strict_transform_right_point_equation (R : Type) [CommRing R] (t x : R) [(Ideal.span
     ({t,x} : Set R)).IsMaximal] [IsNoetherianRing (BlowupChart R t x)] [IsNoetherianRing
     (BlowupChart R x t)] (beta : BlowupRestriction R t x) (D : TwoChartCurveData R t x beta) (d : ℕ)
-    (G : GluedGenerators R t x beta d) (hG : ∀ j : ℕ, Ideal.span {Ideal.Quotient.mk
-    ((chartExceptional R t x)^j) (G.left j)} = leftLevelKernel D j ∧ Ideal.span {Ideal.Quotient.mk
-    ((chartExceptional R x t)^j) (G.right j)} = rightLevelKernel D j) (f : R) (hf : ∀ j : ℕ,
+    (G : GluedGenerators R t x beta d) (hG : ∀ j : ℕ,
+    Ideal.span {Ideal.Quotient.mk ((chartExceptional R t x)^j) (G.left j)} = leftLevelKernel D j ∧
+    Ideal.span {Ideal.Quotient.mk ((chartExceptional R x t)^j) (G.right j)} = rightLevelKernel D j)
+    (f : R) (hf : ∀ j : ℕ,
     surfaceToCechInput R t x j f = (cechInputLattice R t x j).mkQ (gluedFunctionPair R t x G j)) (s
     : D.ι ⊕ D.ιinf) [IsNoetherianRing (CompletedLocalAt (BlowupChart R x t) (rightPoint D s))]
     (hereg : Function.Injective (fun a : (CompletedLocalAt (BlowupChart R x t) (rightPoint D s)) =>
@@ -968,7 +969,7 @@ private theorem layer_left_laurent_lift (j : ℕ) (z : ℤ → O)
     refine ⟨LaurentPolynomial.C (Ideal.Quotient.mk _ c) * LaurentPolynomial.T m, fun ℓ hℓ => ?_,
       ?_⟩
     · rw [← LaurentPolynomial.single_eq_C_mul_T, AddMonoidAlgebra.coeff_single,
-        Finsupp.single_apply, if_neg (by omega)]
+        Finsupp.single_apply, ite_eq_right (by omega)]
     · have hmonoA : Ideal.Quotient.mk (Ideal.span {blowupRelation R t x}) (Polynomial.monomial m c)
           = chartBase R t x c * chartSlope R t x ^ m := by
         rw [← Polynomial.C_mul_X_pow_eq_monomial, map_mul, map_pow]; rfl
@@ -1000,7 +1001,7 @@ private theorem layer_right_laurent_lift (beta : BlowupRestriction R t x) (d j :
     refine ⟨LaurentPolynomial.C (Ideal.Quotient.mk _ c) * LaurentPolynomial.T ((j:ℤ) - d - m),
       fun ℓ hℓ => ?_, ?_⟩
     · rw [← LaurentPolynomial.single_eq_C_mul_T, AddMonoidAlgebra.coeff_single,
-        Finsupp.single_apply, if_neg (by omega)]
+        Finsupp.single_apply, ite_eq_right (by omega)]
     · have hmonoB : Ideal.Quotient.mk (Ideal.span {blowupRelation R x t}) (Polynomial.monomial m c)
           = chartBase R x t c * chartSlope R x t ^ m := by
         rw [← Polynomial.C_mul_X_pow_eq_monomial, map_mul, map_pow]; rfl
@@ -1060,7 +1061,7 @@ private theorem laurent_window_coeffs_eq_zero {K : Type} [CommRing K] (d j : ℕ
     exact this.symm
   · intro b _ hb
     rw [← LaurentPolynomial.single_eq_C_mul_T, AddMonoidAlgebra.coeff_single, Finsupp.single_apply,
-      if_neg]
+      ite_eq_right]
     intro h; apply hb; ext; omega
   · simp
 
@@ -1303,7 +1304,7 @@ private theorem layer_coker_exact_of_range (R : Type) [CommRing R] (t x : R)
     Submodule.Quotient.mk y0 at hq
   rw [Submodule.Quotient.eq] at hq
   change _ ∈ (Ideal.span {algebraMap (BlowupChart R t x) (BlowupOverlap R t x)
-    (chartBase R t x t)}) ^ j at hq
+                            (chartBase R t x t)}) ^ j at hq
   rw [Ideal.span_singleton_pow, Ideal.mem_span_singleton'] at hq
   obtain ⟨o, ho⟩ := hq
   obtain ⟨v, hv⟩ := hall (-o)

@@ -110,13 +110,13 @@ theorem monic_poly_reconstruct (O : Type) [CommRing O] [Nontrivial O] (n : ℕ) 
     rwa [Polynomial.degree_X_pow]
   · intro i
     unfold monicPolyO
-    rw [Polynomial.coeff_add, Polynomial.coeff_X_pow, if_neg (by omega), zero_add,
+    rw [Polynomial.coeff_add, Polynomial.coeff_X_pow, ite_eq_right (by omega), zero_add,
       Polynomial.finsetSum_coeff]
     simp only [Polynomial.coeff_C_mul, Polynomial.coeff_X_pow]
     rw [Finset.sum_eq_single i]
     · simp
     · intro j _ hj
-      rw [if_neg (fun h ↦ hj (Fin.ext h.symm)), mul_zero]
+      rw [ite_eq_right (fun h ↦ hj (Fin.ext h.symm)), mul_zero]
     · simp
   · intro F hF hn
     conv_rhs => rw [hF.as_sum, hn]

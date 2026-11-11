@@ -258,7 +258,7 @@ private theorem two_chart_level_one_normalization (R : Type) [CommRing R] (t x :
     pow_one _
   have hoverlap :
       Ideal.span {Ideal.Quotient.mk (Ideal.span {overlapException R t x})
-        ((algebraMap (BlowupChart R t x) (BlowupOverlap R t x)) (FA 1))} =
+                    ((algebraMap (BlowupChart R t x) (BlowupOverlap R t x)) (FA 1))} =
       Ideal.span {Ideal.Quotient.mk (Ideal.span {overlapException R t x}) (beta.right (FB 1))} := by
     have := congrArg (Ideal.map (Ideal.quotEquivOfEq hpow).toRingHom)
       (two_chart_level_generators_agree_on_overlap R t x beta D FA hFA FB hFB 1)

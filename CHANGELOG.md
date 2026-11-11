@@ -5,6 +5,32 @@ All cycles: Lean v4.33.1, Mathlib `0df444a360eaa60ab8c11dca51a86af692955474`. Ma
 Quot.sound]` throughout; statements kernel-checked against the certified trees after every wave
 (`Checks/run_checks.sh`, 3x KERNEL_OK). Detailed logs: `CAPTAIN.md`.
 
+## v1.3.0 (2026-11-11) — Lean v4.35.0 / Mathlib v4.35.0; sign-off wording removed
+
+- Toolchain: Lean `v4.33.1` → `v4.35.0`, Mathlib `0df444a` → `56a0058` (tag `v4.35.0`). Proof repairs in 61 files:
+  the core deprecation of `if_pos`/`if_neg`/`dif_pos`/`dif_neg` (314 uses), 14 Mathlib renames or removals, the
+  implicit coefficient ring of `PowerSeries.derivative`, lemmas whose shape changed (`List.TFAE.out` is 1-indexed,
+  `Ideal.ramificationIdx_pos` needs a Noetherian instance), tactics that now close goals earlier, and two moved
+  imports. `lakefile.lean` sets `allowNonModules := true` (Mathlib now asks importers to use the module system).
+- Statements: of 2503 declarations, 2465 have identical source text to v1.2.0. 33 differ only in whitespace: Lean
+  v4.35.0 parses set literals with a position check, so continuation lines inside `{…}` had to be re-indented.
+  5 internal lemmas of the reciprocity proof (`binomial_series_ode`, `derivative_expSer`, `mul_derivative_logSer`,
+  `eq_of_mul_derivative_eq_mul`, `mul_derivative_formalPow`) drop the now-implicit ring argument of
+  `PowerSeries.derivative`; they are listed with old and new text in `Checks/reference/stmt_text_rewrites_v1_3_0.json`.
+  Nothing changed in `Basic.lean`, `Main.lean`, the cluster, étale and corollary statements, or the tests' statements.
+- `tools/stmt_text.py` (new) compares statement source text, which survives a toolchain change; kernel-term hashes
+  (`tools/StmtDump.lean`) do not. `tools/release_check_local.sh` now checks text against v1.2.0 and hashes against
+  `Checks/reference/stmt_dump_v1_3_0.tsv`.
+- Sign-off wording removed from the `Basic.lean` header docstring and the README; a stale owner marker removed from
+  this file. `HANDOFF.md` notes that no owner decision remains open.
+- Verification (macOS, Mathlib cache): `lake build SurfaceBlowup Tests` 3582 jobs, 0 warnings; axioms 22/22 and 25/25
+  `[propext, Classical.choice, Quot.sound]`; forbidden-token scan clean. `Checks/run_checks.sh` was not run (certified
+  trees not available). Mathlib itself changed two definitions that the codebase uses by name between the pins
+  (`PadicInt` is now a subring, with the same carrier; `Measure.map` of a non-measurable map), which the proofs
+  absorb; this was noticed by reading Mathlib sources, not by a kernel-level comparison.
+- The Prove2Me tree stays in the platform's environment (Lean v4.33.1, Mathlib `0df444a`); tag `v1.2.0` is the
+  last version that compiles there.
+
 ## v1.2.0 (2026-11-11) — exported corollaries, `ℤ_p` instance, docstring corrections
 
 A statement-faithfulness audit of v1.1.0 (Claude Fable 5.2, with a blind and a targeted second review by

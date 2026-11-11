@@ -89,11 +89,11 @@ theorem main_dvr_cluster (O : Type) [CommRing O] [IsDomain O]
       have h1 : monicPolynomial O a = 1 := by simp [monicPolynomial]
       rw [Set.mem_ofPred_eq, h1, hasPolynomialType_one_iff]
       split_ifs with h <;> simp [h]
-    rw [clusterDensity, hC, hE, clusterExpr, rootLaw, if_pos rfl]
+    rw [clusterDensity, hC, hE, clusterExpr, rootLaw, ite_eq_left rfl]
     by_cases hσ : σ = 0
     · subst hσ
       simp [lawCoeff, lawOne, Expr.sum, densityValue, Expr.eval]
-    · rw [if_neg hσ]
+    · rw [ite_eq_right hσ]
       simp [lawCoeff, lawOne, Expr.sum, densityValue, Expr.eval, Ne.symm hσ]
   · obtain ⟨pi, hpi⟩ := IsDiscreteValuationRing.exists_irreducible O
     obtain ⟨hR1, hR2⟩ := root_cell_law O htop pi hpi n hn σ
@@ -112,7 +112,7 @@ theorem main_dvr_cluster (O : Type) [CommRing O] [IsDomain O]
       ENNReal.pow_ne_top (ENNReal.inv_ne_top.2 (by exact_mod_cast Nat.card_pos.ne'))
     rw [clusterDensity, measure_congr hae, clusterCell_inter_eq_image O pi hpi n σ, hT2,
       clusterCell_eq_image O pi hpi n, hU2, measure_univ, ENNReal.mul_div_mul_left _ _ hc0 hct,
-      div_one, hR2, clusterExpr, rootLaw, if_neg hn.ne']
+      div_one, hR2, clusterExpr, rootLaw, ite_eq_right hn.ne']
 
 /-- The cluster probability is unchanged by restricting the event to separable polynomials
 (the étale convention). -/
@@ -144,7 +144,7 @@ theorem cluster_formula_regular (n : ℕ) (σ : FactorType) :
   refine expression_regular _ _ (expression_sum_safe _ _ fun x hx => ?_)
   obtain ⟨z, hz, rfl⟩ := List.mem_map.mp hx
   by_cases h : z.1 = σ
-  · simp only [h, if_true]; exact hL z hz q (prime_power_ge_two q hq)
+  · simp only [h, ite_true]; exact hL z hz q (prime_power_ge_two q hq)
   · simp [h, Expr.safe]
 
 /-- Reciprocity in the paper's notation: `A_n(q) = B_n(1/q)` (restates `recip_main`). -/

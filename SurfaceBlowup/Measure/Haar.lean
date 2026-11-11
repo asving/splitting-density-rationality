@@ -362,8 +362,7 @@ theorem algebra_type_children_exists (O : Type) [CommRing O] [IsDomain O]
   have hfun : ∀ x, (Algebra.TensorProduct.map (AlgHom.id (BaseField O) (BaseField O)) ψ) x
       = LinearMap.baseChange (BaseField O) ψ.toLinearMap x := by
     intro x
-    induction x using TensorProduct.induction_on with
-    | zero => simp
+    induction x using TensorProduct.inductionOn with
     | tmul k a => simp
     | add x y hx hy => rw [map_add, map_add, hx, hy]
   have hΨ : Function.Bijective

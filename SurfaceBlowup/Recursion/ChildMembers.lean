@@ -146,7 +146,7 @@ theorem t_chart_point_child_member (O : Type) [CommRing O] [IsDomain O] [IsDiscr
     have hZ : chartSlope _ (surfaceT O pi u a b) (surfaceX O pi u a b) ∉ P :=
       not_mem_of_eval₂_mem ((chartBase _ (surfaceT O pi u a b) (surfaceX O pi u a b)).comp
         (algebraMap O _)) P Φ hΦ h2 _ (by rw [hPspan]; exact Ideal.subset_span (by simp))
-    simp only [hZ, if_false] at hs' ⊢
+    simp only [hZ, ite_false] at hs' ⊢
     let τ : TopologicalSpace (AdjoinRoot Φ) := unramifiedTopology O Φ hΦ.1
     let μ : MeasurableSpace (AdjoinRoot Φ) := unramifiedMeasurableSpace O Φ hΦ.1
     obtain ⟨i1, i2, hchar, hdvr, hcomp, hfin, hcard, htr, hcpt, ht2, hsc, hbor, htop'⟩ :=
@@ -179,12 +179,12 @@ private theorem infinity_child_state_shape (m : ConcreteMember)
   cases s with
   | single a c =>
     obtain ⟨h1, h2, h3⟩ := hsh
-    simp only [pointChildState, infinityDirection, if_true, StateShape, stateContactT] at hb ⊢
+    simp only [pointChildState, infinityDirection, ite_true, StateShape, stateContactT] at hb ⊢
     subst h1
     exact ⟨by omega, rfl, m.ha, hQ, by omega⟩
   | crossing a b c h =>
     obtain ⟨h1, h2, h3, h4, h5⟩ := hsh
-    simp only [pointChildState, infinityDirection, if_true, StateShape, stateContactT] at hb ⊢
+    simp only [pointChildState, infinityDirection, ite_true, StateShape, stateContactT] at hb ⊢
     subst h1 h2
     exact ⟨rfl, rfl, m.ha, hQ, by omega⟩
 
@@ -248,19 +248,19 @@ private theorem direction_child_member_of_eq (m : ConcreteMember) (t x : m.R)
       | single a c =>
         obtain ⟨h1, h2, h3⟩ := hsh
         subst h1
-        simp only [pointChildState, hinfne, if_false, StateShape, h2]
+        simp only [pointChildState, hinfne, ite_false, StateShape, h2]
         split_ifs <;> exact ⟨by omega, rfl, hQ⟩
       | crossing a b c h =>
         obtain ⟨h1, h2, h3, h4, h5⟩ := hsh
         subst h1 h2
-        simp only [pointChildState, hinfne, if_false]
+        simp only [pointChildState, hinfne, ite_false]
         by_cases hq : (some φ : ClosedDirection (IsLocalRing.ResidueField m.R)) =
           zeroDirection (IsLocalRing.ResidueField m.R)
         · have := hz' hq h rfl
-          simp only [hq, if_true, StateShape]
+          simp only [hq, ite_true, StateShape]
           rw [← hq]
           refine ⟨?_, ?_, h3, hQ, by omega⟩ <;> simp
-        · simp only [hq, if_false, StateShape]
+        · simp only [hq, ite_false, StateShape]
           refine ⟨?_, ?_, hQ⟩ <;> simp
     obtain ⟨mc, alg, fin, free, hrank, hcard, hpi, -, -, hs, ⟨pc, c1, c2, c3, c4, -, hmeas⟩,
       Eq, h1, h2, h3⟩ := t_chart_point_child_member m.O m.htop m.pi m.hpi m.u m.a m.b m.ha
@@ -599,7 +599,7 @@ private theorem isDVR_of_maximalIdeal_eq_span (O : Type) [CommRing O] [IsDomain 
     exact hnil 1 (by rw [pow_one]; exact Ideal.span_singleton_eq_bot.mp h)
   have hp : (IsLocalRing.maximalIdeal B).IsPrincipal := ⟨⟨tb, hm⟩⟩
   have hdvr : IsDiscreteValuationRing B :=
-    ((IsDiscreteValuationRing.TFAE B hnf).out 0 4).mpr hp
+    ((IsDiscreteValuationRing.TFAE B hnf).out 1 5).mpr hp
   refine ⟨hdom, hdvr, ?_, ?_⟩
   · exact (IsDiscreteValuationRing.irreducible_iff_uniformizer tb).mpr hm
   · rw [hpi.maximalIdeal_eq, Ideal.map_span, Set.image_singleton, hvert,
@@ -739,7 +739,7 @@ private theorem fieldInvariant_eq_of_dvr (O : Type) [CommRing O] [IsDomain O]
   have hl : IsLocalRing (integralClosure O L) := hD.toIsLocalRing
   unfold fieldInvariant
   dsimp only
-  rw [dif_pos hl, ← he, ← hfd, hea, hf1]
+  rw [dite_eq_left hl, ← he, ← hfd, hea, hf1]
 
 /-- In the terminal state `single a 1`, the generic fibre of the curve order has field invariant
 `(a, 1)`: ramification index `a` and residue degree `1`. -/
@@ -899,14 +899,14 @@ theorem recursion_terminal_law (U : SurfaceUniverse) (i : U.ι) (ht : (U.M i).s.
     rw [hev]
     by_cases hσ : σ = {(a,1)}
     · subst hσ
-      simp only [if_true]
+      simp only [ite_true]
       have : densityValue (lawCoeff (stateLaw (U.M i).s) {(a,1)}) (U.M i).q = 1 := by
         rw [hc]; simp [densityValue, Expr.eval]
       refine ⟨hm, ?_, ?_⟩
       · rw [hc]; simp [Expr.eval]
       · rw [this, one_mul]
     · have hσ' : ¬ ({(a,1)} : FactorType) = σ := fun h => hσ h.symm
-      simp only [hσ, if_false]
+      simp only [hσ, ite_false]
       have : densityValue (lawCoeff (stateLaw (U.M i).s) σ) (U.M i).q = 0 := by
         rw [hc]; simp [densityValue, Expr.eval, hσ']
       refine ⟨MeasurableSet.empty, ?_, ?_⟩

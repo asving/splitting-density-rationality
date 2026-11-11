@@ -402,7 +402,7 @@ private theorem frobenius_root_spec (O : Type) [CommRing O] [IsLocalRing O]
       ∀ c : O, unramifiedFrobenius O Φ (algebraMap O (AdjoinRoot Φ) c) =
         algebraMap O (AdjoinRoot Φ) c := by
   have h := frobenius_root_exists O Φ hΦ
-  have hr : frobeniusRoot O Φ = Classical.choose h := dif_pos h
+  have hr : frobeniusRoot O Φ = Classical.choose h := dite_eq_left h
   exact ⟨hr ▸ (Classical.choose_spec h).1, hr ▸ (Classical.choose_spec h).2,
     AdjoinRoot.liftAlgHom_root _ _ _ _, (unramifiedFrobenius O Φ).commutes⟩
 
@@ -778,7 +778,7 @@ theorem descend_block_mem_cell (O : Type) [CommRing O] [IsDomain O] [IsDiscreteV
     · rw [show F.coeff j = _ from hFcoeff ⟨j, hj⟩]
       change (AdjoinRoot.of Φ) (descendCoeff O Φ (P.coeff j)) = P.coeff j
       unfold descendCoeff
-      rw [dif_pos (hdesc j)]
+      rw [dite_eq_left (hdesc j)]
       exact Classical.choose_spec (hdesc j)
     · rcases (not_lt.mp hj).eq_or_lt with h | h
       · subst h
@@ -828,7 +828,7 @@ theorem unramified_is_dvr (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuat
     exact one_ne_zero (htors ϖ₀ (fun y hy => (mul_eq_zero.1 hy).resolve_left hϖ₀.ne_zero) 1
       (by rw [h, zero_mul]))
   have hdvr : IsDiscreteValuationRing (AdjoinRoot Φ) := by
-    have := (IsDiscreteValuationRing.TFAE (AdjoinRoot Φ) hnf).out 0 4
+    have := (IsDiscreteValuationRing.TFAE (AdjoinRoot Φ) hnf).out 1 5
     exact this.2 ⟨⟨_, hspan ϖ₀ hϖ₀⟩⟩
   have e : IsLocalRing.ResidueField (AdjoinRoot Φ) ≃ residueExtension O Φ :=
     (Ideal.quotEquivOfEq hmax).toEquiv
@@ -1051,7 +1051,7 @@ private theorem selectBlock_spec (O : Type) [CommRing O] [IsDomain O]
     ⟨B i0, hBm i0, hBd i0, hBr i0, hBp ▸ Finset.dvd_prod_of_mem _ (Finset.mem_univ _)⟩
   have hs : selectBlock O Φ r a = coeffVec r (B i0) := by
     unfold selectBlock
-    rw [dif_pos hw]
+    rw [dite_eq_left hw]
     obtain ⟨h1, h2, h3, h4⟩ := Classical.choose_spec hw
     rw [huniq _ h1 h2 h3 h4]
   refine ⟨B, hBm, hBd, hBr, hBp, huniq, hs, ?_⟩
@@ -1084,7 +1084,7 @@ theorem block_descent_bijection (O : Type) [CommRing O] [IsDomain O]
     intro c
     have h : ∃ c' : O, algebraMap O (AdjoinRoot Φ) c' = algebraMap O (AdjoinRoot Φ) c := ⟨c, rfl⟩
     unfold descendCoeff
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     exact hinj (Classical.choose_spec h)
   have hleft : ∀ a ∈ residueCell O (Φ.natDegree * r) (residuePoly O Φ ^ r),
       descendBlock O Φ r (selectBlock O Φ r a) = a := by

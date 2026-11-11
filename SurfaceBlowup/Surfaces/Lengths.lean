@@ -433,7 +433,7 @@ private lemma lowOrderIdeal_le_pow (k : Type) [CommRing k] (L : ℕ) :
   have key (s : Fin 2) (a : TwoSeries k) (m : Fin 2 →₀ ℕ) :
       MvPowerSeries.coeff (m + Finsupp.single s 1) (MvPowerSeries.X s * a) =
         MvPowerSeries.coeff m a := by
-    rw [MvPowerSeries.X, MvPowerSeries.coeff_monomial_mul, if_pos le_add_self,
+    rw [MvPowerSeries.X, MvPowerSeries.coeff_monomial_mul, ite_eq_left le_add_self,
       add_tsub_cancel_right, one_mul]
   induction L with
   | zero => simp
@@ -445,7 +445,7 @@ private lemma lowOrderIdeal_le_pow (k : Type) [CommRing k] (L : ℕ) :
       rfl
     obtain ⟨a, ha⟩ : MvPowerSeries.X 0 ∣ g - g1 := by
       refine MvPowerSeries.X_dvd_iff.2 fun m hm ↦ ?_
-      rw [map_sub, c1, if_pos hm, sub_self]
+      rw [map_sub, c1, ite_eq_left hm, sub_self]
     obtain ⟨b, hb⟩ : MvPowerSeries.X 1 ∣ g1 := by
       refine MvPowerSeries.X_dvd_iff.2 fun m hm ↦ ?_
       rw [c1]
@@ -453,7 +453,7 @@ private lemma lowOrderIdeal_le_pow (k : Type) [CommRing k] (L : ℕ) :
       · exact hg m (by omega)
       · rfl
     have hA : a ∈ lowOrderIdeal k N := fun m hm ↦ by
-      rw [← key 0 a m, ← ha, map_sub, c1, if_neg (by simp), sub_zero]
+      rw [← key 0 a m, ← ha, map_sub, c1, ite_eq_right (by simp), sub_zero]
       exact hg _ (by simp; omega)
     have hB : b ∈ lowOrderIdeal k N := fun m hm ↦ by
       rw [← key 1 b m, ← hb, c1]
@@ -549,7 +549,7 @@ theorem mvPowerSeries_mem_span_C_var_iff (σ A : Type) [CommRing A] (c : A) (s :
       rw [MvPowerSeries.coeff_C_mul]
       have : MvPowerSeries.coeff m q = Classical.choose (h m hm) := by
         change (if hm : m s = 0 then _ else 0) = _
-        rw [dif_pos hm]
+        rw [dite_eq_left hm]
       rw [this]
       exact (Classical.choose_spec (h m hm)).symm
     obtain ⟨r, hr⟩ : (MvPowerSeries.X s : MvPowerSeries σ A) ∣ g - MvPowerSeries.C c * q := by

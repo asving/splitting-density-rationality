@@ -461,7 +461,7 @@ theorem baseChange_bijective_of_finite_cokernel (O : Type) [CommRing O] [IsDomai
   have hflat : Module.Flat O (BaseField O) :=
     IsLocalization.flat (BaseField O) (nonZeroDivisors O)
   constructor
-  · rw [LinearMap.baseChange_eq_ltensor]
+  · rw [LinearMap.baseChange_eq_lTensor]
     exact Module.Flat.lTensor_preserves_injective_linearMap φ hinj
   · obtain ⟨pi, hpi⟩ := IsDiscreteValuationRing.exists_irreducible O
     have hmax := hpi.maximalIdeal_eq
@@ -470,8 +470,7 @@ theorem baseChange_bijective_of_finite_cokernel (O : Type) [CommRing O] [IsDomai
       hpi.ne_zero (IsFractionRing.injective O (BaseField O) (by simpa using h))
     have hu : IsUnit ((algebraMap O (BaseField O) pi)^ℓ) := (pow_ne_zero ℓ hne).isUnit
     intro x
-    induction x using TensorProduct.induction_on with
-    | zero => exact ⟨0, map_zero _⟩
+    induction x using TensorProduct.inductionOn with
     | tmul k y =>
       obtain ⟨m, hm⟩ := key y
       obtain ⟨u, hu'⟩ := hu
@@ -775,7 +774,7 @@ theorem coefficient_measure_pi_one (O : Type) [CommRing O] [IsDomain O] [IsDiscr
           O).surjective
   have hp : IsProbabilityMeasure ((coefficientMeasure O 1).map
       (LinearEquiv.funUnique (Fin 1) O O)) :=
-    Measure.isProbabilityMeasure_map hm.aemeasurable
+    inferInstance
   refine ⟨?_, hp, hc, hc', hm, hm'⟩
   exact Measure.isAddHaarMeasure_eq_of_isProbabilityMeasure _ _
 
@@ -990,8 +989,8 @@ theorem concrete_member_state_generator_regular (m : ConcreteMember) (g : m.toMe
     have := (m.toMeasured.atlas.chart i).regular this
     exact (IsUnit.mul_left_inj u.isUnit).mp this
   refine ⟨fun h0 ↦ ?_, hnu, hreg⟩
-  have h01 : (1 : m.toMeasured.R ⧸ Ideal.span {algebraMap m.toMeasured.O m.toMeasured.R
-      m.toMeasured.S.pi})
+  have h01 : (1 : m.toMeasured.R ⧸
+      Ideal.span {algebraMap m.toMeasured.O m.toMeasured.R m.toMeasured.S.pi})
       = 0 := hreg (by simp [h0])
   exact (mem_maximalIdeal _).mp hpi.2
     (Ideal.span_singleton_eq_top.mp (Ideal.Quotient.zero_eq_one_iff.mp h01.symm))
@@ -1018,10 +1017,10 @@ theorem concrete_member_division_chart_measure (m : ConcreteMember) (g : m.toMea
   obtain ⟨i, hi⟩ : ∃ i, Ideal.span {g} ∈ _ := by
     change Ideal.span {g} ∈ surfaceStateSet _ _ _ _ at hg
     rwa [m.toMeasured.atlas.cover, Set.mem_iUnion] at hg
-  have hres : Ideal.span {Ideal.Quotient.mk (Ideal.span {algebraMap m.toMeasured.O m.toMeasured.R
-      m.toMeasured.S.pi}) (m.toMeasured.atlas.chart i).f}
-      = Ideal.span {Ideal.Quotient.mk (Ideal.span {algebraMap m.toMeasured.O m.toMeasured.R
-          m.toMeasured.S.pi}) g} := by
+  have hres : Ideal.span {Ideal.Quotient.mk (Ideal.span
+      {algebraMap m.toMeasured.O m.toMeasured.R m.toMeasured.S.pi}) (m.toMeasured.atlas.chart i).f}
+      = Ideal.span {Ideal.Quotient.mk (Ideal.span
+      {algebraMap m.toMeasured.O m.toMeasured.R m.toMeasured.S.pi}) g} := by
     rw [← hi.2, principal_ideal_image]
   have hcell : ∀ z, coordinateIdeal m.toMeasured.S.pi g bc z ∈
       residueIdealCell (algebraMap m.toMeasured.O m.toMeasured.R m.toMeasured.S.pi)
@@ -1073,7 +1072,7 @@ theorem concrete_member_division_chart_measure (m : ConcreteMember) (g : m.toMea
     m.toMeasured.atlas _ = _
   unfold stateMeasure
   rw [Measure.smul_apply, Measure.finsetSum_apply, smul_eq_mul]
-  simp only [hsum, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [hsum, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 /-- A generator `g` of an ideal of the state set and the parameter `T` form a regular sequence
 in both orders. -/
@@ -1143,8 +1142,9 @@ private theorem concrete_surface_crossing_curve_free (O : Type) [CommRing O] [Is
     (u : (TwoSeries O)ˣ) (a b : ℕ) (ha : 0 < a) (hb : 0 < b) (f : ConcreteSurface O pi u a b)
     (e : (ConcreteSurface O pi u a b ⧸ Ideal.span {algebraMap O (ConcreteSurface O pi u a b) pi})
     ≃+* SpecialFiber (ResidueField O) a b) (c h : ℕ) (hc : 0 < c)
-    (hcontact : contact (e (Ideal.Quotient.mk (Ideal.span {algebraMap O (ConcreteSurface O pi u a b)
-    pi}) f)) (fiberT (ResidueField O) a b) = c) (hxcontact : contact
+    (hcontact : contact (e (Ideal.Quotient.mk
+    (Ideal.span {algebraMap O (ConcreteSurface O pi u a b) pi}) f)) (fiberT (ResidueField O) a b) =
+    c) (hxcontact : contact
     (e (Ideal.Quotient.mk (Ideal.span {algebraMap O (ConcreteSurface O pi u a b) pi}) f))
     (fiberX (ResidueField O) a b) = h) :
     Module.Free O (ConcreteSurface O pi u a b ⧸ Ideal.span {f}) ∧ Module.Finite O
@@ -1156,11 +1156,11 @@ private theorem concrete_surface_crossing_curve_free (O : Type) [CommRing O] [Is
   have hlen2 := concrete_surface_special_fiber_length_transport O pi u a b f e
   have hfu : ¬ IsUnit f := by
     intro hu
-    have hu' : IsUnit (e (Ideal.Quotient.mk (Ideal.span {algebraMap O (ConcreteSurface O pi u a b)
-        pi}) f)) :=
+    have hu' : IsUnit (e (Ideal.Quotient.mk
+        (Ideal.span {algebraMap O (ConcreteSurface O pi u a b) pi}) f)) :=
       (hu.map (Ideal.Quotient.mk _)).map e
-    have h1 : Ideal.span {e (Ideal.Quotient.mk (Ideal.span {algebraMap O
-        (ConcreteSurface O pi u a b) pi}) f)} = ⊤ :=
+    have h1 : Ideal.span {e (Ideal.Quotient.mk
+        (Ideal.span {algebraMap O (ConcreteSurface O pi u a b) pi}) f)} = ⊤ :=
       (Ideal.span_singleton_eq_top).2 hu'
     rw [h1] at hlen
     simp only [Module.length_eq_zero] at hlen
@@ -1256,8 +1256,7 @@ theorem concrete_type_add_of_index_map (m : ConcreteMember) (n : ℕ) (mc : Fin 
   let f := Algebra.TensorProduct.map (AlgHom.id (BaseField m.O) (BaseField m.O)) ψ
   have hf : ⇑f = ⇑(LinearMap.baseChange (BaseField m.O) ψ.toLinearMap) := by
     funext x
-    induction x using TensorProduct.induction_on with
-    | zero => simp
+    induction x using TensorProduct.inductionOn with
     | tmul a b => simp [f, Algebra.TensorProduct.map_tmul]
     | add x y hx hy => rw [map_add, map_add, hx, hy]
   have hfb : Function.Bijective f := hf ▸ hbij

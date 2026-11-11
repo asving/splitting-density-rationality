@@ -301,6 +301,7 @@ theorem form_cell_monic_identification (O : Type) [CommRing O] [IsDomain O]
   unfold cellMeasure
   rw [MeasureTheory.Measure.map_smul, show (fun b : Fin r → O => b ∘ Fin.rev) = ⇑R from rfl,
     h2.map_eq, hmass]
+  exact R.measurable.aemeasurable
 
 /-! ### Measurability of form products -/
 
@@ -322,7 +323,7 @@ theorem form_product_measurable (O : Type) [CommRing O] [IsDomain O] [IsDiscrete
     (normalized_form_cell_cylinder_mass O htop (d i) (ν i) (g i) (hgν i)).2.2.2.1)
   have hoff : ∀ a, a ∉ PC → f a = 0 := fun a ha ↦ by
     simp only [f, reducedFormProduct]
-    exact if_neg fun h ↦ ha fun i _ ↦ h i
+    exact ite_eq_right fun h ↦ ha fun i _ ↦ h i
   have hball : ∀ (k : ℕ) (L : ℕ) (x : Fin k → O),
       MeasurableSet {b : Fin k → O | ∀ j, b j - x j ∈ m ^ L} := fun k L x ↦ by
     have hk := finite_coordinate_borel_cylinders O m htop k
@@ -593,7 +594,7 @@ private theorem projectiveNormalize_alg (O : Type) [CommRing O] [IsLocalRing O] 
     simp only [insertOne, dropCoord]
     rw [← hw]; exact Fin.insertNth_self_removeNth μ w
   have hnm : ∀ a ∈ PC, projectiveNormalize O n G μ a = dropCoord μ (normalizeAt μ a) :=
-    fun a ha => if_pos ha
+    fun a ha => ite_eq_left ha
   have hnμ : ∀ a ∈ PC, normalizeAt μ a μ = 1 := by
     intro a ha
     obtain ⟨v, hv, -⟩ := hunit a ha
@@ -665,7 +666,7 @@ private theorem projectiveNormalize_preimage_ball (O : Type) [CommRing O] [IsLoc
     have hu : IsUnit (a μ) := by
       rw [← IsLocalRing.notMem_maximalIdeal, ← IsLocalRing.residue_eq_zero_iff, hr]; exact hc
     refine ⟨IsLocalRing.notMem_maximalIdeal.mpr hu, fun j => ?_⟩
-    rw [projectiveNormalize, if_pos ⟨⟨μ, hu⟩, c, hc, hac⟩] at hB
+    rw [projectiveNormalize, ite_eq_left ⟨⟨μ, hu⟩, c, hc, hac⟩] at hB
     rcases Fin.eq_self_or_eq_succAbove μ j with rfl | ⟨i, rfl⟩
     · rw [h1, mul_one, sub_self]; exact Submodule.zero_mem _
     · have := hB i
@@ -684,7 +685,7 @@ private theorem projectiveNormalize_preimage_ball (O : Type) [CommRing O] [IsLoc
     have hPC : a ∈ projectiveCell O n G :=
       ⟨⟨μ, hu⟩, _, (hu.map (IsLocalRing.residue O)).ne_zero, hres⟩
     refine ⟨hPC, fun i => ?_⟩
-    rw [projectiveNormalize, if_pos hPC]
+    rw [projectiveNormalize, ite_eq_left hPC]
     simp only [dropCoord, normalizeAt, Fin.removeNth, Pi.smul_apply, smul_eq_mul]
     have h3 := Ideal.mul_mem_left (m ^ L) (Ring.inverse (a μ)) (hj (μ.succAbove i))
     rw [hxs] at h3
@@ -740,7 +741,7 @@ theorem projective_cell_normalization_pushforward (O : Type) [CommRing O] [IsDom
     · rw [projectiveNormalize_preimage_ball O n G μ L hL x hx]
       exact (unit_multiple_cylinder_mass O htop n L hL μ (insertOne μ x) (by simp [insertOne])).1
     · rw [hkey L x hL hx]; exact MeasurableSet.empty
-  have hoff : ∀ a, a ∉ PC → nm a = 0 := fun a ha => if_neg ha
+  have hoff : ∀ a, a ∉ PC → nm a = 0 := fun a ha => ite_eq_right ha
   have hnmm : Measurable nm := by
     change @Measurable _ _ _ (inferInstance : MeasurableSpace (Fin n → O)) nm
     rw [hgen]

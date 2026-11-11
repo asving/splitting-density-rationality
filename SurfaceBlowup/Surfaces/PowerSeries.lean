@@ -56,7 +56,7 @@ theorem monomialIdeal_mem_iff (k : Type) [CommRing k] (a b : ℕ) (φ : TwoSerie
   rw [hgen, Ideal.mem_span_singleton]
   constructor
   · rintro ⟨ψ, rfl⟩ m hm
-    rw [MvPowerSeries.coeff_monomial_mul, if_neg (by rwa [hle])]
+    rw [MvPowerSeries.coeff_monomial_mul, ite_eq_right (by rwa [hle])]
   · intro h
     obtain ⟨ψ, hψ⟩ : ∃ ψ : MvPowerSeries (Fin 2) k,
         ∀ m, MvPowerSeries.coeff m ψ = MvPowerSeries.coeff (m + n₀) φ :=

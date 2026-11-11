@@ -429,7 +429,7 @@ private theorem projective_divisor_of_residue_vector (k : Type) [Field k] (n : �
       (divisorVector k n D) := by
   set H := formPoly v with hHdef
   have hvH : ∀ i : Fin (n+1), v i = H.coeff i := fun i => by
-    rw [hHdef, formPoly_coeff, dif_pos i.isLt]
+    rw [hHdef, formPoly_coeff, dite_eq_left i.isLt]
   have hH0 : H ≠ 0 := by
     intro h0; apply hv; funext i; rw [hvH i, h0]; simp
   have hdle : H.natDegree ≤ n := formPoly_natDegree_le v
@@ -588,17 +588,17 @@ private theorem zero_cell_scaled (O : Type) [CommRing O] [IsDomain O] [IsDiscret
       by_cases hj : j < r
       · have := h ⟨j, hj⟩
         have e := hco ⟨j, hj⟩
-        rw [e, Polynomial.coeff_X_pow, if_neg hj.ne]
+        rw [e, Polynomial.coeff_X_pow, ite_eq_right hj.ne]
         simpa using this
       · rcases (not_lt.1 hj).eq_or_lt with hr | hr
         · subst hr
           have h1 : (monicPolyO b).coeff r = 1 := by
             have := hm.coeff_natDegree
             rwa [hdeg] at this
-          rw [Polynomial.coeff_X_pow, if_pos rfl, h1]
+          rw [Polynomial.coeff_X_pow, ite_eq_left rfl, h1]
           simp
         · rw [Polynomial.coeff_eq_zero_of_natDegree_lt (by rw [hdeg]; exact hr),
-            Polynomial.coeff_X_pow, if_neg hr.ne']
+            Polynomial.coeff_X_pow, ite_eq_right hr.ne']
           simp
   have himg : ∀ b : Fin r → AdjoinRoot Φ, b ∈ zeroCell O Φ r ↔ ∃ z : Fin r → AdjoinRoot Φ,
       algebraMap O (AdjoinRoot Φ) pi • z = b := by
@@ -827,7 +827,7 @@ private theorem formPoly_eq_reverse {O : Type} [CommRing O] [Nontrivial O] (r : 
   ext i
   rw [formPoly_coeff, coeff_reverse, hd]
   by_cases hi : i ≤ r
-  · rw [dif_pos (by omega), revAt_le hi]
+  · rw [dite_eq_left (by omega), revAt_le hi]
     rcases Nat.eq_zero_or_pos i with h0 | hpos
     · subst h0
       simp only [Nat.sub_zero]
@@ -842,8 +842,8 @@ private theorem formPoly_eq_reverse {O : Type} [CommRing O] [Nontrivial O] (r : 
       rw [e, insertOne, Fin.insertNth_zero', Fin.cons_succ]
       simp only [Function.comp_apply]
       congr 1; ext; simp [Fin.rev]; omega
-  · rw [dif_neg (by omega)]
-    have : revAt r i = i := by simp only [revAt]; exact if_neg hi
+  · rw [dite_eq_right (by omega)]
+    have : revAt r i = i := by simp only [revAt]; exact ite_eq_right hi
     rw [this, coeff_eq_zero_of_natDegree_lt (by omega)]
 
 open Polynomial in
@@ -1050,11 +1050,11 @@ private lemma block_law (hroot : RootCellLaw) (O : Type) [CommRing O] [IsDomain 
       (Nat.card (IsLocalRing.ResidueField O)) := by
   cases a with
   | none =>
-    simp only [Option.isNone_none, if_true]
+    simp only [Option.isNone_none, ite_true]
     rw [blockG_single]
     exact infinity_block_event_law hroot O htop r hr τ
   | some φ =>
-    simp only [Option.isNone_some, Bool.false_eq_true, if_false]
+    simp only [Option.isNone_some, Bool.false_eq_true, ite_false]
     have hcell := (form_cell_monic_identification O htop 0).1 (blockDeg (some φ) r)
         (blockG (some φ) r)
     rw [formPoly_blockG] at hcell
@@ -1293,8 +1293,9 @@ theorem affine_type_event_primitive_density (hroot : RootCellLaw) (O : Type) [Co
       ν * ∑ m ∈ residuePatterns n, if HasArray k n D m then c m else 0 := by
     intro D hD
     obtain ⟨⟨m₀, hm₀, hm₀R⟩, huniq⟩ := divisor_array_exists_unique k n D ((hS D).1 hD)
-    rw [Finset.sum_eq_single_of_mem m₀ hm₀R fun m _ hne ↦ if_neg fun h ↦ hne (huniq _ _ h hm₀),
-      if_pos hm₀, Set.inter_assoc, Set.inter_eq_right.2 (hPCsub D),
+    rw [Finset.sum_eq_single_of_mem m₀ hm₀R fun m _ hne ↦
+        ite_eq_right fun h ↦ hne (huniq _ _ h hm₀),
+      ite_eq_left hm₀, Set.inter_assoc, Set.inter_eq_right.2 (hPCsub D),
       (hcell D ((hS D).1 hD)).2.2 A, (hlawD D hD m₀ hm₀).2, mul_right_comm, ← div_eq_mul_inv,
       projective_cell_conditional_density O htop n (divisorVector k n D)
         (divisor_vector_properties k n D ((hS D).1 hD)).2.2.2.2.2.2]
@@ -1317,7 +1318,7 @@ theorem affine_type_event_primitive_density (hroot : RootCellLaw) (O : Type) [Co
         (lawCoeff (arrayLaw m) σ).eval (q : ℚ) := by
     rw [projectiveExpr, globalLaw, law_coeff_scale, (law_coeff_flatMap _ _ _ [] [] σ _).2.2,
       ← Finset.sum_map_toList]
-    simp only [if_true]
+    simp only [ite_true]
     congr 2
     exact List.map_congr_left fun m _ ↦ by rw [law_coeff_scale]; rfl
   have hPN : 0 ≤ (Expr.inv (projectiveNormalizer n)).eval (q : ℚ) := by

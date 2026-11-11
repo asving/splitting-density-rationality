@@ -272,16 +272,17 @@ private theorem two_chart_layer_correction_zpow (R : Type) [CommRing R] (t x : R
     (hslope : beta (chartSlope R x t) = IsLocalization.Away.invSelf (chartSlope R t x))
     (j : ℕ) (k : ℤ) (hk : -1 ≤ (j : ℤ) + k) (w : BlowupOverlap R t x)
     (hw : w ∈ (Ideal.span {algebraMap (BlowupChart R t x) (BlowupOverlap R t x)
-      (chartBase R t x t)})^j) :
+                             (chartBase R t x t)})^j) :
     ∃ a ∈ (chartExceptional R t x)^j, ∃ b ∈ (chartExceptional R x t)^j,
       w - (algebraMap (BlowupChart R t x) (BlowupOverlap R t x) a -
         selfZPow (chartSlope R t x) (BlowupOverlap R t x) k * beta b) ∈
       (Ideal.span {algebraMap (BlowupChart R t x) (BlowupOverlap R t x)
-        (chartBase R t x t)})^(j+1) := by
+                     (chartBase R t x t)})^(j+1) := by
   obtain ⟨L, hL⟩ := overlap_layer_laurent_coordinates R t x hreg j
   have hP : ∀ P : Polynomial (R ⧸ Ideal.span {t, x}), ∃ a ∈ (chartExceptional R t x)^j,
-      (L P.toLaurent).val = Ideal.Quotient.mk ((Ideal.span {algebraMap (BlowupChart R t x)
-          (BlowupOverlap R t x) (chartBase R t x t)})^(j+1))
+      (L P.toLaurent).val = Ideal.Quotient.mk
+        ((Ideal.span {algebraMap (BlowupChart R t x) (BlowupOverlap R t x)
+                        (chartBase R t x t)})^(j+1))
         (algebraMap (BlowupChart R t x) (BlowupOverlap R t x) a) := by
     intro P
     induction P using Polynomial.induction_on' with
@@ -298,8 +299,9 @@ private theorem two_chart_layer_correction_zpow (R : Type) [CommRing R] (t x : R
       simp only [map_mul, map_pow, selfZPow_natCast]
   have hQ : ∀ Q : Polynomial (R ⧸ Ideal.span {t, x}), ∃ b ∈ (chartExceptional R x t)^j,
       (L (LaurentPolynomial.T ((j : ℤ) + k) * LaurentPolynomial.invert Q.toLaurent)).val
-        = Ideal.Quotient.mk ((Ideal.span {algebraMap (BlowupChart R t x)
-          (BlowupOverlap R t x) (chartBase R t x t)})^(j+1))
+        = Ideal.Quotient.mk
+          ((Ideal.span {algebraMap (BlowupChart R t x) (BlowupOverlap R t x)
+                          (chartBase R t x t)})^(j+1))
           (selfZPow (chartSlope R t x) (BlowupOverlap R t x) k * beta b) := by
     intro Q
     induction Q using Polynomial.induction_on' with
@@ -326,8 +328,9 @@ private theorem two_chart_layer_correction_zpow (R : Type) [CommRing R] (t x : R
         invSelf_pow_eq_selfZPow]
       ring
   obtain ⟨P, Q, hF⟩ := laurent_split_nonnegative_twist (R ⧸ Ideal.span {t, x}) ((j : ℤ) + k) hk
-    (L.symm ⟨Ideal.Quotient.mk ((Ideal.span {algebraMap (BlowupChart R t x)
-          (BlowupOverlap R t x) (chartBase R t x t)})^(j+1)) w, by
+    (L.symm ⟨Ideal.Quotient.mk
+      ((Ideal.span {algebraMap (BlowupChart R t x) (BlowupOverlap R t x)
+                      (chartBase R t x t)})^(j+1)) w, by
       rw [LinearMap.mem_ker]
       unfold principalPowerReduction
       rw [AlgHom.toLinearMap_apply, Ideal.Quotient.factorₐ_apply, Ideal.Quotient.factor_mk]
@@ -463,7 +466,7 @@ theorem curve_limit_level_map_surjective (R : Type) [CommRing R] (t x : R)
   have fmem : ∀ n, f n ∈ curveSections R t x beta G (J+n) ∧
       f n - f (n+1) ∈ curveIdealLattice R t x beta G (J+n) := by
     have hs : ∀ n (h : f n ∈ curveSections R t x beta G (J+n)),
-        f (n+1) = Classical.choose (key (J+n) (f n) h) := fun n h => dif_pos h
+        f (n+1) = Classical.choose (key (J+n) (f n) h) := fun n h => dite_eq_left h
     intro n
     induction n with
     | zero => exact ⟨ha, by rw [hs 0 ha]; exact (Classical.choose_spec (key _ _ ha)).2⟩
@@ -502,7 +505,7 @@ private theorem two_chart_additive_approximation (R : Type) [CommRing R] (t x : 
     ∃ a : (BlowupChart R t x), ∃ b : (BlowupChart R x t),
       w - ((algebraMap (BlowupChart R t x) (BlowupOverlap R t x)) a - beta b) ∈
         (Ideal.span {(algebraMap (BlowupChart R t x) (BlowupOverlap R t x))
-          (chartBase R t x t)})^n := by
+                       (chartBase R t x t)})^n := by
   induction n with
   | zero => exact ⟨0, 0, by simp⟩
   | succ n ih =>
@@ -702,8 +705,9 @@ private theorem glued_generators_succ (R : Type) [CommRing R] (t x : R)
       Ideal.Quotient.mk ((chartExceptional R t x)^j) (gA j) * c))
     (hregBc : ∀ j : ℕ, Function.Injective (fun c : BlowupChart R x t ⧸ (chartExceptional R x t)^j =>
       Ideal.Quotient.mk ((chartExceptional R x t)^j) (gB j) * c))
-    (hoverlap : ∀ j : ℕ, Ideal.span {Ideal.Quotient.mk ((Ideal.span {overlapException R t x})^j)
-      ((algebraMap (BlowupChart R t x) (BlowupOverlap R t x)) (gA j))} =
+    (hoverlap : ∀ j : ℕ,
+      Ideal.span {Ideal.Quotient.mk ((Ideal.span {overlapException R t x})^j)
+                    ((algebraMap (BlowupChart R t x) (BlowupOverlap R t x)) (gA j))} =
       Ideal.span {Ideal.Quotient.mk ((Ideal.span {overlapException R t x})^j) (beta.right (gB j))})
     (hregC : ∀ j : ℕ, Function.Injective (fun c : BlowupOverlap R t x ⧸
       (Ideal.span {overlapException R t x})^j =>
@@ -783,8 +787,9 @@ theorem glued_generators_exist (R : Type) [CommRing R] (t x : R) (beta : BlowupR
       Ideal.Quotient.mk ((chartExceptional R t x)^j) (gA j) * c))
     (hregBc : ∀ j : ℕ, Function.Injective (fun c : BlowupChart R x t ⧸ (chartExceptional R x t)^j =>
       Ideal.Quotient.mk ((chartExceptional R x t)^j) (gB j) * c))
-    (hoverlap : ∀ j : ℕ, Ideal.span {Ideal.Quotient.mk ((Ideal.span {overlapException R t x})^j)
-      ((algebraMap (BlowupChart R t x) (BlowupOverlap R t x)) (gA j))} =
+    (hoverlap : ∀ j : ℕ,
+      Ideal.span {Ideal.Quotient.mk ((Ideal.span {overlapException R t x})^j)
+                    ((algebraMap (BlowupChart R t x) (BlowupOverlap R t x)) (gA j))} =
       Ideal.span {Ideal.Quotient.mk ((Ideal.span {overlapException R t x})^j) (beta.right (gB j))})
     (hregC : ∀ j : ℕ, Function.Injective (fun c : BlowupOverlap R t x ⧸
       (Ideal.span {overlapException R t x})^j =>

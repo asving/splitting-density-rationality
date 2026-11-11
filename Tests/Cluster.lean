@@ -32,7 +32,7 @@ private theorem clusterDensity_two (htop : IsAdic (maximalIdeal O)) (σ : Factor
       (if σ = {(1,1),(1,1)} then 1 / (2 * ((Nat.card (ResidueField O) : ℚ) + 1)) else 0) +
       (if σ = {(1,2)} then 1 / (2 * ((Nat.card (ResidueField O) : ℚ) + 1)) else 0) : ℚ) := by
   have hq : 1 < (Nat.card (ResidueField O) : ℚ) := by exact_mod_cast Finite.one_lt_card
-  rw [main_dvr_cluster O htop, clusterExpr, rootLaw, if_neg two_ne_zero, densityValue,
+  rw [main_dvr_cluster O htop, clusterExpr, rootLaw, ite_eq_right two_ne_zero, densityValue,
     single_two_law 1 one_pos _ hq]
 
 /-- Quadratic cluster, ramified: probability `q / (q + 1)`. -/

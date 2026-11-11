@@ -842,8 +842,8 @@ theorem t_chart_unit_point_completion_equiv (O : Type) [CommRing O] [IsDomain O]
     [IsDiscreteValuationRing O] (pi : O) (hpi : Irreducible pi) (u : (TwoSeries O)ˣ) (a b : ℕ)
     (ha : 0 < a) (α : O) (hα : IsUnit α) (P : Ideal (tChart O pi u a b)) [P.IsPrime]
     (hP : P = Ideal.span
-      {tBase O pi u a b (surfaceT O pi u a b), tSlope O pi u a b - tBase O pi u a b
-          (algebraMap O (ConcreteSurface O pi u a b) α)}) :
+      {tBase O pi u a b (surfaceT O pi u a b),
+        tSlope O pi u a b - tBase O pi u a b (algebraMap O (ConcreteSurface O pi u a b) α)}) :
     ∃ Eq : CompletedLocalAt (tChart O pi u a b) P ≃+* ConcreteSurface O pi
       (substUnit O α u * shiftUnit O α hα ^ b) (a + b) 0,
       (∀ s : TwoSeries O,

@@ -259,14 +259,14 @@ private noncomputable def mult (s : State) (P : TangentPattern s.degree)
 private theorem mult_inf (s : State) (P : TangentPattern s.degree)
     (F : ∀ i : Fin s.degree, Col k s P i) :
     mult k s P F (infinityDirection k) = P.rt.val := by
-  unfold mult; rw [if_pos rfl]
+  unfold mult; rw [ite_eq_left rfl]
 
 private theorem mult_zero_crossing (a b c h : ℕ)
     (P : TangentPattern (State.crossing a b c h).degree)
     (F : ∀ i : Fin (State.crossing a b c h).degree, Col k (State.crossing a b c h) P i) :
     mult k (State.crossing a b c h) P F (zeroDirection k) = P.rx.val := by
   unfold mult
-  rw [if_neg (zero_ne_inf k), dif_pos ((mem_bdry_crossing k a b c h _).2 (Or.inr rfl))]
+  rw [ite_eq_right (zero_ne_inf k), dite_eq_left ((mem_bdry_crossing k a b c h _).2 (Or.inr rfl))]
 
 private theorem mult_nonbdry (s : State) (P : TangentPattern s.degree)
     (F : ∀ i : Fin s.degree, Col k s P i) (i : Fin s.degree) (Q : Pt k s i) :
@@ -277,7 +277,7 @@ private theorem mult_nonbdry (s : State) (P : TangentPattern s.degree)
   have hpos := directionDegree_pos k Q
   change mult k s P F Q = Option.elim ((F i).1 ⟨Q, hb, hQ⟩) 0 (fun j ↦ j.val + 1)
   unfold mult
-  rw [if_neg hinf, dif_neg hb, dif_pos hle]
+  rw [ite_eq_right hinf, dite_eq_right hb, dite_eq_left hle]
   congr 1
   exact coloring_congr k s P F ⟨directionDegree k Q - 1, by omega⟩ i
     (Fin.ext (by change directionDegree k Q - 1 = i.val; omega)) Q hb
@@ -461,7 +461,7 @@ private theorem toDiv_toCol [Finite k] (s : State) (P : TangentPattern s.degree)
       change D.1 Q - 1 + 1 = D.1 Q
       omega
   · unfold mult
-    rw [if_neg h1, dif_neg h2, dif_neg h3]
+    rw [ite_eq_right h1, dite_eq_right h2, dite_eq_right h3]
     by_contra hne
     have h4 := deg_mul_mult_le k s P D Q
     have h5 : directionDegree k Q ≤ directionDegree k Q * D.1 Q :=
@@ -482,11 +482,11 @@ private theorem toCol_toDiv [Finite k] (s : State) (P : TangentPattern s.degree)
   cases hFQ : (F i).1 Q with
   | none =>
     rw [hFQ] at hm
-    exact if_pos hm
+    exact ite_eq_left hm
   | some j =>
     rw [hFQ] at hm
     simp only [Option.elim] at hm
-    rw [if_neg (by change toDiv k s P F Q.1 ≠ 0; omega)]
+    rw [ite_eq_right (by change toDiv k s P F Q.1 ≠ 0; omega)]
     exact congrArg some (Fin.ext (by change toDiv k s P F Q.1 - 1 = j.val; omega))
 
 end Colorings

@@ -297,7 +297,7 @@ private theorem lawCoef_crossing_term (a b c h : ℕ) (ha : 0 < a) (hb : 0 < b) 
   rw [lawCoef_lawProd, List.map_map, hch, List.map_append, List.map_append, List.prod_append,
     List.prod_append, ← hoth, prod_lawCoef_optional_child _ _ ?_,
     prod_lawCoef_optional_child _ _ ?_]
-  all_goals first | rfl | exact fun h1 ↦ hv (1, _) (by rw [hch]; simp [h1])
+  all_goals exact fun h1 ↦ hv (1, _) (by rw [hch]; simp [h1])
 
 /-- Summing the pattern terms `scalar (divisorCount ε m · Y) · B · Π ψ_{i+1}(F_{S(a;j+1)})^{m(i,j)}`
 over the patterns `m` of weight `w` gives `scalar Y · B · patternSum ε a N w`. -/
@@ -329,7 +329,7 @@ private theorem lawCoef_exitLaw_crossing (a b c h : ℕ) (ha : 0 < a) (hb : 0 < 
   have hns : ∀ P, ¬ SelfPattern (State.crossing a b c h) P := by
     rintro P ⟨a', c', h1, -⟩
     exact State.noConfusion h1
-  simp only [hns, if_false]
+  simp only [hns, ite_false]
   refine (Finset.sum_congr rfl (fun P hP ↦ lawCoef_crossing_term a b c h ha hb hc hh P
     (by unfold allowedPatterns at hP; exact (Finset.mem_filter.mp hP).2))).trans ?_
   rw [sum_allowedPatterns_crossing a b c h ha hb hh (fun d rt rx m ↦
@@ -343,8 +343,9 @@ private theorem lawCoef_exitLaw_crossing (a b c h : ℕ) (ha : 0 < a) (hb : 0 < 
   refine Finset.sum_congr rfl (fun d _ ↦ Finset.sum_congr rfl
       (fun rt _ ↦ Finset.sum_congr rfl (fun rx _ ↦ ?_)))
   by_cases hcond : ((0 < rt ↔ d < c) ∧ (0 < rx ↔ d < h) ∧ rt + rx ≤ d)
-  · rw [if_pos hcond, if_pos hcond]; exact sum_patterns_scalar_mul_eq_patternSum _ _ _ _ _ _
-  · rw [if_neg hcond, if_neg hcond]
+  · rw [ite_eq_left hcond, ite_eq_left hcond]
+    exact sum_patterns_scalar_mul_eq_patternSum _ _ _ _ _ _
+  · rw [ite_eq_right hcond, ite_eq_right hcond]
 
 private theorem lawCoef_residue_flatMap (n : ℕ) (b : Bool) :
     lawCoef ((residuePatterns n).toList.flatMap fun m ↦
@@ -362,9 +363,9 @@ private theorem lawCoef_residue_flatMap (n : ℕ) (b : Bool) :
 theorem lawCoef_globalLaw_false (n : ℕ) :
     lawCoef (globalLaw false n) = qpow (-(n : ℤ)) * patternSum 0 1 n n := by
   have k0 := lawCoef_residue_flatMap n false
-  simp only [Bool.false_eq_true, if_false] at k0
+  simp only [Bool.false_eq_true, ite_false] at k0
   unfold globalLaw
-  simp only [Bool.false_eq_true, if_false]
+  simp only [Bool.false_eq_true, ite_false]
   rw [lawCoef_lawScale, k0, Expr.rational_inv, Expr.rational_pow, Expr.rational_var, qpow,
     zpow_neg, zpow_natCast]
 
@@ -374,9 +375,9 @@ theorem lawCoef_globalLaw_true (n : ℕ) :
     lawCoef (globalLaw true n) =
       scalar (((projectiveNormalizer n).rational)⁻¹) * patternSum 1 1 n n := by
   have k1 := lawCoef_residue_flatMap n true
-  simp only [if_true] at k1
+  simp only [ite_true] at k1
   unfold globalLaw
-  simp only [if_true]
+  simp only [ite_true]
   rw [lawCoef_lawScale, k1, Expr.rational_inv]
 
 /-- The contribution of an allowed tangent pattern `P` of `S(a;n)` to its recursion, as an element
@@ -403,7 +404,7 @@ theorem lawCoef_single_term (a n : ℕ) (ha : 0 < a) (hn : 0 < n)
   rw [lawCoef_lawProd, List.map_map] at hoth
   rw [lawCoef_lawProd, List.map_map, hch, List.map_append, List.prod_append, ← hoth,
     prod_lawCoef_optional_child _ _ ?_]
-  all_goals first | rfl | exact fun h1 ↦ hv (1, _) (by rw [hch]; simp [h1])
+  all_goals exact fun h1 ↦ hv (1, _) (by rw [hch]; simp [h1])
 
 /-! ### Closed forms of the weights -/
 
@@ -521,7 +522,8 @@ private theorem availablePoints_rational_eq_sum (ε : ℤ) (m : ℕ) (hm : 0 < m
     simp only [mul_add, Finset.sum_add_distrib, Finset.mul_sum]
     have h0 : ∑ j ∈ m.divisors, RatFunc.C (((ArithmeticFunction.moebius j : ℤ) : ℚ) / m) *
         (ε : RatFunc ℚ) = 0 := by
-      rw [← Finset.sum_mul, ← map_sum, ← Finset.sum_div, sum_divisors_moebius, if_neg h1]; simp
+      rw [← Finset.sum_mul, ← map_sum, ← Finset.sum_div, sum_divisors_moebius, ite_eq_right h1]
+      simp
     rw [h0, add_zero]
     refine Finset.sum_congr rfl fun j _ ↦ ?_
     rw [← mul_assoc, ← map_mul]
@@ -582,10 +584,10 @@ private theorem lawCoef_stateLaw_crossing_comm (a b c h : ℕ) (ha : 0 < a) (hb 
   by_cases hc1 : ((0 < rt ↔ d < c) ∧ (0 < rx ↔ d < h) ∧ rt + rx ≤ d)
   · have hc2 : ((0 < rx ↔ d < h) ∧ (0 < rt ↔ d < c) ∧ rx + rt ≤ d) := by
       obtain ⟨x, y, z⟩ := hc1; exact ⟨y, x, by omega⟩
-    rw [if_pos hc1, if_pos hc2, mul_comm (if rx = 0 then _ else _)]
+    rw [ite_eq_left hc1, ite_eq_left hc2, mul_comm (if rx = 0 then _ else _)]
   · have hc2 : ¬ ((0 < rx ↔ d < h) ∧ (0 < rt ↔ d < c) ∧ rx + rt ≤ d) := by
       rintro ⟨y, x, z⟩; exact hc1 ⟨x, y, by omega⟩
-    rw [if_neg hc1, if_neg hc2]
+    rw [ite_eq_right hc1, ite_eq_right hc2]
 
 /-- The contact series `U_{a,b}` has constant term `1`. -/
 theorem crossingQ_zero_zero (a b : ℕ) : crossingQ a b 0 0 = 1 := by simp [crossingQ]
@@ -717,7 +719,7 @@ private theorem crossing_factorization_term (a b c h d rt rx : ℕ) (ha : 0 < a)
   swap
   · simp [hsum]
   rw [show rx + (d - rt - rx) + rt = d by omega]
-  simp only [hsum, hdc, and_self, if_true, and_true]
+  simp only [hsum, hdc, and_self, ite_true, and_true]
   rw [coeff_eulerSer,
     patternSum_eq_of_le (-1) (a + b) (d - rt - rx) (a * c + b * h) (d - rt - rx) le_rfl (by
       have : c ≤ a * c := Nat.le_mul_of_pos_left c ha
@@ -727,14 +729,14 @@ private theorem crossing_factorization_term (a b c h d rt rx : ℕ) (ha : 0 < a)
   by_cases hT : (0 < rt ↔ d < c)
   swap
   · have : crossingQ a (a + b) (c - d) rt = 0 := by
-      unfold crossingQ; rw [if_neg (by omega), if_neg (by omega)]
+      unfold crossingQ; rw [ite_eq_right (by omega), ite_eq_right (by omega)]
     simp [this, hT]
   by_cases hX : (0 < rx ↔ d < h)
   swap
   · have : crossingQ (a + b) b rx (h - d) = 0 := by
-      unfold crossingQ; rw [if_neg (by omega), if_neg (by omega)]
+      unfold crossingQ; rw [ite_eq_right (by omega), ite_eq_right (by omega)]
     simp [this, hX]
-  simp only [hT, hX, and_self, if_true]
+  simp only [hT, hX, and_self, ite_true]
   set Bt := (if rt = 0 then 1 else lawCoef (stateLaw (State.crossing (a + b) a rt (c - d))))
   set Bx := (if rx = 0 then 1 else lawCoef (stateLaw (State.crossing (a + b) b rx (h - d))))
   set i := (if d < c then 1 else 0)
@@ -742,22 +744,22 @@ private theorem crossing_factorization_term (a b c h d rt rx : ℕ) (ha : 0 < a)
   have eT : crossingQ a (a + b) (c - d) rt = scalar ((RatFunc.X - 1) ^ i) * Bt := by
     by_cases h1 : d < c
     · have hrt : 0 < rt := hT.2 h1
-      simp only [i, Bt, crossingQ, if_pos h1, pow_one, if_neg
+      simp only [i, Bt, crossingQ, ite_eq_left h1, pow_one, ite_eq_right
           (show ¬ (c - d = 0 ∧ rt = 0) by omega),
-        if_pos (show 0 < c - d ∧ 0 < rt by omega), if_neg (show ¬ rt = 0 by omega)]
+        ite_eq_left (show 0 < c - d ∧ 0 < rt by omega), ite_eq_right (show ¬ rt = 0 by omega)]
       rw [lawCoef_stateLaw_crossing_comm a (a + b) (c - d) rt ha (by omega) (by omega) hrt]
     · have hrt : rt = 0 := by omega
-      simp only [i, Bt, crossingQ, if_neg h1, pow_zero, scalar_one, if_pos hrt, mul_one,
-        if_pos (show c - d = 0 ∧ rt = 0 by omega)]
+      simp only [i, Bt, crossingQ, ite_eq_right h1, pow_zero, scalar_one, ite_eq_left hrt, mul_one,
+        ite_eq_left (show c - d = 0 ∧ rt = 0 by omega)]
   have eX : crossingQ (a + b) b rx (h - d) = scalar ((RatFunc.X - 1) ^ k) * Bx := by
     by_cases h1 : d < h
     · have hrx : 0 < rx := hX.2 h1
-      simp only [k, Bx, crossingQ, if_pos h1, pow_one, if_neg
+      simp only [k, Bx, crossingQ, ite_eq_left h1, pow_one, ite_eq_right
           (show ¬ (rx = 0 ∧ h - d = 0) by omega),
-        if_pos (show 0 < rx ∧ 0 < h - d by omega), if_neg (show ¬ rx = 0 by omega)]
+        ite_eq_left (show 0 < rx ∧ 0 < h - d by omega), ite_eq_right (show ¬ rx = 0 by omega)]
     · have hrx : rx = 0 := by omega
-      simp only [k, Bx, crossingQ, if_neg h1, pow_zero, scalar_one, if_pos hrx, mul_one,
-        if_pos (show rx = 0 ∧ h - d = 0 by omega)]
+      simp only [k, Bx, crossingQ, ite_eq_right h1, pow_zero, scalar_one, ite_eq_left hrx, mul_one,
+        ite_eq_left (show rx = 0 ∧ h - d = 0 by omega)]
   rw [eT, eX, rational_divisorProbability_crossing a b c h d,
     show qpow (-(chooseTwo d : ℤ)) = scalar (((RatFunc.X : RatFunc ℚ) ^ chooseTwo d)⁻¹) by
       rw [qpow, zpow_neg, zpow_natCast]]
@@ -823,7 +825,7 @@ private theorem qmul_qplus_qdiag_qminus_crossingQ_apply (a b c h : ℕ) (ha : 0 
       obtain ⟨rfl, rfl⟩ : rt = 0 ∧ rx = 0 := by omega
       have hz : crossingQ a (a + b) c 0 = 0 := qPositive_crossingQ _ _ c 0 (Or.inr rfl) (by omega)
       simp [hG, hz]
-    · exact if_neg (by omega)
+    · exact ite_eq_right (by omega)
   rw [← Finset.sum_subset hsub hzero]
   refine Finset.sum_congr rfl fun d hd ↦ ?_
   simp only [Finset.mul_sum]
@@ -980,7 +982,7 @@ theorem coeff_qact_crossingQ_gaussPhi_eulerSer (a n : ℕ) (ha : 0 < a) :
     · by_cases hdn : d + 1 < n
       · have : 0 < n - (d+1) := by omega
         have hr' : r ≤ d + 1 := by omega
-        simp only [h0.ne', false_and, if_false, h0, this, hdn, iff_self, hr', and_self, if_true,
+        simp only [h0.ne', false_and, ite_false, h0, this, hdn, iff_self, hr', and_self, ite_true,
             pow_one, scalar_mul]
         ring
       · have : ¬ (0 < n - (d+1)) := by omega
@@ -1030,14 +1032,14 @@ theorem lawCoef_single_self_term (a n : ℕ) (ha : 0 < a) (hn : 2 ≤ n)
     rw [Finset.prod_eq_single ((⟨0, hpos⟩, ⟨n - 1, hn1⟩) : Fin (State.single a n).degree × Fin
         (State.single a n).degree)]
     · rw [hother]
-      simp only [and_self, if_true, pow_one]
+      simp only [and_self, ite_true, pow_one]
       rw [show n - 1 + 1 = n by omega, adamsCoef_one]
     · intro b _ hb
-      rw [hother, if_neg, pow_zero]
+      rw [hother, ite_eq_right, pow_zero]
       rintro ⟨h1, h2⟩
       exact hb (Prod.ext (Fin.ext h1) (Fin.ext h2))
     · simp
-  rw [hprod, hprob, hcount, if_pos hrt, one_mul, scalar_mul, ← qpow_one,
+  rw [hprod, hprob, hcount, ite_eq_left hrt, one_mul, scalar_mul, ← qpow_one,
     show qpow (-(tri n : ℤ)) = scalar (((RatFunc.X : RatFunc ℚ) ^ tri n)⁻¹) by
       rw [qpow, zpow_neg, zpow_natCast]]
   ring

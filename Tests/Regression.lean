@@ -188,7 +188,7 @@ private theorem coeff_descend_of_ne (q : ℚ) (δ : ℕ) (L : Law) (σ : FactorT
   | nil => rfl
   | cons z L ih =>
     simp only [lawDescend, List.map_cons] at *
-    rw [coeff_cons, ih, if_neg fun e ↦ h _ e.symm, zero_add]
+    rw [coeff_cons, ih, ite_eq_right fun e ↦ h _ e.symm, zero_add]
 
 private theorem coeff_descend_one (q : ℚ) (L : Law) (σ : FactorType) :
     coeffAt q (lawDescend 1 L) σ = coeffAt q L σ := by
@@ -227,7 +227,7 @@ private theorem coeff_eq_zero_of_not_mem (q : ℚ) (L : Law) (τ : FactorType)
   | nil => rfl
   | cons z L ih =>
     simp only [List.map_cons, List.toFinset_cons, Finset.mem_insert, not_or] at h
-    rw [coeff_cons, ih h.2, if_neg (Ne.symm h.1), add_zero]
+    rw [coeff_cons, ih h.2, ite_eq_right (Ne.symm h.1), add_zero]
 
 private theorem coeff_map_add (q : ℚ) (z : FactorType × Expr) (M : Law) (σ : FactorType) :
     coeffAt q (M.map fun w ↦ (z.1 + w.1, Expr.mul z.2 w.2)) σ =
@@ -239,7 +239,7 @@ private theorem coeff_map_add (q : ℚ) (z : FactorType × Expr) (M : Law) (σ :
     by_cases h : z.1 ≤ σ
     · have e : z.1 + w.1 = σ ↔ w.1 = σ - z.1 :=
         ⟨fun e ↦ by rw [← e, add_tsub_cancel_left], fun e ↦ by rw [e, add_tsub_cancel_of_le h]⟩
-      simp only [e, if_pos h, Expr.eval]; split_ifs <;> ring
+      simp only [e, ite_eq_left h, Expr.eval]; split_ifs <;> ring
     · have e : ¬ z.1 + w.1 = σ := fun e ↦ h (e ▸ le_self_add)
       simp [h, e]
 
@@ -257,7 +257,7 @@ private theorem coeff_mul_of_mem (q : ℚ) (L M : Law) (σ : FactorType) (S : Fi
           (if τ ≤ σ then coeffAt q L τ * coeffAt q M (σ - τ) else 0) := by
       intro τ _; rw [coeff_cons]; split_ifs <;> ring
     rw [Finset.sum_congr rfl this, Finset.sum_add_distrib, Finset.sum_ite_eq,
-      if_pos (hS z (by simp))]
+      ite_eq_left (hS z (by simp))]
 
 /-- The coefficients of a product, summed over any finite set containing the support of the
 first factor. -/
@@ -340,11 +340,11 @@ private theorem ite_eq_mul_indicator (σ K : FactorType) (c : ℚ) [Decidable (�
 private theorem ite_mem_erase (p : ℕ × ℕ) (σ t : FactorType) (x : ℚ) :
     (if p ∈ σ then (if σ.erase p = t then x else 0) else 0) = if σ = p ::ₘ t then x else 0 := by
   by_cases h : p ∈ σ
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     by_cases h2 : σ.erase p = t
-    · rw [if_pos h2, if_pos]; rw [← h2, Multiset.cons_erase h]
-    · rw [if_neg h2, if_neg]; rintro rfl; exact h2 (by simp)
-  · rw [if_neg h, if_neg]; rintro rfl; exact h (by simp)
+    · rw [ite_eq_left h2, ite_eq_left]; rw [← h2, Multiset.cons_erase h]
+    · rw [ite_eq_right h2, ite_eq_right]; rintro rfl; exact h2 (by simp)
+  · rw [ite_eq_right h, ite_eq_right]; rintro rfl; exact h (by simp)
 
 private theorem ite_add_zero (c : Prop) [Decidable c] (a b : ℚ) :
     (if c then a + b else 0) = (if c then a else 0) + (if c then b else 0) := by
@@ -354,7 +354,7 @@ private theorem ite_le_sub (t σ u : FactorType) (c d : ℚ) :
     (if t ≤ σ then c * (if σ - t = u then d else 0) else 0) = if σ = t + u then c * d else 0 := by
   by_cases h : σ = t + u
   · subst h; simp
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     split_ifs with h1 h2
     · exact absurd (by rw [← h2, add_tsub_cancel_of_le h1]) h
     · simp
@@ -405,15 +405,15 @@ private theorem otherChildren_spat {n : ℕ} (a : ℕ) (ij₀ : Fin n × Fin n) 
   unfold otherChildren
   rw [flatMap_replicate_eq _ ij₀
     (fun ij : Fin n × Fin n ↦ (ij.1.val+1, State.single a (ij.2.val+1)))
-    (fun ij ↦ (spat ij₀ v ij : ℕ)) (fun x hx ↦ by rw [spat_val, if_neg hx])
-    (Finset.nodup_toList _) (Finset.mem_toList.2 (Finset.mem_univ _)), spat_val, if_pos rfl]
+    (fun ij ↦ (spat ij₀ v ij : ℕ)) (fun x hx ↦ by rw [spat_val, ite_eq_right hx])
+    (Finset.nodup_toList _) (Finset.mem_toList.2 (Finset.mem_univ _)), spat_val, ite_eq_left rfl]
 
 private theorem patternWeight_spat {n : ℕ} (ij₀ : Fin n × Fin n) (v : Fin (n + 1)) :
     patternWeight (spat ij₀ v) = (ij₀.1.val+1)*(ij₀.2.val+1)*v := by
   unfold patternWeight
   rw [Finset.sum_eq_single ij₀]
-  · rw [spat_val, if_pos rfl]
-  · intro ij _ h; rw [spat_val, if_neg h]; simp
+  · rw [spat_val, ite_eq_left rfl]
+  · intro ij _ h; rw [spat_val, ite_eq_right h]; simp
   · simp
 
 private theorem divisorCount_eval {n : ℕ} (q : ℚ) (off : ℤ) (m : Pattern n) :
@@ -430,10 +430,10 @@ private theorem divisorCount_spat {n : ℕ} (q : ℚ) (off : ℤ) (ij₀ : Fin n
   rw [divisorCount_eval, Finset.prod_eq_single ij₀.1 _ (by simp)]
   · have h1 : (∑ j, ((spat ij₀ v (ij₀.1, j)) : ℕ)) = v := by
       rw [Finset.sum_eq_single ij₀.2 (fun j _ hj ↦ by simp [spat_val, Prod.ext_iff, hj]) (by simp),
-        spat_val, if_pos rfl]
+        spat_val, ite_eq_left rfl]
     have h2 : (∏ j, (((spat ij₀ v (ij₀.1, j)) : ℕ).factorial : ℚ)) = ((v : ℕ).factorial : ℚ) := by
       rw [Finset.prod_eq_single ij₀.2 (fun j _ hj ↦ by simp [spat_val, Prod.ext_iff, hj])
-        (by simp), spat_val, if_pos rfl]
+        (by simp), spat_val, ite_eq_left rfl]
     rw [h1, h2]; ring
   · intro i _ hi
     have h1 : (∑ j, ((spat ij₀ v (i, j)) : ℕ)) = 0 :=
@@ -889,7 +889,7 @@ private theorem coeff_crossing_of_unique {a b c h : ℕ} (hv : (State.crossing a
       (divisorProbability (.crossing a b c h) P.d.val)).eval q = 1) (σ : FactorType) :
     coeffAt q (stateLaw (.crossing a b c h)) σ = coeffAt q (stateLaw s') σ := by
   rw [stateLaw_crossing _ _ _ _ hv, coeff_exitLaw, hA, Finset.sum_singleton,
-    if_neg (by rintro ⟨_, _, h, _⟩; cases h), hX, one_mul, hch, childProd, List.map_singleton,
+    ite_eq_right (by rintro ⟨_, _, h, _⟩; cases h), hX, one_mul, hch, childProd, List.map_singleton,
     coeff_prod_singleton, coeff_descend_one]
 
 /-- `T(a,b;1,1)` has the law of the terminal state `S(a+b;1)`. -/
@@ -984,7 +984,7 @@ private theorem crossing_left_one_law (a b h : ℕ) (ha : 0 < a) (hb : 0 < b) (h
     · simpa using crossing_one_one_law a b ha hb q hq σ
     obtain ⟨P, hA, hch, hX⟩ :=
       crossing_unique_pattern a b 1 (h+1) ha hb one_pos (by omega) q (.inl rfl) (by omega)
-    rw [if_neg (by omega), if_pos (by omega), List.nil_append, Nat.add_sub_cancel] at hch
+    rw [ite_eq_right (by omega), ite_eq_left (by omega), List.nil_append, Nat.add_sub_cancel] at hch
     rw [coeff_crossing_of_unique ⟨ha, hb, one_pos, by omega⟩ P hA _ hch q hX,
       ih (a+b) (by omega) h0]
     congr 2; ring_nf
@@ -996,7 +996,7 @@ private theorem crossing_right_one_law (a b c : ℕ) (ha : 0 < a) (hb : 0 < b) (
   rcases Nat.lt_or_ge 1 c with hc1 | hc1
   · obtain ⟨P, hA, hch, hX⟩ :=
       crossing_unique_pattern a b c 1 ha hb hc one_pos q (.inr rfl) (by omega)
-    rw [if_pos hc1, if_neg (by omega), List.append_nil] at hch
+    rw [ite_eq_left hc1, ite_eq_right (by omega), List.append_nil] at hch
     rw [coeff_crossing_of_unique ⟨ha, hb, hc, one_pos⟩ P hA _ hch q hX,
       crossing_left_one_law (a+b) a (c-1) (by omega) ha (by omega) q hq]
     obtain ⟨k, rfl⟩ : ∃ k, c = k+1 := ⟨c-1, by omega⟩
@@ -1080,9 +1080,9 @@ theorem single_two_law (a : ℕ) (ha : 0 < a) (q : ℚ) (hq : 1 < q) (σ : Facto
     rintro ⟨_, _, he, h'⟩; rw [hz] at h'; simp only [List.cons.injEq] at h'; exact h (he ▸ h'.1)
   have hS2 : ¬ SelfPattern (.single a 2) P2 := by
     rintro ⟨_, _, _, h⟩; rw [hch2] at h; simp at h
-  rw [if_neg (notSelf P1 _ hch1 (by simp)), if_neg hS2,
-    if_pos (show SelfPattern (.single a 2) P3 from ⟨a, 2, rfl, hch3⟩),
-    if_neg (notSelf P4 _ hch4 (by simp)), hch1, hch2, hch4]
+  rw [ite_eq_right (notSelf P1 _ hch1 (by simp)), ite_eq_right hS2,
+    ite_eq_left (show SelfPattern (.single a 2) P3 from ⟨a, 2, rfl, hch3⟩),
+    ite_eq_right (notSelf P4 _ hch4 (by simp)), hch1, hch2, hch4]
   simp only [childProd, List.map_cons, List.map_nil, stateLaw_terminal, lawDescend_lawAtom,
     lawProd_cons, lawProd_nil, coeff_mul_lawOne, coeff_descend_one,
     crossing_one_one_law a a ha ha q hq,
@@ -1287,7 +1287,7 @@ private theorem sum_allowed_single_one_three (f : TangentPattern (State.single 1
   rw [allowedPatterns_single_one_three, allowedThree]
   repeat rw [Finset.sum_insert (by decide)]
   rw [Finset.sum_singleton]
-  simp +decide only [selfPattern_single_iff, if_true, if_false, add_zero, add_assoc]
+  simp +decide only [selfPattern_single_iff, ite_true, ite_false, add_zero, add_assoc]
 
 /-! ### Degree three: laws -/
 
@@ -1386,7 +1386,7 @@ theorem monicExpr_three_eval (q : ℚ) (hq : 1 < q) (σ : FactorType) :
   rw [Finset.sum_singleton, coeff_m3Inert, coeff_m3Quadratic, coeff_m3Tangent q hq, coeff_m3Split,
     coeff_otherChildren _ [(1, .single 1 3)] (by decide)]
   simp only [childProd, List.map_cons, List.map_nil, lawProd_cons, lawProd_nil, coeff_mul_lawOne,
-    coeff_descend_one, single_three_law q hq, Bool.false_eq_true, if_false]
+    coeff_descend_one, single_three_law q hq, Bool.false_eq_true, ite_false]
   simp [d1, d2, d3, d4, d5, Expr.eval, eval_pow, Multiset.insert_eq_cons, ite_eq_mul_indicator]
   have : q ≠ 0 := by positivity
   have : q + 1 ≠ 0 := by positivity
@@ -1443,7 +1443,7 @@ private theorem crossing_two_two_law (q : ℚ) (hq : 1 < q) (σ : FactorType) :
   have hS : ∀ P, ¬ SelfPattern (.crossing 1 1 2 2) P := by rintro P ⟨_, _, h, _⟩; cases h
   rw [stateLaw_crossing _ _ _ _ ⟨one_pos, one_pos, two_pos, two_pos⟩, coeff_exitLaw, hA,
     Finset.sum_insert (by simp [hne]), Finset.sum_insert (by simp [hne]), Finset.sum_singleton]
-  simp only [if_neg (hS _)]
+  simp only [ite_eq_right (hS _)]
   have hch1 : children (.crossing 1 1 2 2) P1 = [(2, .single 2 1)] := by
     simp [children, P1, f1, otherChildren_spat, i0, i1]
   have hch2 : children (.crossing 1 1 2 2) P2 = [(1, .single 2 2)] := by
@@ -1606,7 +1606,7 @@ private theorem sum_allowed_single_one_four (f : TangentPattern (State.single 1 
   rw [allowedPatterns_single_one_four, allowedFour]
   repeat rw [Finset.sum_insert (by decide)]
   rw [Finset.sum_singleton]
-  simp +decide only [selfPattern_single_iff, if_true, if_false, add_zero, add_assoc]
+  simp +decide only [selfPattern_single_iff, ite_true, ite_false, add_zero, add_assoc]
 
 /-! ### Degree four: laws at `q = 2` -/
 
@@ -1691,7 +1691,7 @@ private theorem coeff_m4QuadraticContact (σ : FactorType) :
     rw [coeff_descend_scaleType 2 two_pos, single_two_law_at_four]
     simp only [(scaleType_injective two_pos).eq_iff]
   · push Not at h
-    rw [coeff_descend_of_ne 2 2 _ σ h, if_neg (h _), if_neg (h _), if_neg (h _)]
+    rw [coeff_descend_of_ne 2 2 _ σ h, ite_eq_right (h _), ite_eq_right (h _), ite_eq_right (h _)]
     norm_num
 
 private theorem coeff_m4TwoTangent (σ : FactorType) :
@@ -1711,11 +1711,13 @@ private theorem coeff_m4TwoTangent (σ : FactorType) :
       coeffAt 2 (lawDescend 1 (stateLaw (.single 1 2))) τ = 0 := by
     intro τ h
     simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at h
-    rw [coeff_descend_one, single_two_law_at_two, if_neg h.1, if_neg h.2.1, if_neg h.2.2]; simp
+    rw [coeff_descend_one, single_two_law_at_two, ite_eq_right h.1, ite_eq_right h.2.1,
+      ite_eq_right h.2.2]
+    simp
   rw [coeff_mul 2 _ _ _ hS, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
     Finset.sum_singleton]
   simp only [lawProd_nil, coeff_mul_lawOne, coeff_descend_one, single_two_law_at_two]
-  simp +decide only [if_true, if_false, add_zero, zero_add]
+  simp +decide only [ite_true, ite_false, add_zero, zero_add]
   simp only [mul_add, ite_add_zero, ite_le_sub]
   ring
 
@@ -1749,10 +1751,10 @@ private theorem coeff_crossing_one_one_single_two_at_two (σ : FactorType) :
   have hS : ∀ τ ∉ ({{(2,1)}} : Finset FactorType),
       coeffAt 2 (lawDescend 1 (stateLaw (.crossing 1 1 1 1))) τ = 0 := fun τ h ↦ by
     rw [coeff_descend_one, crossing_one_one_law 1 1 one_pos one_pos 2 (by norm_num),
-      if_neg (Finset.mem_singleton.not.1 h)]
+      ite_eq_right (Finset.mem_singleton.not.1 h)]
   simp only [childProd, List.map_cons, List.map_nil, lawProd_cons]
   rw [coeff_mul 2 _ _ _ hS, Finset.sum_singleton, coeff_descend_one,
-    crossing_one_one_law 1 1 one_pos one_pos 2 (by norm_num), if_pos rfl, lawProd_nil,
+    crossing_one_one_law 1 1 one_pos one_pos 2 (by norm_num), ite_eq_left rfl, lawProd_nil,
     coeff_mul_lawOne, coeff_descend_one, single_two_law_at_two]
   simp only [one_mul, ite_add_zero, ite_le_sub_one]
 
@@ -1848,7 +1850,7 @@ theorem monicExpr_four_eval_two (σ : FactorType) :
   rw [monicExpr, coeff_globalLaw, residuePatterns_four]
   repeat rw [Finset.sum_insert (by decide)]
   rw [Finset.sum_singleton]
-  simp only [Bool.false_eq_true, if_false, d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, zero_mul,
+  simp only [Bool.false_eq_true, ite_false, d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, zero_mul,
     zero_add, coeff_m4Inert, coeff_m4Cubic, coeff_m4SplitQuadratic, coeff_m4ContactThree,
     coeff_m4TangentQuadratic, coeff_m4TwoTangent, coeff_m4QuadraticContact, coeff_m4Contact_at_two,
     single_four_law_at_two]
@@ -1874,7 +1876,7 @@ theorem projectiveExpr_four_eval_two (σ : FactorType) :
   rw [projectiveExpr, coeff_globalLaw, residuePatterns_four]
   repeat rw [Finset.sum_insert (by decide)]
   rw [Finset.sum_singleton]
-  simp only [if_true, d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, zero_mul, zero_add,
+  simp only [ite_true, d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, zero_mul, zero_add,
     coeff_m4Inert, coeff_m4Cubic, coeff_m4SplitQuadratic, coeff_m4ContactThree,
     coeff_m4TangentQuadratic, coeff_m4TwoTangent, coeff_m4QuadraticContact, coeff_m4Contact_at_two,
     coeff_m4SplitTangent, single_four_law_at_two]

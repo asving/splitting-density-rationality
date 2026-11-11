@@ -434,7 +434,7 @@ private theorem affine_natDegree {n : ℕ} (a : Fin (n + 1) → O) (ha : a (Fin.
     simp only [affinePolynomial, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow]
     rw [Finset.sum_eq_single (Fin.last n)]
     · simp
-    · exact fun i _ hi => if_neg fun h => hi (Fin.ext (by simp [h]))
+    · exact fun i _ hi => ite_eq_right fun h => hi (Fin.ext (by simp [h]))
     · simp
   apply Polynomial.natDegree_eq_of_le_of_coeff_ne_zero
   · exact Polynomial.natDegree_sum_le_of_forall_le _ _ fun i _ =>

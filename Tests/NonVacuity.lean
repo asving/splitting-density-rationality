@@ -10,7 +10,7 @@ import Mathlib.FieldTheory.Finite.GaloisField
 import Mathlib.Data.Finsupp.Encodable
 import Mathlib.Topology.Connected.Separation
 import Mathlib.Topology.Instances.ZMod
-import Mathlib.Topology.Separation.Lemmas
+import Mathlib.Topology.Separation.CompletelyRegular
 
 /-!
 # Non-vacuity of the hypotheses of `main_dvr`

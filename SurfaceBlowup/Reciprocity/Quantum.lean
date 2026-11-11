@@ -203,7 +203,7 @@ theorem QPositive.qminus {U : QSer} (hU : QPositive U) : QPositive (qminus U) :=
 /-- The diagonal substitution of a series is positive. -/
 theorem qPositive_qdiag (f : Ser) : QPositive (qdiag f) := fun c h hc hn ↦ by
   unfold qdiag
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
 
 /-- The constant term of a twisted product: `(U V)₀₀ = U₀₀ V₀₀`. -/
 theorem qmul_zero_zero (U V : QSer) : (qmul U V) 0 0 = U 0 0 * V 0 0 := by
@@ -223,7 +223,7 @@ private theorem adamsSer_subst (k : ℕ) (hk : k ≠ 0) (φ : Ser)
     have := PowerSeries.map_subst (h := adamsCoef k)
       (PowerSeries.HasSubst.of_constantCoeff_zero' hf) φ
     rwa [hφ] at this
-  rw [adamsSer, adamsSer, dif_neg hk, dif_neg hk, hm]
+  rw [adamsSer, adamsSer, dite_eq_right hk, dite_eq_right hk, hm]
   exact PowerSeries.expand_subst k hk hs' φ
 
 /-- `ψ_k` on series commutes with the logarithm (`k ≠ 0`, `g(0) = 1`). -/
@@ -509,7 +509,6 @@ private theorem sum_antidiagonal_assoc (n : ℕ) (F : ℕ → ℕ → ℕ → Co
   all_goals rintro ⟨⟨a, b⟩, ⟨c, d⟩⟩ hx
   all_goals simp only [Finset.mem_sigma, Finset.HasAntidiagonal.mem_antidiagonal] at hx ⊢
   all_goals first
-    | rfl
     | (constructor <;> first | trivial | omega)
     | (obtain ⟨h1, h2⟩ := hx; subst h2; simp)
 
@@ -741,11 +740,11 @@ theorem qdiag_mul (f g : Ser) : qdiag (f * g) = qmul (qdiag f) (qdiag g) := by
   simp only [qmul, qdiag]
   by_cases hch : c = h
   · subst hch
-    rw [if_pos rfl, PowerSeries.coeff_mul, Finset.mul_sum]
+    rw [ite_eq_left rfl, PowerSeries.coeff_mul, Finset.mul_sum]
     refine Finset.sum_congr rfl fun p hp ↦ ?_
     rw [Finset.sum_eq_single p]
     · rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
-      simp only [if_true]
+      simp only [ite_true]
       rw [← hp, show (-(((chooseTwo (p.1 + p.2) : ℕ) : ℤ))) =
         -((p.1 : ℤ) * p.2) + (-(chooseTwo p.1 : ℤ) + -(chooseTwo p.2 : ℤ)) by
           rw [chooseTwo_add]; ring,
@@ -757,7 +756,7 @@ theorem qdiag_mul (f g : Ser) : qdiag (f * g) = qmul (qdiag f) (qdiag g) := by
         simp [h2]
       · simp [h1]
     · intro hp'; exact absurd hp hp'
-  · rw [if_neg hch]
+  · rw [ite_eq_right hch]
     symm
     refine Finset.sum_eq_zero fun p hp ↦ Finset.sum_eq_zero fun r hr ↦ ?_
     rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp hr
@@ -775,7 +774,7 @@ private theorem qdiag_one : qdiag 1 = qone := by
     rcases eq_or_ne c 0 with rfl | hc
     · simp [chooseTwo, qpow_zero]
     · simp [hc]
-  · simp only [if_neg hch]
+  · simp only [ite_eq_right hch]
     split_ifs with h' <;> first | rfl | omega
 
 /-- `qdiag(f)† = qdiag(S(v f))`. -/
@@ -784,7 +783,7 @@ private theorem qdagger_qdiag (f : Ser) : qdagger (qdiag f) = qdiag (dilate (rec
   simp only [qdagger, qdiag]
   by_cases hch : c = h
   · subst hch
-    simp only [if_true, map_mul, recipCoef_qpow, coeff_dilate, coeff_recipSer]
+    simp only [ite_true, map_mul, recipCoef_qpow, coeff_dilate, coeff_recipSer]
     have e := two_mul_chooseTwo c
     rw [← mul_assoc, ← mul_assoc, ← qpow_add, ← qpow_add]
     congr 2

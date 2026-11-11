@@ -56,7 +56,7 @@ theorem finite_length_module_card (O : Type) [CommRing O] [IsLocalRing O]
         (by rw [hℓ]; exact ENat.natCast_ne_top _)
     have hA : IsArtinian O M := (isFiniteLength_iff_isNoetherian_isArtinian.mp hfin).2
     have hnt : Nontrivial M := Module.length_pos_iff.mp (by rw [hℓ]; exact_mod_cast Nat.succ_pos n)
-    have : IsAtomic (Submodule O M) := isAtomic_of_orderBot_wellFounded_lt wellFounded_lt
+    have : IsAtomic (Submodule O M) := inferInstance
     obtain ⟨N, hN, -⟩ := (eq_bot_or_exists_atom_le (⊤ : Submodule O M)).resolve_left top_ne_bot
     have hS : IsSimpleModule O N := isSimpleModule_iff_isAtom.mpr hN
     obtain ⟨I, hI, ⟨e⟩⟩ := isSimpleModule_iff_quot_maximal.mp hS

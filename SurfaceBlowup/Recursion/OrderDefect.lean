@@ -153,8 +153,7 @@ theorem order_defect_children_sum (O : Type) [CommRing O] [IsDomain O] [IsDiscre
     have : ⇑(Algebra.TensorProduct.map (AlgHom.id (BaseField O) (BaseField O)) ψ) =
       ⇑(LinearMap.baseChange (BaseField O) ψ.toLinearMap) := by
       funext x
-      induction x using TensorProduct.induction_on with
-      | zero => simp
+      induction x using TensorProduct.inductionOn with
       | tmul a b => simp
       | add x y hx hy => simp only [map_add, hx, hy]
     exact this ▸ h
@@ -281,10 +280,10 @@ private theorem otherChildren_count (n : ℕ) (w : ℕ) (mm : Pattern n) (δ r :
   · rw [key]
     split_ifs with h
     · rw [Finset.sum_eq_single (⟨δ - 1, by omega⟩, ⟨r - 1, by omega⟩)]
-      · rw [if_pos]
+      · rw [ite_eq_left]
         simp [Prod.ext_iff]; omega
       · rintro ⟨i, j⟩ _ hne
-        rw [if_neg]
+        rw [ite_eq_right]
         intro he
         simp only [Prod.mk.injEq, State.single.injEq] at he
         apply hne
@@ -292,19 +291,19 @@ private theorem otherChildren_count (n : ℕ) (w : ℕ) (mm : Pattern n) (δ r :
       · simp
     · apply Finset.sum_eq_zero
       rintro ⟨i, j⟩ _
-      rw [if_neg]
+      rw [ite_eq_right]
       intro he
       simp only [Prod.mk.injEq, State.single.injEq] at he
       have := i.2; have := j.2
       apply h; omega
   · intro w' r' hw
     rw [key]
-    refine Finset.sum_eq_zero fun ij _ ↦ if_neg fun he ↦ ?_
+    refine Finset.sum_eq_zero fun ij _ ↦ ite_eq_right fun he ↦ ?_
     simp only [Prod.mk.injEq, State.single.injEq] at he
     exact hw he.2.1.symm
   · intro a b c h
     rw [key]
-    exact Finset.sum_eq_zero fun ij _ ↦ if_neg (by simp)
+    exact Finset.sum_eq_zero fun ij _ ↦ ite_eq_right (by simp)
 
 open scoped Classical in
 private lemma natCard_subtype_eq_filter_card {α : Type} (T : Finset α) (p : α → Prop)
@@ -422,7 +421,7 @@ theorem cell_assignment_exists (k : Type) [Field k] [Finite k] (s : State) (hs :
       rw [hA {infinityDirection k} (by intro Q; simp [boundaryDirections])]
       simp only [children, List.count_append, hlist, Finset.sum_singleton]
       congr 1
-      simp only [g', pointChildState, if_true, hrt]
+      simp only [g', pointChildState, ite_true, hrt]
       simp only [infinityDirection, directionDegree] at hrt ⊢
       simp only [Nat.pos_iff_ne_zero]
     | crossing a b c0 h0 =>
@@ -432,7 +431,7 @@ theorem cell_assignment_exists (k : Type) [Field k] [Finite k] (s : State) (hs :
       simp only at hrx
       congr 1
       have hzi : zeroDirection k = infinityDirection k ↔ False := ⟨hnz, False.elim⟩
-      simp only [g', pointChildState, if_true, hzi, if_false, hrt, hrx]
+      simp only [g', pointChildState, ite_true, hzi, ite_false, hrt, hrx]
       simp only [infinityDirection, directionDegree, zeroDirection, Polynomial.natDegree_X,
         Nat.pos_iff_ne_zero]
   obtain ⟨e, he⟩ := equiv_of_fiber_card_eq (Fin (children s P).length) {Q // 0 < Dv Q} (ℕ × State)
@@ -654,10 +653,10 @@ private theorem residue_basis_of_reduction {O R : Type} [CommRing O] [IsDomain O
     rw [map_mul, map_sub, hφsmul, map_sum, hφf, (hres0 pi).2 dvd_rfl, map_zero, zero_mul,
       sub_zero] at h2
     have h3 := congrArg (PowerSeries.coeff (i : ℕ)) h2
-    rw [PowerSeries.coeff_mul_X_pow', if_neg (by omega), map_sum] at h3
+    rw [PowerSeries.coeff_mul_X_pow', ite_eq_right (by omega), map_sum] at h3
     simp_rw [hφsmul, map_pow, hφx, PowerSeries.coeff_C_mul_X_pow] at h3
-    rw [Finset.sum_eq_single i (fun j _ hj ↦ if_neg (fun h ↦ hj (Fin.ext h).symm))
-      (by simp), if_pos rfl] at h3
+    rw [Finset.sum_eq_single i (fun j _ hj ↦ ite_eq_right (fun h ↦ hj (Fin.ext h).symm))
+      (by simp), ite_eq_left rfl] at h3
     exact (hres0 _).1 h3.symm
 
 /-- For monic `F` of degree `r > 0` whose lower coefficients lie in the maximal ideal, the
@@ -694,9 +693,9 @@ theorem series_quotient_equiv_adjoinRoot (O : Type) [CommRing O] [IsDomain O]
       ext i
       rw [Polynomial.coeff_map, Polynomial.coeff_X_pow]
       rcases lt_trichotomy i r with h | rfl | h
-      · rw [if_neg h.ne, (IsLocalRing.residue_eq_zero_iff _).2 (hred i h)]
-      · rw [if_pos rfl, ← hdeg, hF.coeff_natDegree, map_one]
-      · rw [if_neg h.ne', Polynomial.coeff_eq_zero_of_natDegree_lt (hdeg ▸ h), map_zero]
+      · rw [ite_eq_right h.ne, (IsLocalRing.residue_eq_zero_iff _).2 (hred i h)]
+      · rw [ite_eq_left rfl, ← hdeg, hF.coeff_natDegree, map_one]
+      · rw [ite_eq_right h.ne', Polynomial.coeff_eq_zero_of_natDegree_lt (hdeg ▸ h), map_zero]
     rw [hfdef, Polynomial.aeval_def, Polynomial.hom_eval₂, hφx,
       show φ.comp (algebraMap O R) = PowerSeries.C.comp (IsLocalRing.residue O) from
         RingHom.ext hφc, ← Polynomial.eval₂_map, hFbar]
@@ -824,11 +823,11 @@ theorem repeated_root_one_chart_atlas (O : Type) [CommRing O] [IsDomain O]
     rw [contact_fiberT_eq_axisQuotientLength _ 1 0 one_pos,
       axisQuotientLength_eq _ (by decide : (0 : Fin 2) ≠ 1) _ n, hn]
     · intro j hj
-      rw [axisX, MvPowerSeries.coeff_X_pow, if_neg]
+      rw [axisX, MvPowerSeries.coeff_X_pow, ite_eq_right]
       intro h
       have := congrArg (fun m ↦ m 1) h
       simp at this; omega
-    · rw [axisX, MvPowerSeries.coeff_X_pow, if_pos rfl]; exact one_ne_zero
+    · rw [axisX, MvPowerSeries.coeff_X_pow, ite_eq_left rfl]; exact one_ne_zero
   have hxne : x ^ n ≠ 0 := by
     intro h
     rw [h, map_zero, map_zero, ← map_zero (Ideal.Quotient.mk (monomialIdeal k 1 0))] at hex
@@ -991,8 +990,8 @@ theorem t_chart_nonrational_point_child_data (O : Type) [CommRing O] [IsDomain O
     P = Ideal.span {(chartBase (ConcreteSurface O pi u a b) (surfaceT O pi u a b)
         (surfaceX O pi u a b)) (surfaceT O pi u a b),
         Polynomial.eval₂ ((chartBase (ConcreteSurface O pi u a b) (surfaceT O pi u a b)
-        (surfaceX O pi u a b)).comp (algebraMap O (ConcreteSurface O pi u a b)))
-        (chartSlope (ConcreteSurface O pi u a b) (surfaceT O pi u a b) (surfaceX O pi u a b)) Φ} ∧
+          (surfaceX O pi u a b)).comp (algebraMap O (ConcreteSurface O pi u a b)))
+          (chartSlope (ConcreteSurface O pi u a b) (surfaceT O pi u a b) (surfaceX O pi u a b)) Φ} ∧
     ∃ (hθ : IsUnit (AdjoinRoot.root Φ))
         (Eq : CompletedLocalAt (BlowupChart (ConcreteSurface O pi u a b) (surfaceT O pi u a b)
         (surfaceX O pi u a b)) P ≃+*
@@ -1105,8 +1104,8 @@ theorem t_chart_rational_point_child_data (O : Type) [CommRing O] [IsDomain O]
     P = Ideal.span {(chartBase (ConcreteSurface O pi u a b) (surfaceT O pi u a b)
         (surfaceX O pi u a b)) (surfaceT O pi u a b),
         (chartSlope (ConcreteSurface O pi u a b) (surfaceT O pi u a b) (surfaceX O pi u a b)) -
-        (chartBase (ConcreteSurface O pi u a b) (surfaceT O pi u a b) (surfaceX O pi u a b))
-        (algebraMap O (ConcreteSurface O pi u a b) α)} ∧
+          (chartBase (ConcreteSurface O pi u a b) (surfaceT O pi u a b) (surfaceX O pi u a b))
+          (algebraMap O (ConcreteSurface O pi u a b) α)} ∧
     ∃ (u' : (TwoSeries O)ˣ) (Eq : CompletedLocalAt
         (BlowupChart (ConcreteSurface O pi u a b) (surfaceT O pi u a b) (surfaceX O pi u a b)) P ≃+*
         ConcreteSurface O pi u' (a + b) (if α = 0 then b else 0)),
@@ -1129,7 +1128,7 @@ theorem t_chart_rational_point_child_data (O : Type) [CommRing O] [IsDomain O]
     Ideal.Quotient.maximal_of_isField _ (e.toMulEquiv.isField (Field.toIsField _))
   obtain ⟨h1, h2, h3, h4, h5, h6, -⟩ := chartSubst_apply_generators O 0
   rcases concrete_chart_point_span_form O pi hpi u a b ha P hP with h | ⟨α, hα, h⟩ | ⟨Φ, hΦ, h2', h⟩
-  · have hb : (if (0 : O) = 0 then b else 0) = b := if_pos rfl
+  · have hb : (if (0 : O) = 0 then b else 0) = b := ite_eq_left rfl
     obtain ⟨E, hE1, hE2, hE3⟩ := t_chart_origin_completion_equiv O pi hpi u a b ha P h
     refine ⟨0, Or.inl rfl, ?_, ?_⟩
     · simpa using h
@@ -1139,7 +1138,7 @@ theorem t_chart_rational_point_child_data (O : Type) [CommRing O] [IsDomain O]
         rwa [h2] at this
       · simpa using hE2
   · have hα0 : α ≠ 0 := hα.ne_zero
-    have hb : (if α = 0 then b else 0) = 0 := if_neg hα0
+    have hb : (if α = 0 then b else 0) = 0 := ite_eq_right hα0
     obtain ⟨E, hE1, hE2, hE3⟩ := t_chart_unit_point_completion_equiv O pi hpi u a b ha α hα P h
     refine ⟨α, Or.inr hα, h, ?_⟩
     rw [hb]

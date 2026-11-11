@@ -83,7 +83,7 @@ private theorem order_reflected_sum {k K : Type} [Field k] [Field K] (κ : k →
     rw [hH, Polynomial.finsetSum_coeff, Finset.sum_eq_single i]
     · simp
     · intro j _ hj
-      rw [Polynomial.coeff_C_mul_X_pow, if_neg]
+      rw [Polynomial.coeff_C_mul_X_pow, ite_eq_right]
       intro h; exact hj (Fin.ext h.symm)
     · simp
   have hdeg : H.natDegree ≤ d := by
@@ -99,9 +99,9 @@ private theorem order_reflected_sum {k K : Type} [Field k] [Field K] (κ : k →
     have := hcoeff ⟨d - m, by omega⟩
     simp only at this
     rw [this, map_sum, Finset.sum_eq_single (⟨d - m, by omega⟩ : Fin (d+1))]
-    · rw [PowerSeries.coeff_C_mul_X_pow, if_pos (by simp; omega)]
+    · rw [PowerSeries.coeff_C_mul_X_pow, ite_eq_left (by simp; omega)]
     · intro j _ hj
-      rw [PowerSeries.coeff_C_mul_X_pow, if_neg]
+      rw [PowerSeries.coeff_C_mul_X_pow, ite_eq_right]
       intro h; apply hj; ext; simp; omega
     · simp
   rw [PowerSeries.order_eq_nat]
@@ -321,7 +321,7 @@ theorem monomial_span_pow (R : Type) [CommRing R] (t x : R) (j : ℕ) (r : R)
     | succ n ih =>
       rw [pow_succ']
       refine (Ideal.mul_mono_right ih).trans ?_
-      rw [Ideal.span_mul_span', Ideal.span_le]
+      rw [Ideal.span_mul_span, Ideal.span_le]
       rintro _ ⟨a, ha, b, ⟨i, rfl⟩, rfl⟩
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
       rcases ha with rfl | rfl
@@ -408,7 +408,7 @@ theorem negative_laurent_twist_has_no_kernel (k : Type) [CommRing k] (m : ℤ) (
   have hL : ∀ (f : Polynomial k) (i : ℕ), f.toLaurent.coeff (i : ℤ) = f.coeff i := by
     intro f i
     rw [LaurentPolynomial.coeff_toLaurent]
-    exact Finsupp.mapDomain_apply Nat.castEmbedding.injective _ i
+    exact Finsupp.mapDomain_apply_of_injective Nat.castEmbedding.injective _ i
   have hN : ∀ (f : Polynomial k) (n : ℤ), n < 0 → f.toLaurent.coeff n = 0 := by
     intro f n hn
     rw [LaurentPolynomial.coeff_toLaurent]
@@ -788,7 +788,7 @@ theorem overlap_exceptional_quotient_domain (R : Type) [CommRing R] (t x : R)
         rw [RingEquiv.symm_apply_eq, hPC]
       simp only [RingHom.comp_apply, Polynomial.coe_mapRingHom, Polynomial.map_C,
         RingEquiv.toRingHom_eq_coe, RingHom.coe_coe, κ,
-        Polynomial.toLaurent_C, AlgEquiv.coe_ringEquiv, LaurentPolynomial.invert_C]
+        Polynomial.toLaurent_C, AlgEquiv.coe_toRingEquiv, LaurentPolynomial.invert_C]
       have h2 : levelBase R x t 1 r = Ideal.Quotient.mk _ (chartBase R x t r) := rfl
       rw [Ideal.quotEquivOfEq_mk, h1, h2, hg, hbase]
       exact hEC r
@@ -796,7 +796,7 @@ theorem overlap_exceptional_quotient_domain (R : Type) [CommRing R] (t x : R)
         rw [RingEquiv.symm_apply_eq, hPX]
       simp only [RingHom.comp_apply, Polynomial.coe_mapRingHom, Polynomial.map_X,
         RingEquiv.toRingHom_eq_coe, RingHom.coe_coe, h1,
-        Polynomial.toLaurent_X, AlgEquiv.coe_ringEquiv, LaurentPolynomial.invert_T]
+        Polynomial.toLaurent_X, AlgEquiv.coe_toRingEquiv, LaurentPolynomial.invert_T]
       have h2 : levelSlope R x t 1 = Ideal.Quotient.mk _ (chartSlope R x t) := rfl
       rw [h2, hg, beta.slope]
       have hm : LaurentPolynomial.T 1 *
@@ -1210,8 +1210,8 @@ theorem concrete_infinity_strict_transform_multiplicity (d : ℕ) (c : Fin (d + 
     Module.length (CompletedLocalAt (BlowupChart 𝒮 𝒳 𝒯) P)
       (CompletedLocalAt (BlowupChart 𝒮 𝒳 𝒯) P ⧸
         Ideal.span {completedPointMap (BlowupChart 𝒮 𝒳 𝒯) P
-          (∑ i : Fin (d+1),
-            algebraMap 𝒮 (BlowupChart 𝒮 𝒳 𝒯) (c i) * chartSlope 𝒮 𝒳 𝒯 ^ (d - i.val)),
+                      (∑ i : Fin (d+1),
+                        algebraMap 𝒮 (BlowupChart 𝒮 𝒳 𝒯) (c i) * chartSlope 𝒮 𝒳 𝒯 ^ (d - i.val)),
         completedPointMap (BlowupChart 𝒮 𝒳 𝒯) P (chartBase 𝒮 𝒳 𝒯 𝒳)}) =
     ((d - (∑ i : Fin (d+1), Polynomial.C (IsLocalRing.residue 𝒮 (c i)) * Polynomial.X^i.val :
       Polynomial (IsLocalRing.ResidueField 𝒮)).natDegree : ℕ) : ℕ∞) := by
@@ -1258,12 +1258,11 @@ theorem concrete_strict_transform_generators (d : ℕ) (f : 𝒮) (c : Fin (d + 
     [P.IsMaximal] [P.IsPrime] (hP : chartBase 𝒮 𝒯 𝒳 𝒯 ∈ P) (Pinf : Ideal (BlowupChart 𝒮 𝒳 𝒯))
     [Pinf.IsMaximal] [Pinf.IsPrime] (hx : chartBase 𝒮 𝒳 𝒯 𝒳 ∈ Pinf)
     (hW : chartSlope 𝒮 𝒳 𝒯 ∈ Pinf) :
-    strictTransformAt 𝒮 𝒯 𝒳 P d (Ideal.span {f}) = Ideal.span {completedPointMap
-      (BlowupChart 𝒮 𝒯 𝒳) P
-      (∑ i : Fin (d+1), algebraMap 𝒮 (BlowupChart 𝒮 𝒯 𝒳) (c i) * chartSlope 𝒮 𝒯 𝒳 ^ i.val)} ∧
-    strictTransformAt 𝒮 𝒳 𝒯 Pinf d (Ideal.span {f}) = Ideal.span {completedPointMap
-      (BlowupChart 𝒮 𝒳 𝒯) Pinf
-      (∑ i : Fin (d+1),
+    strictTransformAt 𝒮 𝒯 𝒳 P d (Ideal.span {f}) =
+      Ideal.span {completedPointMap (BlowupChart 𝒮 𝒯 𝒳) P (∑ i : Fin (d+1),
+        algebraMap 𝒮 (BlowupChart 𝒮 𝒯 𝒳) (c i) * chartSlope 𝒮 𝒯 𝒳 ^ i.val)} ∧
+    strictTransformAt 𝒮 𝒳 𝒯 Pinf d (Ideal.span {f}) =
+      Ideal.span {completedPointMap (BlowupChart 𝒮 𝒳 𝒯) Pinf (∑ i : Fin (d+1),
         algebraMap 𝒮 (BlowupChart 𝒮 𝒳 𝒯) (c i) * chartSlope 𝒮 𝒳 𝒯 ^ (d - i.val))} := by
   obtain ⟨_, _, _, inj⟩ :=
     (concrete_infinity_point_completion O pi hpi u a b ha Pinf hx hW).2

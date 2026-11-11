@@ -363,13 +363,13 @@ theorem child_volume_ratio (s : State) (hs : s.Valid) (P : TangentPattern s.degr
     · have hdc' : ¬ P.d.val < c := fun h => by have := hrt.2 h; omega
       have hc : c = P.d.val := by omega
       have hw : patternWeight P.other = P.d.val := by omega
-      simp only [h0, if_true, hdc', if_false, List.map_nil, List.prod_nil, hw, inv_pow]
+      simp only [h0, ite_true, hdc', ite_false, List.map_nil, List.prod_nil, hw, inv_pow]
       rw [show (q:ℚ)^c = (q:ℚ)^P.d.val from congrArg _ hc]
       field_simp
     · have hdc' : P.d.val < c := hrt.1 (by omega)
       have hc : (q:ℚ)^c = (q:ℚ)^(P.rt.val + (c - P.d.val)) * (q:ℚ)^(patternWeight P.other) := by
         rw [← pow_add]; congr 1; omega
-      simp only [h0, if_false, hdc', if_true, List.map_cons, List.map_nil, List.prod_cons,
+      simp only [h0, ite_false, hdc', ite_true, List.map_cons, List.map_nil, List.prod_cons,
         List.prod_nil, Expr.eval, expr_eval_pow, hc, pow_one, inv_pow]
       field_simp
   | crossing a b c h =>
@@ -392,8 +392,8 @@ theorem child_volume_ratio (s : State) (hs : s.Valid) (P : TangentPattern s.degr
     have e1 : P.rt.val = 0 → c - P.d.val = 0 := fun h => by have := hrt.2; omega
     have e2 : P.rx.val = 0 → h - P.d.val = 0 := fun h => by have := hrx.2; omega
     by_cases h0 : P.rt.val = 0 <;> by_cases h1 : P.rx.val = 0 <;>
-    · simp only [h0, h1, hc', hh', e1, e2, ne_eq, not_true_eq_false, not_false_eq_true, if_true,
-        if_false, List.map_nil, List.prod_nil, Expr.eval, inv_pow, List.map_cons, List.prod_cons,
+    · simp only [h0, h1, hc', hh', e1, e2, ne_eq, not_true_eq_false, not_false_eq_true, ite_true,
+        ite_false, List.map_nil, List.prod_nil, Expr.eval, inv_pow, List.map_cons, List.prod_cons,
         expr_eval_pow]
       norm_num [Expr.eval, expr_eval_pow, pow_add]
       field_simp

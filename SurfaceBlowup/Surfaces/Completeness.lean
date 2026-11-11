@@ -387,7 +387,6 @@ theorem concrete_surface_curve_isAdicComplete (O : Type) [CommRing O] [IsDomain 
   rw [Ideal.map_span] at hc
   simp only [Set.image_singleton] at hc ⊢
   convert hc using 2
-  rfl
 
 /-- The concrete surface is `π`-adically complete as an `O`-module. -/
 theorem concrete_surface_isAdicComplete_span_pi_base (O : Type) [CommRing O] [IsDomain O]

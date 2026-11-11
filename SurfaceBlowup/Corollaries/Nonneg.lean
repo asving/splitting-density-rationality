@@ -122,10 +122,10 @@ theorem globalLaw_coeff_eval_nonneg (projective : Bool) (n : ℕ) (Q : ℕ) (hQ 
     simp only [Expr.eval]
     refine inv_nonneg.2 ?_
     cases projective
-    · rw [if_neg Bool.false_ne_true, expression_pow_eval]
+    · rw [ite_eq_right Bool.false_ne_true, expression_pow_eval]
       simp only [Expr.eval]
       positivity
-    · rw [if_pos rfl]
+    · rw [ite_eq_left rfl]
       exact (projective_normalizer_positive n _ hQ0).le
   · -- the number of residue divisors with the pattern `m`
     exact divisorCount_eval_nonneg Q hQ _ (by cases projective <;> simp) m

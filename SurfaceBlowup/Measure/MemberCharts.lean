@@ -112,7 +112,7 @@ theorem member_coefficient_measure_map_product_coordinates (m : ConcreteMember)
       (fun j => coefficientMeasure (mc j).toMeasured.O (mc j).toMeasured.s.degree)
   set μ' := MeasureTheory.Measure.map ρ (coefficientMeasure m.toMeasured.O m.toMeasured.s.degree)
   have : MeasureTheory.IsProbabilityMeasure μ' :=
-    MeasureTheory.Measure.isProbabilityMeasure_map hρ.aemeasurable
+    inferInstance
   have : μ'.IsAddLeftInvariant :=
     MeasureTheory.isAddLeftInvariant_map (ρ.toLinearMap.toAddMonoidHom.toAddHom) hρ ρ.surjective
   have key := MeasureTheory.Measure.isAddInvariant_eq_smul_of_compactSpace μ' ν

@@ -81,10 +81,10 @@ private theorem coeff_sum_fin_C_mul_X_pow {S : Type} [Semiring S] (N : ℕ)
       if h : j < N + 1 then f ⟨j, h⟩ else 0 := by
   simp only [Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow]
   split_ifs with h
-  · rw [Finset.sum_eq_single ⟨j, h⟩ (fun i _ hi ↦ if_neg fun hj ↦ hi (Fin.ext hj.symm))
+  · rw [Finset.sum_eq_single ⟨j, h⟩ (fun i _ hi ↦ ite_eq_right fun hj ↦ hi (Fin.ext hj.symm))
       (by simp)]
     simp
-  · exact Finset.sum_eq_zero fun i _ ↦ if_neg (by omega)
+  · exact Finset.sum_eq_zero fun i _ ↦ ite_eq_right (by omega)
 
 open LaurentPolynomial in
 /-- The exceptional fibre of the overlap chart of the blow-up at `(t, x)` embeds into the Laurent
@@ -163,7 +163,7 @@ theorem glued_level_one_normalization (R : Type) [CommRing R] (t x : R)
     [(Ideal.span ({t,x} : Set R)).IsMaximal] [IsLocalRing R] (_hreg : RegularParameterPair R t x)
     (beta : BlowupRestriction R t x) (d : ℕ) (gA : BlowupChart R t x) (gB : BlowupChart R x t)
     (hoverlap : Ideal.span {Ideal.Quotient.mk (Ideal.span {overlapException R t x})
-      ((algebraMap (BlowupChart R t x) (BlowupOverlap R t x)) gA)} =
+                              ((algebraMap (BlowupChart R t x) (BlowupOverlap R t x)) gA)} =
       Ideal.span {Ideal.Quotient.mk (Ideal.span {overlapException R t x}) (beta.right gB)})
     (hregB : Function.Injective (fun c : BlowupOverlap R t x ⧸
       (Ideal.span {overlapException R t x}) => Ideal.Quotient.mk
@@ -190,21 +190,21 @@ theorem glued_level_one_normalization (R : Type) [CommRing R] (t x : R)
   set PB : Polynomial (R ⧸ I) :=
     ∑ i : Fin (n+1), Polynomial.C (Ideal.Quotient.mk I (cB i)) * Polynomial.X ^ i.val with hPB
   have hPAr : PA.coeff r ≠ 0 := by
-    rw [hPA, coeff_sum_fin_C_mul_X_pow, dif_pos (by omega), Ne, Ideal.Quotient.eq_zero_iff_mem]
+    rw [hPA, coeff_sum_fin_C_mul_X_pow, dite_eq_left (by omega), Ne, Ideal.Quotient.eq_zero_iff_mem]
     exact hr ⟨r, by omega⟩ rfl
   have hPA0 : PA ≠ 0 := fun h ↦ hPAr (by simp [h])
   have hPAtr : PA.natTrailingDegree = r :=
     le_antisymm (Polynomial.natTrailingDegree_le_of_ne_zero hPAr) <|
       Polynomial.le_natTrailingDegree hPA0 fun j hj ↦ by
-        rw [hPA, coeff_sum_fin_C_mul_X_pow, dif_pos (by omega)]
+        rw [hPA, coeff_sum_fin_C_mul_X_pow, dite_eq_left (by omega)]
         exact Ideal.Quotient.eq_zero_iff_mem.mpr (hlow ⟨j, by omega⟩ hj)
   have hPBn : PB.coeff n ≠ 0 := by
-    rw [hPB, coeff_sum_fin_C_mul_X_pow, dif_pos (by omega), Ne, Ideal.Quotient.eq_zero_iff_mem]
+    rw [hPB, coeff_sum_fin_C_mul_X_pow, dite_eq_left (by omega), Ne, Ideal.Quotient.eq_zero_iff_mem]
     exact htop
   have hPB0 : PB ≠ 0 := fun h ↦ hPBn (by simp [h])
   have hPBdeg : PB.natDegree = n :=
     Polynomial.natDegree_eq_of_le_of_coeff_ne_zero (Polynomial.natDegree_le_iff_coeff_eq_zero.2
-      fun j hj ↦ by rw [hPB, coeff_sum_fin_C_mul_X_pow, dif_neg (by omega)]) hPBn
+      fun j hj ↦ by rw [hPB, coeff_sum_fin_C_mul_X_pow, dite_eq_right (by omega)]) hPBn
   -- images
   let ΦA : BlowupChart R t x →+* LaurentPolynomial (R ⧸ I) :=
     φ.comp ((Ideal.Quotient.mk E).comp (algebraMap (BlowupChart R t x) (BlowupOverlap R t x)))
@@ -279,7 +279,8 @@ private theorem laurent_twist_kernel_coeff_toLaurent {k : Type} [CommRing k] (f 
   split_ifs with hz
   · obtain ⟨n, rfl⟩ := Int.eq_ofNat_of_zero_le hz
     rw [LaurentPolynomial.coeff_toLaurent]
-    have := Finsupp.mapDomain_apply (Nat.castEmbedding (R := ℤ)).injective f.toFinsupp.coeff n
+    have := Finsupp.mapDomain_apply_of_injective (Nat.castEmbedding (R := ℤ)).injective
+      f.toFinsupp.coeff n
     simp only [Nat.castEmbedding_apply] at this
     simp only [Int.toNat_natCast]; exact this.trans rfl
   · rw [LaurentPolynomial.coeff_toLaurent]
@@ -308,17 +309,17 @@ theorem laurent_nonnegative_twist_kernel (k : Type) [CommRing k] (m : ℕ) (P Q 
   · rw [Polynomial.natDegree_le_iff_coeff_eq_zero]
     intro n hn
     have := key n
-    simp only [Nat.cast_nonneg, if_true, Int.toNat_natCast] at this
-    rw [this, if_neg]
+    simp only [Nat.cast_nonneg, ite_true, Int.toNat_natCast] at this
+    rw [this, ite_eq_right]
     have : (m : ℕ) < n := by exact_mod_cast hn
     omega
   · split_ifs with hi
     · have := key ((m - i : ℕ) : ℤ)
-      simp only [Nat.cast_nonneg, if_true, Int.toNat_natCast] at this
-      rw [this, if_pos (by omega)]
+      simp only [Nat.cast_nonneg, ite_true, Int.toNat_natCast] at this
+      rw [this, ite_eq_left (by omega)]
       congr 1; omega
     · have := key ((m : ℤ) - i)
-      rw [if_neg (by omega), if_pos (by omega)] at this
+      rw [ite_eq_right (by omega), ite_eq_left (by omega)] at this
       rw [show ((m : ℤ) - ((m : ℤ) - i)).toNat = i by omega] at this
       exact this.symm
 

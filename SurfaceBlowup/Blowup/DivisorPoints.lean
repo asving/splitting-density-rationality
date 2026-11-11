@@ -640,9 +640,11 @@ private theorem curve_datum_matches_divisor (O : Type) [CommRing O] [IsDomain O]
       tBase O pi u a b (surfaceT O pi u a b) ∈ P → (∑ i : Fin (d+1), algebraMap
         (ConcreteSurface O pi u a b) (tChart O pi u a b) (c i) * tSlope O pi u a b^i.val) ∈ P →
       ∃ s : D.ι ⊕ D.ι0, leftPoint D s = P)
-    (hright : ∀ s : D.ι ⊕ D.ιinf, Ideal.span {rightData D s} = Ideal.span {completedPointMap
-      (xChart O pi u a b) (rightPoint D s) (∑ i : Fin (d+1), algebraMap (ConcreteSurface O pi u a b)
-        (xChart O pi u a b) (c i) * xSlope O pi u a b^(d - i.val))} ∧ (∑ i : Fin (d+1), algebraMap
+    (hright : ∀ s : D.ι ⊕ D.ιinf, Ideal.span {rightData D s} =
+      Ideal.span {completedPointMap (xChart O pi u a b) (rightPoint D s)
+                    (∑ i : Fin (d+1), algebraMap (ConcreteSurface O pi u a b)
+                      (xChart O pi u a b) (c i) * xSlope O pi u a b^(d - i.val))} ∧
+      (∑ i : Fin (d+1), algebraMap
           (ConcreteSurface O pi u a b) (xChart O pi u a b) (c i) * xSlope O pi u a b^(d - i.val)) ∈
         rightPoint D s)
     (hrightsurj : ∀ P : Ideal (xChart O pi u a b), P.IsMaximal →
@@ -779,10 +781,10 @@ theorem fixed_tangent_cell_curve_datum (O : Type) [CommRing O] [IsDomain O]
         (∑ i : Fin (d+1), algebraMap (ConcreteSurface O pi u a b) (tChart O pi u a b) (c i) *
             tSlope O pi u a b^i.val) ∈ leftPoint D s) ∧
       (∀ s : D.ι ⊕ D.ιinf,
-        Ideal.span {rightData D s} = Ideal.span {completedPointMap (xChart O pi u a b)
-            (rightPoint D s)
-          (∑ i : Fin (d+1), algebraMap (ConcreteSurface O pi u a b) (xChart O pi u a b) (c i) *
-              xSlope O pi u a b^(d - i.val))} ∧
+        Ideal.span {rightData D s} =
+          Ideal.span {completedPointMap (xChart O pi u a b) (rightPoint D s)
+                        (∑ i : Fin (d+1), algebraMap (ConcreteSurface O pi u a b)
+                          (xChart O pi u a b) (c i) * xSlope O pi u a b^(d - i.val))} ∧
         (∑ i : Fin (d+1), algebraMap (ConcreteSurface O pi u a b) (xChart O pi u a b) (c i) *
             xSlope O pi u a b^(d - i.val)) ∈ rightPoint D s) ∧
       (∀ s : D.ι ⊕ D.ι0,
@@ -1255,7 +1257,7 @@ private theorem glued_level_one_data (O R : Type) [CommRing O] [IsDomain O]
     hPdeg.trans (matches_divisor_degree O R S beta D Dv e he heZ hm), fun i ↦ ?_⟩
   rw [← hHP, hHdef, Polynomial.finsetSum_coeff, Finset.sum_eq_single i (fun b _ hb ↦ ?_) (by simp)]
   · simp
-  · rw [Polynomial.coeff_C_mul_X_pow, if_neg fun h ↦ hb (Fin.ext h.symm)]
+  · rw [Polynomial.coeff_C_mul_X_pow, ite_eq_right fun h ↦ hb (Fin.ext h.symm)]
 
 /-- A global function glued from the generators of a curve datum matching `Dv` has tangent
 divisor `Dv` in degree `deg D`. -/

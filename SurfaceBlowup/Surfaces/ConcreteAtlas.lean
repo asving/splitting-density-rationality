@@ -254,7 +254,7 @@ private theorem reduction_ne_zero [(Ideal.span ({t,x} : Set R)).IsMaximal]
   rw [Finset.sum_eq_single i0] at h2
   · simpa [Ideal.Quotient.eq_zero_iff_mem] using h2
   · intro j _ hj
-    rw [if_neg]
+    rw [ite_eq_right]
     intro hv; exact hj (Fin.ext hv.symm)
   · simp
 
@@ -693,13 +693,13 @@ theorem curve_datum_of_parent_function (O : Type) [CommRing O] [IsDomain O]
       (∀ s : D.ι ⊕ D.ιinf,
         Ideal.span {rightData D s} = Ideal.span
         {completedPointMap
-        (BlowupChart (ConcreteSurface O pi u a b) (surfaceX O pi u a b) (surfaceT O pi u a b))
-        (rightPoint D s)
-        (∑ i : Fin (d+1),
-        algebraMap (ConcreteSurface O pi u a b)
-        (BlowupChart (ConcreteSurface O pi u a b) (surfaceX O pi u a b) (surfaceT O pi u a b))
-        (c i) * (chartSlope (ConcreteSurface O pi u a b) (surfaceX O pi u a b)
-        (surfaceT O pi u a b))^(d - i.val))} ∧
+           (BlowupChart (ConcreteSurface O pi u a b) (surfaceX O pi u a b) (surfaceT O pi u a b))
+           (rightPoint D s)
+           (∑ i : Fin (d+1),
+           algebraMap (ConcreteSurface O pi u a b)
+           (BlowupChart (ConcreteSurface O pi u a b) (surfaceX O pi u a b) (surfaceT O pi u a b))
+           (c i) * (chartSlope (ConcreteSurface O pi u a b) (surfaceX O pi u a b)
+           (surfaceT O pi u a b))^(d - i.val))} ∧
         (∑ i : Fin (d+1),
         algebraMap (ConcreteSurface O pi u a b)
         (BlowupChart (ConcreteSurface O pi u a b) (surfaceX O pi u a b) (surfaceT O pi u a b))

@@ -37,7 +37,7 @@ theorem affinePolynomial_coeff_last {n : ℕ} (a : Fin (n + 1) → O) :
   simp only [affinePolynomial, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow]
   rw [Finset.sum_eq_single (Fin.last n)]
   · simp
-  · exact fun i _ hi => if_neg fun h => hi (Fin.ext (by simp [h]))
+  · exact fun i _ hi => ite_eq_right fun h => hi (Fin.ext (by simp [h]))
   · simp
 
 omit [IsDomain O] in

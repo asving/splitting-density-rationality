@@ -298,17 +298,17 @@ theorem other_children_count (n : ℕ) (m : Pattern n) (δ r : ℕ) :
         (δ, State.single 1 r) then (m ij).val else 0)]
     split_ifs with h
     · rw [Finset.sum_eq_single (⟨δ - 1, by omega⟩, ⟨r - 1, by omega⟩)]
-      · rw [if_pos]
+      · rw [ite_eq_left]
         simp only [Prod.mk.injEq, State.single.injEq]
         exact ⟨by omega, trivial, by omega⟩
       · intro b _ hb
-        rw [if_neg]
+        rw [ite_eq_right]
         simp only [Prod.mk.injEq, State.single.injEq]
         rintro ⟨h1, -, h2⟩
         apply hb
         ext <;> simp <;> omega
       · simp
-    · refine Finset.sum_eq_zero fun ij _ ↦ if_neg ?_
+    · refine Finset.sum_eq_zero fun ij _ ↦ ite_eq_right ?_
       simp only [Prod.mk.injEq, State.single.injEq]
       have := ij.1.isLt
       have := ij.2.isLt
@@ -440,7 +440,7 @@ theorem law_coeff_descend (δ : ℕ) (hδ : 0 < δ) (L : Law) (τ : FactorType) 
     refine List.sum_eq_zero fun x hx ↦ ?_
     simp only [lawDescend, List.map_map, List.mem_map, Function.comp_def] at hx
     obtain ⟨z, -, rfl⟩ := hx
-    exact if_neg fun e ↦ hσ z.1 e.symm
+    exact ite_eq_right fun e ↦ hσ z.1 e.symm
 
 /-! ### Interpretation of laws in a monoid algebra -/
 
@@ -503,7 +503,7 @@ private theorem lawInterp_coeff_eq_zero (L : Law) (τ : FactorType)
   rw [lawInterp_coeff]
   refine List.sum_eq_zero fun x hx ↦ ?_
   obtain ⟨z, hz, rfl⟩ := List.mem_map.1 hx
-  exact if_neg fun e ↦ h (List.mem_toFinset.2 (List.mem_map.2 ⟨z, hz, e⟩))
+  exact ite_eq_right fun e ↦ h (List.mem_toFinset.2 (List.mem_map.2 ⟨z, hz, e⟩))
 
 end lawInterp
 
@@ -599,7 +599,7 @@ theorem law_coeff_prod_descend (Ls : List (ℕ × Law)) (hδ : ∀ z ∈ Ls, 0 <
       erw [hs, hp]
       simp only [Fin.cons_zero, Fin.cons_succ, List.get_cons_zero, hg,
         tsub_eq_iff_eq_add_of_le hle, mul_ite, mul_zero, add_comm]
-    · refine (Finset.sum_eq_zero fun τ' _ ↦ if_neg fun h ↦ ?_).symm
+    · refine (Finset.sum_eq_zero fun τ' _ ↦ ite_eq_right fun h ↦ ?_).symm
       erw [hs] at h
       simp only [Fin.cons_zero, List.get_cons_zero] at h
       exact hle (h ▸ le_self_add)
@@ -626,7 +626,7 @@ theorem law_coeff_prod_formula (L : ℕ) (Dl : Fin L → Law) (σ : FactorType) 
         refine Finset.sum_congr rfl fun τ' _ ↦ ?_
         simp only [Fin.sum_univ_succ, Fin.prod_univ_succ, Fin.cons_zero, Fin.cons_succ]
         simp only [tsub_eq_iff_eq_add_of_le hle, mul_ite, mul_zero, add_comm]
-      · refine (Finset.sum_eq_zero fun τ' _ ↦ if_neg fun h ↦ hle ?_).symm
+      · refine (Finset.sum_eq_zero fun τ' _ ↦ ite_eq_right fun h ↦ hle ?_).symm
         rw [h, Fin.sum_univ_succ, Fin.cons_zero]
         exact le_self_add
   · rw [lawCoeff_eval_interp]
@@ -801,10 +801,10 @@ theorem integral_local_extension_unique_prime (O B : Type) [CommRing O] [IsLocal
     (IsLocalRing.maximalIdeal B).comap (algebraMap O B) = IsLocalRing.maximalIdeal O ∧
       ∀ Q : Ideal B, Q.IsPrime → Q.comap (algebraMap O B) = IsLocalRing.maximalIdeal O →
         Q = IsLocalRing.maximalIdeal B := by
-  refine ⟨IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal _),
+  refine ⟨IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_under_of_isIntegral_of_isMaximal _),
     fun Q hQ hc ↦ ?_⟩
   have hm : (Q.comap (algebraMap O B)).IsMaximal := by rw [hc]; infer_instance
-  exact IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_of_isIntegral_of_isMaximal_comap Q hm)
+  exact IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_of_isIntegral_of_isMaximal_under Q hm)
 
 /-- For a finite flat extension of local rings `O → B`, `e · f = [B : O]`. -/
 theorem finite_flat_local_ramification_degree (O B : Type) [CommRing O] [IsDomain O]

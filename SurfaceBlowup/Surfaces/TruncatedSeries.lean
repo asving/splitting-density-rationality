@@ -90,7 +90,7 @@ theorem axisQuotientLength_eq (k : Type) [Field k] {s t : Fin 2} (hst : s ≠ t)
   have hT : Xs ∣ F - F0 := by
     rw [MvPowerSeries.X_dvd_iff]
     intro m hm
-    rw [map_sub, hF0, if_pos hm, sub_self]
+    rw [map_sub, hF0, ite_eq_left hm, sub_self]
   have hX : Xt ^ d ∣ F0 := by
     rw [MvPowerSeries.X_pow_dvd_iff]
     intro m hm
@@ -102,8 +102,8 @@ theorem axisQuotientLength_eq (k : Type) [Field k] {s t : Fin 2} (hst : s ≠ t)
   obtain ⟨G, hG⟩ := hT
   have hU0 : MvPowerSeries.constantCoeff U ≠ 0 := by
     have := congrArg (MvPowerSeries.coeff (Finsupp.single t d)) hU
-    rw [hF0, if_pos (by simp [hst]), MvPowerSeries.X_pow_eq,
-      MvPowerSeries.coeff_monomial_mul, if_pos le_rfl, one_mul, tsub_self,
+    rw [hF0, ite_eq_left (by simp [hst]), MvPowerSeries.X_pow_eq,
+      MvPowerSeries.coeff_monomial_mul, ite_eq_left le_rfl, one_mul, tsub_self,
       MvPowerSeries.coeff_zero_eq_constantCoeff_apply] at this
     rw [← this]; exact hd
   have hUu : IsUnit U := MvPowerSeries.isUnit_iff_constantCoeff.mpr (isUnit_iff_ne_zero.mpr hU0)
@@ -243,7 +243,7 @@ private theorem truncCoeffs_surjective_and_ker (k : Type) [Field k] (a b L : ℕ
     rw [Finset.sum_eq_single s₀]
     · simp [e]
     · intro s _ hs
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       exact hs (Subtype.ext (einj h.symm))
     · simp
@@ -260,7 +260,7 @@ private theorem truncCoeffs_surjective_and_ker (k : Type) [Field k] (a b L : ℕ
       refine Submodule.add_mem_sup ?_ ?_
       · rw [monomialIdeal_mem_iff]
         intro m hm
-        rw [hx, if_neg hm]
+        rw [hx, ite_eq_right hm]
       · rw [axis_ideal_pow_mem_iff]
         intro m hm
         rw [map_sub, hx]

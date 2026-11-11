@@ -3,10 +3,13 @@ open Lake DSL
 
 package «surfaceBlowup» where
   leanOptions := #[⟨`autoImplicit, false⟩]
+  -- Mathlib (from v4.35.0) asks importers to use the module system; these files do not.
+  -- This is Lake's opt-out; it changes nothing about elaboration or checking.
+  allowNonModules := true
 
 require mathlib from git
   "https://github.com/leanprover-community/mathlib4.git" @
-  "0df444a360eaa60ab8c11dca51a86af692955474"
+  "56a005855ea17e0b0958f73ec801ae140b0a1679"
 
 /-- The unified formalization: rationality of type densities over complete DVRs, and reciprocity. -/
 @[default_target]

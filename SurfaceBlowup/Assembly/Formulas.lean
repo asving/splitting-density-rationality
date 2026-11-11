@@ -83,8 +83,9 @@ theorem monicDensityF_eq_densityValue (htop : IsAdic (IsLocalRing.maximalIdeal O
       intro D hD
       have hD' := (hS D).1 hD
       obtain ⟨⟨m0, hm0, hm0R⟩, huniq⟩ := divisor_array_exists_unique k n D hD'.2
-      rw [Finset.sum_eq_single_of_mem m0 hm0R fun m _ hne ↦ if_neg fun h ↦ hne (huniq _ _ h hm0),
-        if_pos hm0, (hcell D hD').2.2 E,
+      rw [Finset.sum_eq_single_of_mem m0 hm0R fun m _ hne ↦
+          ite_eq_right fun h ↦ hne (huniq _ _ h hm0),
+        ite_eq_left hm0, (hcell D hD').2.2 E,
         (monic_cell_law root_cell_law O htop n D hD' m0 hm0 σ).2]
     rw [Finset.sum_congr rfl h1, Finset.sum_comm]
     exact Finset.sum_congr rfl fun m _ ↦ by rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul]
@@ -97,7 +98,7 @@ theorem monicDensityF_eq_densityValue (htop : IsAdic (IsLocalRing.maximalIdeal O
           (lawCoeff (arrayLaw m) σ).eval (q : ℚ) := by
       rw [monicExpr, globalLaw, law_coeff_scale, (law_coeff_flatMap _ _ _ [] [] σ _).2.2,
         ← Finset.sum_map_toList]
-      simp only [Bool.false_eq_true, if_false]
+      simp only [Bool.false_eq_true, ite_false]
       congr 2
       exact List.map_congr_left fun m _ ↦ by rw [law_coeff_scale]; rfl
     have hinv0 : 0 ≤ (Expr.inv (.pow .var n)).eval ((q : ℕ) : ℚ) := by

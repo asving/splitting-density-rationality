@@ -408,7 +408,7 @@ private theorem residue_sum_coeff {R : Type} [CommRing R] [IsLocalRing R] (d : �
     (∑ j : Fin (d + 1), Polynomial.C (IsLocalRing.residue R (c j)) * Polynomial.X ^ j.val).coeff i =
       IsLocalRing.residue R (c i) := by
   simp only [Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow]
-  rw [Finset.sum_eq_single i (fun j _ hj ↦ if_neg fun h ↦ hj (Fin.ext h.symm)) (by simp)]
+  rw [Finset.sum_eq_single i (fun j _ hj ↦ ite_eq_right fun h ↦ hj (Fin.ext h.symm)) (by simp)]
   simp
 
 /-- The residue polynomial `H = ∑ᵢ c̄ᵢ Xⁱ` of a curve `∑ cᵢ tᵈ⁻ⁱ xⁱ` of multiplicity `d` on a
@@ -554,10 +554,11 @@ private theorem concrete_index_map_reindexed_of_eq (O : Type) [CommRing O] [IsDo
     (hf : ∀ j : ℕ, surfaceToCechInput (ConcreteSurface O pi u a b) t x j f =
     (cechInputLattice (ConcreteSurface O pi u a b) t x j).mkQ
     (gluedFunctionPair (ConcreteSurface O pi u a b) t x G j))
-    (hG : ∀ j : ℕ, Ideal.span {Ideal.Quotient.mk
-    ((chartExceptional (ConcreteSurface O pi u a b) t x)^j) (G.left j)} = leftLevelKernel D j ∧
-    Ideal.span {Ideal.Quotient.mk ((chartExceptional (ConcreteSurface O pi u a b) x t)^j)
-    (G.right j)} = rightLevelKernel D j) (n : ℕ) (e : Fin n ≃ AllPoints D) (B : Fin n → Type)
+    (hG : ∀ j : ℕ, Ideal.span
+    {Ideal.Quotient.mk ((chartExceptional (ConcreteSurface O pi u a b) t x)^j) (G.left j)} =
+    leftLevelKernel D j ∧ Ideal.span
+    {Ideal.Quotient.mk ((chartExceptional (ConcreteSurface O pi u a b) x t)^j) (G.right j)} =
+    rightLevelKernel D j) (n : ℕ) (e : Fin n ≃ AllPoints D) (B : Fin n → Type)
     [∀ j, CommRing (B j)] [∀ j, Algebra O (B j)] (eB : ∀ j, B j ≃+*
     (localRing D (e j) ⧸ Ideal.span {localCurve D (e j)}))
     (hB : ∀ (j : Fin n) (c : O), (eB j) (algebraMap O (B j) c) = Ideal.Quotient.mk
@@ -602,9 +603,9 @@ private theorem cell_datum_multiplicities_pos_of_eq (O : Type) [CommRing O] [IsD
     (chartSlope (ConcreteSurface O pi u a b) t x)^i.val) ∈ leftPoint D s)
     (hr : ∀ s : D.ι ⊕ D.ιinf, Ideal.span {rightData D s} = Ideal.span
     {completedPointMap (BlowupChart (ConcreteSurface O pi u a b) x t) (rightPoint D s)
-    (∑ i : Fin (d+1), algebraMap (ConcreteSurface O pi u a b)
-    (BlowupChart (ConcreteSurface O pi u a b) x t) (c i) *
-    (chartSlope (ConcreteSurface O pi u a b) x t)^(d - i.val))} ∧
+       (∑ i : Fin (d+1), algebraMap (ConcreteSurface O pi u a b)
+       (BlowupChart (ConcreteSurface O pi u a b) x t) (c i) *
+       (chartSlope (ConcreteSurface O pi u a b) x t)^(d - i.val))} ∧
     (∑ i : Fin (d+1), algebraMap (ConcreteSurface O pi u a b)
     (BlowupChart (ConcreteSurface O pi u a b) x t) (c i) *
     (chartSlope (ConcreteSurface O pi u a b) x t)^(d - i.val)) ∈ rightPoint D s) :
@@ -651,9 +652,9 @@ private theorem concrete_two_chart_glued_generators_exist_of_eq (O : Type) [Comm
         (cechInputLattice (ConcreteSurface O pi u a b) t x j).mkQ
         (gluedFunctionPair (ConcreteSurface O pi u a b) t x G j)) ∧ ∀ j : ℕ, Ideal.span
         {Ideal.Quotient.mk ((chartExceptional (ConcreteSurface O pi u a b) t x)^j) (G.left j)} =
-        leftLevelKernel D j ∧ Ideal.span {Ideal.Quotient.mk
-        ((chartExceptional (ConcreteSurface O pi u a b) x t)^j) (G.right j)} = rightLevelKernel D
-        j := by
+        leftLevelKernel D j ∧ Ideal.span
+        {Ideal.Quotient.mk ((chartExceptional (ConcreteSurface O pi u a b) x t)^j) (G.right j)} =
+        rightLevelKernel D j := by
   subst ht hx
   exact concrete_two_chart_glued_generators_exist O pi hpi u a b ha beta D
 
@@ -691,9 +692,9 @@ private theorem fixed_tangent_cell_curve_datum_of_eq (O : Type) [CommRing O] [Is
         (chartSlope (ConcreteSurface O pi u a b) t x)^i.val) ∈ leftPoint D s) ∧
         (∀ s : D.ι ⊕ D.ιinf, Ideal.span {rightData D s} = Ideal.span
         {completedPointMap (BlowupChart (ConcreteSurface O pi u a b) x t) (rightPoint D s)
-        (∑ i : Fin (d+1), algebraMap (ConcreteSurface O pi u a b)
-        (BlowupChart (ConcreteSurface O pi u a b) x t) (c i) *
-        (chartSlope (ConcreteSurface O pi u a b) x t)^(d - i.val))} ∧
+           (∑ i : Fin (d+1), algebraMap (ConcreteSurface O pi u a b)
+           (BlowupChart (ConcreteSurface O pi u a b) x t) (c i) *
+           (chartSlope (ConcreteSurface O pi u a b) x t)^(d - i.val))} ∧
         (∑ i : Fin (d+1), algebraMap (ConcreteSurface O pi u a b)
         (BlowupChart (ConcreteSurface O pi u a b) x t) (c i) *
         (chartSlope (ConcreteSurface O pi u a b) x t)^(d - i.val)) ∈ rightPoint D s) ∧

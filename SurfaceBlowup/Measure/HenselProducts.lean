@@ -194,8 +194,8 @@ private theorem eq_sum_range_of_degree_lt {p : Polynomial R} {d : ℕ}
   ext j
   rw [coeff_sum_range_C_mul_X_pow]
   by_cases hj : j < d
-  · rw [if_pos hj]
-  · rw [if_neg hj]
+  · rw [ite_eq_left hj]
+  · rw [ite_eq_right hj]
     exact coeff_eq_zero_of_degree_lt
       (lt_of_lt_of_le hp (by exact_mod_cast Nat.le_of_not_lt hj))
 
@@ -553,10 +553,10 @@ theorem hensel_family_exists (O ι : Type) [CommRing O] [IsLocalRing O]
           (Polynomial.monic_prod_of_monic _ _ (fun i _ => hg i)) hcop hr
       obtain ⟨G', h1, h2, h3, h4⟩ := ih H hH hHr
       have hs : ∏ i ∈ s, (if i = a then G0 else G' i) = ∏ i ∈ s, G' i :=
-        Finset.prod_congr rfl (fun i hi => if_neg (fun (h : i = a) => ha (h ▸ hi)))
+        Finset.prod_congr rfl (fun i hi => ite_eq_right (fun (h : i = a) => ha (h ▸ hi)))
       refine ⟨fun i => if i = a then G0 else G' i, ?_, ?_, ?_, ?_⟩
       rotate_left
-      · rw [Finset.prod_insert ha, hs, if_pos rfl, hFe, h2]
+      · rw [Finset.prod_insert ha, hs, ite_eq_left rfl, hFe, h2]
       all_goals
         intro i hi
         rcases Finset.mem_insert.mp hi with rfl | hi
@@ -891,7 +891,7 @@ theorem power_coordinates_transport (O : Type) [CommRing O] [IsDomain O] [Topolo
     rfl
   have hadd : IsTopologicalAddGroup (AdjoinRoot Φ) := by
     subst hτ
-    exact topologicalAddGroup_induced e.toLinearMap.toAddMonoidHom
+    exact isTopologicalAddGroup_induced e.toLinearMap.toAddMonoidHom
   have hmul : ContinuousMul (AdjoinRoot Φ) := by
     refine ⟨?_⟩
     rw [hind.continuous_iff]

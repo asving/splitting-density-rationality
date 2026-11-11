@@ -175,7 +175,7 @@ def cechInputLattice (j : ℕ) : Submodule R (BlowupChart R t x × BlowupChart R
 /-- The lattice `(t^j)` in the overlap. -/
 def cechOutputLattice (j : ℕ) : Submodule R (BlowupOverlap R t x) :=
   ((Ideal.span {algebraMap (BlowupChart R t x) (BlowupOverlap R t x)
-      (chartBase R t x t)})^j).restrictScalars R
+                  (chartBase R t x t)})^j).restrictScalars R
 /-- The `j`-th level of the Čech source. -/
 abbrev CechLevelInput (j : ℕ) :=
   (BlowupChart R t x × BlowupChart R x t) ⧸ cechInputLattice R t x j

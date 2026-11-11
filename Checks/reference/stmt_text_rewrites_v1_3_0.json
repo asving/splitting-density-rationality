@@ -1,0 +1,27 @@
+{
+ "SurfaceBlowup/Reciprocity/Defs.lean::SurfaceBlowup.binomial_series_ode": {
+  "new": "theorem binomial_series_ode (c : RatFunc ℚ) :\n    (1 + PowerSeries.X) * PowerSeries.derivative (PowerSeries.mk fun n ↦\n      ((n.factorial : ℚ)⁻¹) • ∏ j ∈ Finset.range n, (scalar c - (j : ℚ) • (1 : Coef))) =\n    PowerSeries.C (scalar c) * PowerSeries.mk (fun n ↦\n      ((n.factorial : ℚ)⁻¹) • ∏ j ∈ Finset.range n, (scalar c - (j : ℚ) • (1 : Coef)))",
+  "old": "theorem binomial_series_ode (c : RatFunc ℚ) :\n    (1 + PowerSeries.X) * PowerSeries.derivative Coef (PowerSeries.mk fun n ↦\n      ((n.factorial : ℚ)⁻¹) • ∏ j ∈ Finset.range n, (scalar c - (j : ℚ) • (1 : Coef))) =\n    PowerSeries.C (scalar c) * PowerSeries.mk (fun n ↦\n      ((n.factorial : ℚ)⁻¹) • ∏ j ∈ Finset.range n, (scalar c - (j : ℚ) • (1 : Coef)))",
+  "reason": "Mathlib made the coefficient ring of PowerSeries.derivative implicit (mathlib4 #43334); it is determined by the type of the argument (Ser = PowerSeries Coef), so the term is the same derivative."
+ },
+ "SurfaceBlowup/Reciprocity/Defs.lean::SurfaceBlowup.derivative_expSer": {
+  "new": "theorem derivative_expSer (f : Ser) (hf : PowerSeries.constantCoeff f = 0) :\n    PowerSeries.derivative (expSer f) = PowerSeries.derivative f * expSer f",
+  "old": "theorem derivative_expSer (f : Ser) (hf : PowerSeries.constantCoeff f = 0) :\n    PowerSeries.derivative Coef (expSer f) = PowerSeries.derivative Coef f * expSer f",
+  "reason": "Mathlib made the coefficient ring of PowerSeries.derivative implicit (mathlib4 #43334); it is determined by the type of the argument (Ser = PowerSeries Coef), so the term is the same derivative."
+ },
+ "SurfaceBlowup/Reciprocity/Defs.lean::SurfaceBlowup.mul_derivative_logSer": {
+  "new": "theorem mul_derivative_logSer (g : Ser) (hg : PowerSeries.constantCoeff g = 1) :\n    g * PowerSeries.derivative (logSer g) = PowerSeries.derivative g",
+  "old": "theorem mul_derivative_logSer (g : Ser) (hg : PowerSeries.constantCoeff g = 1) :\n    g * PowerSeries.derivative Coef (logSer g) = PowerSeries.derivative Coef g",
+  "reason": "Mathlib made the coefficient ring of PowerSeries.derivative implicit (mathlib4 #43334); it is determined by the type of the argument (Ser = PowerSeries Coef), so the term is the same derivative."
+ },
+ "SurfaceBlowup/Reciprocity/Plethysm.lean::SurfaceBlowup.eq_of_mul_derivative_eq_mul": {
+  "new": "theorem eq_of_mul_derivative_eq_mul (g w E F : Ser) (hg : PowerSeries.constantCoeff g = 1)\n    (hE : g * PowerSeries.derivative E = w * E)\n    (hF : g * PowerSeries.derivative F = w * F)\n    (h0 : PowerSeries.constantCoeff E = PowerSeries.constantCoeff F) :\n    E = F",
+  "old": "theorem eq_of_mul_derivative_eq_mul (g w E F : Ser) (hg : PowerSeries.constantCoeff g = 1)\n    (hE : g * PowerSeries.derivative Coef E = w * E)\n    (hF : g * PowerSeries.derivative Coef F = w * F)\n    (h0 : PowerSeries.constantCoeff E = PowerSeries.constantCoeff F) :\n    E = F",
+  "reason": "Mathlib made the coefficient ring of PowerSeries.derivative implicit (mathlib4 #43334); it is determined by the type of the argument (Ser = PowerSeries Coef), so the term is the same derivative."
+ },
+ "SurfaceBlowup/Reciprocity/Plethysm.lean::SurfaceBlowup.mul_derivative_formalPow": {
+  "new": "private theorem mul_derivative_formalPow (c : RatFunc ℚ) (g : Ser)\n    (hg : PowerSeries.constantCoeff g = 1) :\n    g * PowerSeries.derivative (formalPow c g) =\n      PowerSeries.C (scalar c) * PowerSeries.derivative g * formalPow c g",
+  "old": "private theorem mul_derivative_formalPow (c : RatFunc ℚ) (g : Ser)\n    (hg : PowerSeries.constantCoeff g = 1) :\n    g * PowerSeries.derivative Coef (formalPow c g) =\n      PowerSeries.C (scalar c) * PowerSeries.derivative Coef g * formalPow c g",
+  "reason": "Mathlib made the coefficient ring of PowerSeries.derivative implicit (mathlib4 #43334); it is determined by the type of the argument (Ser = PowerSeries Coef), so the term is the same derivative."
+ }
+}

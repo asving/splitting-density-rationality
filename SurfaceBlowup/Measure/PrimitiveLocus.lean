@@ -171,7 +171,8 @@ theorem unramified_coefficient_measure_haar (O : Type) [CommRing O] [IsDomain O]
         (Measure.IsOpenPosMeasure.open_pos _ isOpen_univ Set.univ_nonempty)
   refine ⟨Measure.isAddHaarMeasure_map_of_isFiniteMeasure (coefficientMeasure O Φ.natDegree)
       e.symm.toLinearMap.toAddMonoidHom hces e.symm.surjective,
-    Measure.isProbabilityMeasure_map hmes.aemeasurable, fun L x ↦ ?_⟩
+    show IsProbabilityMeasure (Measure.map e.symm (coefficientMeasure O Φ.natDegree)) from
+      inferInstance, fun L x ↦ ?_⟩
   let E : AdjoinRoot Φ ≃ᵐ (Fin Φ.natDegree → O) :=
     { toEquiv := e.toEquiv, measurable_toFun := hme, measurable_invFun := hmes }
   rw [show unramifiedCoefficientMeasure O Φ hm =
@@ -241,7 +242,7 @@ theorem integral_closure_is_dvr (O K L : Type) [CommRing O] [IsDomain O] [IsDisc
   have hD := integral_closure_is_dedekind O K L
   have hN : IsNoetherianRing (integralClosure O L) := inferInstance
   exact ((IsDiscreteValuationRing.TFAE (R := integralClosure O L)
-    (integral_closure_not_field O K L)).out 0 2).mpr hD
+    (integral_closure_not_field O K L)).out 1 3).mpr hD
 
 /-- The integral closure is complete for its own maximal ideal. -/
 theorem integral_closure_own_adic_complete (O K L : Type) [CommRing O] [IsDomain O]
@@ -293,7 +294,7 @@ private theorem irreducible_factor_invariant_degree (O : Type) [CommRing O] [IsD
   have hdeg : Module.finrank (BaseField O) (AdjoinRoot g) = g.natDegree :=
     finrank_quotient_span_eq_natDegree
   unfold factorInvariant
-  rw [dif_pos hloc]
+  rw [dite_eq_left hloc]
   exact ⟨h.1, h.2.1, h.2.2.trans hdeg⟩
 
 /-- A polynomial type of `F` is a valid factor type of degree `deg F`. -/

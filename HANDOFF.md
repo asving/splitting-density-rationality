@@ -1,3 +1,8 @@
+> **Update 2026-11-11 (v1.3.0).** No owner decision remains open: the license was confirmed on 2026-10-17, and
+> sign-off markers were dropped (what is published is taken charge of by the authors). The toolchain is now Lean
+> v4.35.0 with Mathlib v4.35.0. Re-verify with `tools/release_check_local.sh` from the repository root; the paths
+> and the `taskset` calls in `tools/release_check.sh` and below refer to the original workspace.
+
 > **Cycle 4c update (2026-10-12): Verdict NONE (engineering).** All 14 reviewer items processed
 > (12 DONE, 2 PARTIAL with documented premise-wrong sub-parts; see `CYCLE4C_DONE.md`). Remaining before
 > publication are only the owner decisions (license, main-statement sign-off).

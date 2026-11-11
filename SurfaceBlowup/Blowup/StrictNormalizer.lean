@@ -124,17 +124,17 @@ theorem concrete_strict_transform_transverse_finite (O : Type) [CommRing O] [IsD
     (hP : (chartBase (ConcreteSurface O pi u a b) (surfaceT O pi u a b) (surfaceX O pi u a b))
     (surfaceT O pi u a b) ∈ P) : Function.Injective
     (fun w : CompletedLocalAt (BlowupChart (ConcreteSurface O pi u a b) (surfaceT O pi u a b)
-    (surfaceX O pi u a b)) P ⧸ Ideal.span {completedPointMap
-    (BlowupChart (ConcreteSurface O pi u a b) (surfaceT O pi u a b) (surfaceX O pi u a b)) P FA} =>
-    Ideal.Quotient.mk (Ideal.span {completedPointMap
-    (BlowupChart (ConcreteSurface O pi u a b) (surfaceT O pi u a b) (surfaceX O pi u a b)) P FA})
+    (surfaceX O pi u a b)) P ⧸ Ideal.span {completedPointMap (BlowupChart
+    (ConcreteSurface O pi u a b) (surfaceT O pi u a b) (surfaceX O pi u a b)) P FA} =>
+    Ideal.Quotient.mk (Ideal.span {completedPointMap (BlowupChart
+    (ConcreteSurface O pi u a b) (surfaceT O pi u a b) (surfaceX O pi u a b)) P FA})
     (completedPointMap (BlowupChart (ConcreteSurface O pi u a b) (surfaceT O pi u a b)
     (surfaceX O pi u a b)) P ((chartBase (ConcreteSurface O pi u a b) (surfaceT O pi u a b)
     (surfaceX O pi u a b)) (surfaceT O pi u a b))) * w) ∧ Function.Injective
     (fun w : CompletedLocalAt (BlowupChart (ConcreteSurface O pi u a b) (surfaceT O pi u a b)
-    (surfaceX O pi u a b)) P ⧸ Ideal.span {completedPointMap
-    (BlowupChart (ConcreteSurface O pi u a b) (surfaceT O pi u a b) (surfaceX O pi u a b)) P
-    ((chartBase (ConcreteSurface O pi u a b) (surfaceT O pi u a b) (surfaceX O pi u a b))
+    (surfaceX O pi u a b)) P ⧸ Ideal.span {completedPointMap (BlowupChart
+    (ConcreteSurface O pi u a b) (surfaceT O pi u a b) (surfaceX O pi u a b)) P ((chartBase
+    (ConcreteSurface O pi u a b) (surfaceT O pi u a b) (surfaceX O pi u a b))
     (surfaceT O pi u a b))} => Ideal.Quotient.mk
     (Ideal.span {completedPointMap (BlowupChart (ConcreteSurface O pi u a b) (surfaceT O pi u a b)
     (surfaceX O pi u a b)) P ((chartBase (ConcreteSurface O pi u a b) (surfaceT O pi u a b)
@@ -152,8 +152,8 @@ theorem concrete_strict_transform_transverse_finite (O : Type) [CommRing O] [IsD
   have hreg := concrete_left_point_exceptional_regular O pi hpi u a b ha P hP
   obtain ⟨O', c1, c2, c3, c4, c5, pi', u', a', b', hpi', ha', Eq, q, hEq, hq⟩ :=
     concrete_strict_transform_reduction_ne_zero O pi hpi u a b ha FA hne P hP
-  let e1 := Ideal.quotientEquiv (Ideal.span {completedPointMap _ P
-    (chartBase _ (surfaceT O pi u a b) (surfaceX O pi u a b) (surfaceT O pi u a b))})
+  let e1 := Ideal.quotientEquiv (Ideal.span {completedPointMap _ P (chartBase _
+    (surfaceT O pi u a b) (surfaceX O pi u a b) (surfaceT O pi u a b))})
     (Ideal.span {surfaceT O' pi' u' a' b'}) Eq (by
       rw [Ideal.map_span, Set.image_singleton]; exact congrArg (Ideal.span {·}) hEq.symm)
   obtain ⟨k1, k2, L, hL'⟩ := transverse_of_reduction_ne_zero _ _ _ hreg
@@ -237,7 +237,7 @@ theorem concrete_strict_transform_multiplicity (O : Type) [CommRing O] [IsDomain
     have hc := congrArg (fun p => Polynomial.coeff p i.val) h0
     simp only [Fbar, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow,
       Polynomial.coeff_zero] at hc
-    rw [Finset.sum_eq_single i (fun j _ hj => if_neg fun hji => hj (Fin.ext hji.symm))
+    rw [Finset.sum_eq_single i (fun j _ hj => ite_eq_right fun hji => hj (Fin.ext hji.symm))
       (by simp)] at hc
     exact hi (by rw [← h461, ← IsLocalRing.residue_eq_zero_iff]; simpa using hc :
       c i ∈ surfaceParameterIdeal O pi u a b)
@@ -694,8 +694,8 @@ theorem concrete_surface_single_curve_free (O : Type) [CommRing O] [IsDomain O]
         (hu.map (Ideal.Quotient.mk (Ideal.span {algebraMap O (ConcreteSurface O pi u a 0) pi}))).map
         e
     have htop : Ideal.span
-      {e (Ideal.Quotient.mk (Ideal.span {algebraMap O (ConcreteSurface O pi u a 0) pi}) f), fiberT
-      (IsLocalRing.ResidueField O) a 0} = ⊤ := by
+      {e (Ideal.Quotient.mk (Ideal.span {algebraMap O (ConcreteSurface O pi u a 0) pi}) f),
+        fiberT (IsLocalRing.ResidueField O) a 0} = ⊤ := by
       exact Ideal.eq_top_of_isUnit_mem _ (Ideal.subset_span (by simp)) hu'
     rw [contact, htop] at hcontact
     have : Subsingleton

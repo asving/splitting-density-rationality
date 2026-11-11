@@ -484,6 +484,7 @@ theorem integral_closure_invariants_degree (O K L : Type) [CommRing O] [IsDomain
       (IsLocalRing.maximalIdeal (integralClosure O L)).ramificationIdx O *
         (IsLocalRing.maximalIdeal (integralClosure O L)).inertiaDeg O = Module.finrank K L := by
   obtain ⟨-, _, hrank⟩ := integral_closure_finite_free O K L
+  have : IsNoetherianRing (integralClosure O L) := IsNoetherianRing.of_finite O _
   refine ⟨Ideal.ramificationIdx_pos _ _, Ideal.inertiaDeg_pos _ _, ?_⟩
   rw [finite_flat_local_ramification_degree O (integralClosure O L), hrank]
 

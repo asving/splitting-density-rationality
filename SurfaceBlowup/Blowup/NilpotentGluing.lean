@@ -255,7 +255,7 @@ private lemma cech_kernel_step (R : Type) [CommRing R] (t x : R) (hreg : Regular
     (hb : b ∈ (Ideal.span {chartBase R x t x}) ^ j)
     (hD : fullCechDifferential R t x beta d (a, b) ∈
       (Ideal.span {algebraMap (BlowupChart R t x) (BlowupOverlap R t x)
-          (chartBase R t x t)}) ^ (j + 1)) :
+                     (chartBase R t x t)}) ^ (j + 1)) :
     a ∈ (Ideal.span {chartBase R t x t})^(j+1) ∧ b ∈ (Ideal.span {chartBase R x t x})^(j+1) := by
   set ι := algebraMap (BlowupChart R t x) (BlowupOverlap R t x)
   set eA := chartBase R t x t
@@ -318,7 +318,7 @@ theorem actual_negative_twist_kernel_zero (R : Type) [CommRing R] (t x : R)
     rw [Submodule.Quotient.mk_eq_zero]
     have hz' : fullCechDifferential R t x beta d (a, b) ∈
         (Ideal.span {algebraMap (BlowupChart R t x) (BlowupOverlap R t x)
-          (chartBase R t x t)})^n := hz
+                       (chartBase R t x t)})^n := hz
     have main (j : ℕ) (hj : j ≤ n) : a ∈ (Ideal.span {chartBase R t x t})^j ∧
         b ∈ (Ideal.span {chartBase R x t x})^j := by
       induction j with
@@ -448,8 +448,8 @@ theorem finite_support_level_kernels_principal (R : Type) [CommRing R] (t x : R)
       (BlowupChart R t x) (P i) (chartBase R t x t) (g i) j) :
     ∃ F : ℕ → BlowupChart R t x, ∀ j : ℕ, finiteSupportLevelKernel (BlowupChart R t x) ι P
     (fun i ↦ finiteLocalCurveIdeal (BlowupChart R t x) (P i) (chartBase R t x t) (g i) j)
-    (chartBase R t x t) j = Ideal.span {Ideal.Quotient.mk ((Ideal.span {chartBase R t x t})^j)
-      (F j)} := by
+    (chartBase R t x t) j =
+      Ideal.span {Ideal.Quotient.mk ((Ideal.span {chartBase R t x t})^j) (F j)} := by
   obtain ⟨φ, -, -⟩ := exceptional_chart_is_affine_line R t x
   let _ : Field (R ⧸ Ideal.span ({t,x} : Set R)) := Ideal.Quotient.field _
   have hPIR1 : IsPrincipalIdealRing (ExceptionalChartLevel R t x 1) :=
@@ -461,8 +461,8 @@ theorem finite_support_level_kernels_principal (R : Type) [CommRing R] (t x : R)
         (Ideal.quotEquivOfEq hEq).surjective
   have key (j : ℕ) : ∃ f : BlowupChart R t x, finiteSupportLevelKernel (BlowupChart R t x) ι P
       (fun i ↦ finiteLocalCurveIdeal (BlowupChart R t x) (P i) (chartBase R t x t) (g i) j)
-      (chartBase R t x t) j = Ideal.span {Ideal.Quotient.mk
-      ((Ideal.span {chartBase R t x t})^j) f} := by
+      (chartBase R t x t) j =
+        Ideal.span {Ideal.Quotient.mk ((Ideal.span {chartBase R t x t})^j) f} := by
     rcases Nat.eq_zero_or_pos j with rfl | hj
     · refine ⟨0, ?_⟩
       have : Subsingleton (BlowupChart R t x ⧸ (Ideal.span {chartBase R t x t})^0) := by
@@ -623,9 +623,10 @@ theorem curve_datum_surj_and_inf_clauses (O : Type) [CommRing O] [IsDomain O]
       (tBase O pi u a b) (surfaceT O pi u a b) ∈ P → (∑ i : Fin (d+1), algebraMap
         (ConcreteSurface O pi u a b) (tChart O pi u a b) (c i) * (tSlope O pi u a b)^i.val) ∈ P →
       ∃ s : D.ι ⊕ D.ι0, leftPoint D s = P)
-    (hright : ∀ s : D.ι ⊕ D.ιinf, Ideal.span {rightData D s} = Ideal.span {completedPointMap
-      (xChart O pi u a b) (rightPoint D s) (∑ i : Fin (d+1), algebraMap (ConcreteSurface O pi u a b)
-        (xChart O pi u a b) (c i) * (xSlope O pi u a b)^(d - i.val))} ∧
+    (hright : ∀ s : D.ι ⊕ D.ιinf, Ideal.span {rightData D s} =
+      Ideal.span {completedPointMap (xChart O pi u a b) (rightPoint D s)
+                    (∑ i : Fin (d+1), algebraMap (ConcreteSurface O pi u a b)
+                      (xChart O pi u a b) (c i) * (xSlope O pi u a b)^(d - i.val))} ∧
       (∑ i : Fin (d+1), algebraMap (ConcreteSurface O pi u a b) (xChart O pi u a b) (c i) *
         (xSlope O pi u a b)^(d - i.val)) ∈ rightPoint D s)
     (hrightsurj : ∀ P : Ideal (xChart O pi u a b), P.IsMaximal →
@@ -782,8 +783,9 @@ private theorem level_generator_ne_zero (R : Type) [CommRing R] (t x : R)
       (BlowupChart R t x) (P i) (chartBase R t x t) (g i) 1) (F : ℕ → BlowupChart R t x)
     (hF : ∀ j : ℕ, finiteSupportLevelKernel (BlowupChart R t x) ι P
       (fun i ↦ finiteLocalCurveIdeal (BlowupChart R t x) (P i) (chartBase R t x t) (g i) j)
-      (chartBase R t x t) j = Ideal.span {Ideal.Quotient.mk ((Ideal.span {chartBase R t x t})^j)
-      (F j)}) (j : ℕ) (hj : 0 < j) : Ideal.Quotient.mk (chartExceptional R t x) (F j) ≠ 0 := by
+      (chartBase R t x t) j =
+        Ideal.span {Ideal.Quotient.mk ((Ideal.span {chartBase R t x t})^j) (F j)})
+    (j : ℕ) (hj : 0 < j) : Ideal.Quotient.mk (chartExceptional R t x) (F j) ≠ 0 := by
   have := Fintype.ofFinite ι
   set K := finiteSupportKernel (BlowupChart R t x) ι P
       (fun i ↦ finiteLocalCurveIdeal (BlowupChart R t x) (P i) (chartBase R t x t) (g i) j)
@@ -828,8 +830,8 @@ theorem finite_support_level_generator_regular (R : Type) [CommRing R] (t x : R)
     (F : ℕ → BlowupChart R t x) (hF : ∀ j : ℕ,
       finiteSupportLevelKernel (BlowupChart R t x) ι P
       (fun i ↦ finiteLocalCurveIdeal (BlowupChart R t x) (P i) (chartBase R t x t) (g i) j)
-      (chartBase R t x t) j = Ideal.span {Ideal.Quotient.mk ((Ideal.span {chartBase R t x t})^j)
-      (F j)}) (j : ℕ) :
+      (chartBase R t x t) j =
+        Ideal.span {Ideal.Quotient.mk ((Ideal.span {chartBase R t x t})^j) (F j)}) (j : ℕ) :
     Function.Injective (fun c : BlowupChart R t x ⧸ (chartExceptional R t x)^j ↦ Ideal.Quotient.mk
       ((chartExceptional R t x)^j) (F j) * c) := by
   have := Fintype.ofFinite ι
@@ -857,8 +859,8 @@ theorem overlap_level_generator_regular (R : Type) [CommRing R] (t x : R)
       (BlowupChart R x t) (P i) (chartBase R x t x) (g i) 1) (F : ℕ → BlowupChart R x t)
     (hF : ∀ j : ℕ, finiteSupportLevelKernel (BlowupChart R x t) ι P
       (fun i ↦ finiteLocalCurveIdeal (BlowupChart R x t) (P i) (chartBase R x t x) (g i) j)
-      (chartBase R x t x) j = Ideal.span {Ideal.Quotient.mk ((Ideal.span {chartBase R x t x})^j)
-      (F j)}) (j : ℕ) :
+      (chartBase R x t x) j =
+        Ideal.span {Ideal.Quotient.mk ((Ideal.span {chartBase R x t x})^j) (F j)}) (j : ℕ) :
     Function.Injective (fun c : BlowupOverlap R t x ⧸ (Ideal.span {overlapException R t x})^j ↦
       Ideal.Quotient.mk ((Ideal.span {overlapException R t x})^j) (beta.right (F j)) * c) := by
   have := Fintype.ofFinite ι
@@ -1373,8 +1375,8 @@ theorem concrete_infinity_boundary_contact (O : Type) [CommRing O] [IsDomain O]
     (d : ℕ∞) + Module.length (CompletedLocalAt (xChart O pi u a b) Pinf)
     (CompletedLocalAt (xChart O pi u a b) Pinf ⧸
       (Ideal.span {completedPointMap (xChart O pi u a b) Pinf
-          (∑ i : Fin (d+1), algebraMap (ConcreteSurface O pi u a b) (xChart O pi u a b) (c i) *
-            (xSlope O pi u a b)^(d - i.val))} ⊔
+                     (∑ i : Fin (d+1), algebraMap (ConcreteSurface O pi u a b)
+                       (xChart O pi u a b) (c i) * (xSlope O pi u a b)^(d - i.val))} ⊔
         Ideal.span {completedPointMap (xChart O pi u a b) Pinf (xSlope O pi u a b)})) := by
   obtain ⟨s, hs⟩ := Ideal.Quotient.mk_surjective (c (Fin.last d))
   change surfaceMk O pi u a b s = _ at hs
@@ -1440,8 +1442,8 @@ theorem concrete_zero_boundary_contact (O : Type) [CommRing O] [IsDomain O]
     (d : ℕ∞) + Module.length (CompletedLocalAt (tChart O pi u a b) P)
     (CompletedLocalAt (tChart O pi u a b) P ⧸
       (Ideal.span {completedPointMap (tChart O pi u a b) P
-          (∑ i : Fin (d+1), algebraMap (ConcreteSurface O pi u a b) (tChart O pi u a b) (c i) *
-            (tSlope O pi u a b)^i.val)} ⊔
+                     (∑ i : Fin (d+1), algebraMap (ConcreteSurface O pi u a b)
+                       (tChart O pi u a b) (c i) * (tSlope O pi u a b)^i.val)} ⊔
         Ideal.span {completedPointMap (tChart O pi u a b) P (tSlope O pi u a b)})) := by
   obtain ⟨s, hs⟩ := Ideal.Quotient.mk_surjective (c 0)
   change surfaceMk O pi u a b s = _ at hs

@@ -277,7 +277,7 @@ theorem qpow_zero : qpow 0 = 1 := by simp [qpow, scalar, AddMonoidAlgebra.one_de
 /-- `adamsRat δ` (`δ > 0`) extends `adamsPoly δ`. -/
 private theorem adamsRat_algebraMap (δ : ℕ) (hδ : 0 < δ) (g : Polynomial ℚ) :
     adamsRat δ (algebraMap (Polynomial ℚ) (RatFunc ℚ) g) = adamsPoly δ g := by
-  unfold adamsRat; rw [dif_pos hδ]; simp
+  unfold adamsRat; rw [dite_eq_left hδ]; simp
 
 /-- `recipRat` extends `recipPoly`. -/
 theorem recipRat_algebraMap (g : Polynomial ℚ) :
@@ -346,7 +346,7 @@ theorem adamsRat_zpow_X (δ : ℕ) (hδ : 0 < δ) (j : ℤ) :
 theorem coeff_adamsSer (k : ℕ) (hk : k ≠ 0) (f : Ser) (n : ℕ) :
     PowerSeries.coeff n (adamsSer k f) =
       if k ∣ n then adamsCoef k (PowerSeries.coeff (n / k) f) else 0 := by
-  simp only [adamsSer, dif_neg hk, PowerSeries.coeff_expand, PowerSeries.coeff_map]
+  simp only [adamsSer, dite_eq_right hk, PowerSeries.coeff_expand, PowerSeries.coeff_map]
 
 /-- The constant term of `ψ_k f` is `ψ_k` of the constant term of `f` (`k ≠ 0`). -/
 theorem constantCoeff_adamsSer (k : ℕ) (hk : k ≠ 0) (f : Ser) :
@@ -355,12 +355,12 @@ theorem constantCoeff_adamsSer (k : ℕ) (hk : k ≠ 0) (f : Ser) :
 
 /-- `ψ_k 1 = 1` (`k ≠ 0`). -/
 theorem adamsSer_one (k : ℕ) (hk : k ≠ 0) : adamsSer k (1 : Ser) = 1 := by
-  simp [adamsSer, dif_neg hk]
+  simp [adamsSer, dite_eq_right hk]
 
 /-- `ψ_k` on series is additive on differences (`k ≠ 0`). -/
 theorem adamsSer_sub (k : ℕ) (hk : k ≠ 0) (f g : Ser) :
     adamsSer k (f - g) = adamsSer k f - adamsSer k g := by
-  simp [adamsSer, dif_neg hk]
+  simp [adamsSer, dite_eq_right hk]
 
 /-- Through degree `n`, `ψ_m(B_a) - 1` is the finite sum
 `Σ_{r < n} ψ_m(F_{S(a;r+1)}) x^{m(r+1)}`. -/
@@ -383,18 +383,18 @@ theorem adamsSer_clusterSer_sub_one_scongr (a m n : ℕ) (hm : 0 < m) :
     · have e : s - 1 + 1 = s := by omega
       simp [h0, clusterSer, Nat.mul_div_cancel_left _ hm, hs.ne', e]
     · intro r _ hr
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hh
       exact hr (Fin.ext (by have := Nat.eq_of_mul_eq_mul_left hm hh; simp; omega))
     · simp
-  · rw [if_neg hd, Finset.sum_eq_zero fun r _ ↦ if_neg fun h ↦ hd ⟨_, h⟩]
+  · rw [ite_eq_right hd, Finset.sum_eq_zero fun r _ ↦ ite_eq_right fun h ↦ hd ⟨_, h⟩]
     simp [h0]
 
 /-! ### Exponential, logarithm and binomial series -/
 
 /-- The binomial series `Σ C(c,n) xⁿ` solves `(1 + x) y' = c y`. -/
 theorem binomial_series_ode (c : RatFunc ℚ) :
-    (1 + PowerSeries.X) * PowerSeries.derivative Coef (PowerSeries.mk fun n ↦
+    (1 + PowerSeries.X) * PowerSeries.derivative (PowerSeries.mk fun n ↦
       ((n.factorial : ℚ)⁻¹) • ∏ j ∈ Finset.range n, (scalar c - (j : ℚ) • (1 : Coef))) =
     PowerSeries.C (scalar c) * PowerSeries.mk (fun n ↦
       ((n.factorial : ℚ)⁻¹) • ∏ j ∈ Finset.range n, (scalar c - (j : ℚ) • (1 : Coef))) := by
@@ -405,7 +405,7 @@ theorem binomial_series_ode (c : RatFunc ℚ) :
     simp only [hb, Finset.prod_range_succ, smul_smul, Nat.factorial_succ, Nat.cast_mul]
     rw [mul_inv, ← mul_assoc, mul_inv_cancel₀ (by positivity), one_mul, mul_comm _ (scalar c - _),
       mul_smul_comm]
-  have hd : ∀ m : ℕ, PowerSeries.coeff m (PowerSeries.derivative Coef (PowerSeries.mk b))
+  have hd : ∀ m : ℕ, PowerSeries.coeff m (PowerSeries.derivative (PowerSeries.mk b))
       = ((m + 1 : ℕ) : ℚ) • b (m + 1) := by
     intro m
     rw [PowerSeries.coeff_derivative, PowerSeries.coeff_mk, mul_comm, Nat.cast_smul_eq_nsmul,
@@ -432,7 +432,7 @@ theorem constantCoeff_expSer (f : Ser) (hf : PowerSeries.constantCoeff f = 0) :
 
 /-- The chain rule `(exp f)' = f' · exp f` (for `f(0) = 0`). -/
 theorem derivative_expSer (f : Ser) (hf : PowerSeries.constantCoeff f = 0) :
-    PowerSeries.derivative Coef (expSer f) = PowerSeries.derivative Coef f * expSer f := by
+    PowerSeries.derivative (expSer f) = PowerSeries.derivative f * expSer f := by
   rw [expSer, PowerSeries.derivative_subst (PowerSeries.HasSubst.of_constantCoeff_zero' hf),
     PowerSeries.derivative_exp, mul_comm]
 
@@ -449,7 +449,7 @@ theorem constantCoeff_logSer (g : Ser) (hg : PowerSeries.constantCoeff g = 1) :
 
 /-- The logarithmic derivative `g · (log g)' = g'` (for `g(0) = 1`). -/
 theorem mul_derivative_logSer (g : Ser) (hg : PowerSeries.constantCoeff g = 1) :
-    g * PowerSeries.derivative Coef (logSer g) = PowerSeries.derivative Coef g := by
+    g * PowerSeries.derivative (logSer g) = PowerSeries.derivative g := by
   have hs : PowerSeries.HasSubst (g - 1) :=
     PowerSeries.HasSubst.of_constantCoeff_zero' (by simp [hg])
   set G : Ser := PowerSeries.mk fun n ↦ algebraMap ℚ Coef ((-1 : ℚ) ^ n) with hG
@@ -460,7 +460,7 @@ theorem mul_derivative_logSer (g : Ser) (hg : PowerSeries.constantCoeff g = 1) :
     · simp [hG]; rfl
     · rw [PowerSeries.coeff_succ_X_mul]
       simp only [hG, PowerSeries.coeff_mk, PowerSeries.coeff_one]
-      rw [← map_add, if_neg (Nat.succ_ne_zero n), pow_succ]
+      rw [← map_add, ite_eq_right (Nat.succ_ne_zero n), pow_succ]
       simp
   have hsub : g * G.subst (g - 1) = 1 := by
     have := congrArg (fun f : Ser ↦ f.subst (g - 1)) hgeom
@@ -468,8 +468,12 @@ theorem mul_derivative_logSer (g : Ser) (hg : PowerSeries.constantCoeff g = 1) :
     have h1 : (1 : Ser).subst (g - 1) = (1 : Ser) := by
       rw [← map_one (PowerSeries.C (R := Coef)), PowerSeries.subst_C]; rfl
     rwa [h1, add_sub_cancel] at this
-  rw [logSer, PowerSeries.logOf_eq, PowerSeries.derivative_subst hs, PowerSeries.deriv_log, ← hG,
-    map_sub, PowerSeries.derivative_one, sub_zero, ← mul_assoc, hsub, one_mul]
+  have hG' : (PowerSeries.mk fun n ↦ (-1 : Coef) ^ n) = G := by
+    rw [hG]
+    exact PowerSeries.ext fun n ↦ by
+      rw [PowerSeries.coeff_mk, PowerSeries.coeff_mk, map_pow, map_neg, map_one]
+  rw [logSer, PowerSeries.logOf_eq, PowerSeries.derivative_subst hs, PowerSeries.derivative_log,
+    hG', map_sub, PowerSeries.derivative_one, sub_zero, ← mul_assoc, hsub, one_mul]
 
 private theorem coeff_pow_eq_of_scongr (n : ℕ) (hn : 0 < n) (f g : Ser)
     (hf : PowerSeries.constantCoeff f = 0) (hg : PowerSeries.constantCoeff g = 0)
@@ -489,7 +493,7 @@ private theorem coeff_pow_eq_of_scongr (n : ℕ) (hn : 0 < n) (f g : Ser)
     intro i hi
     have e : PowerSeries.trunc n (f ^ (k + 1)) = PowerSeries.trunc n (g ^ (k + 1)) := by
       rw [← PowerSeries.trunc_trunc_pow, htr, PowerSeries.trunc_trunc_pow]
-    simpa only [PowerSeries.coeff_trunc, if_pos (show i < n by omega)] using
+    simpa only [PowerSeries.coeff_trunc, ite_eq_left (show i < n by omega)] using
       congrArg (fun p ↦ Polynomial.coeff p i) e
   rw [pow_succ f, pow_succ g, PowerSeries.coeff_mul, PowerSeries.coeff_mul]
   refine Finset.sum_congr rfl fun p hp ↦ ?_
@@ -813,7 +817,7 @@ private theorem antidiagonal_shift_sum_eq_zero {c k : ℕ} {p : ℕ × ℕ}
   rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
   refine Finset.sum_eq_zero fun r hr ↦ ?_
   rw [Finset.HasAntidiagonal.mem_antidiagonal] at hr
-  rw [if_neg]
+  rw [ite_eq_right]
   omega
 
 /-- `ι₊` is multiplicative for the twisted product. -/
@@ -938,10 +942,11 @@ private theorem qtripleTerm_eq (A Cq : QSer) (D : Ser) {c h rx m rt : ℕ}
           ((rx : ℤ) + (m : ℤ)) * (rt : ℤ)) *
         (A rx (h - (rx + m + rt)) * (PowerSeries.coeff m D * Cq (c - (rx + m + rt)) rt)) := by
   simp only [qtripleTerm, qplus, qdiag, qminus]
-  rw [if_pos (by omega : rx ≤ rx + m ∧ h - rt - m ≤ h - rt),
+  rw [ite_eq_left (by omega : rx ≤ rx + m ∧ h - rt - m ≤ h - rt),
     show rx + m - rx = m by omega, show h - rt - (h - rt - m) = m by omega,
-    show h - (h - rt) = rt by omega, if_pos (show rx ≤ h - rt - m by omega), if_pos rfl,
-    if_pos (show rt ≤ c - (rx + m) by omega), show h - rt - m - rx = h - (rx + m + rt) by omega,
+    show h - (h - rt) = rt by omega, ite_eq_left (show rx ≤ h - rt - m by omega), ite_eq_left rfl,
+    ite_eq_left (show rt ≤ c - (rx + m) by omega),
+    show h - rt - m - rx = h - (rx + m + rt) by omega,
     show c - (rx + m) - rt = c - (rx + m + rt) by omega]
   have hq : qpow (-(chooseTwo rx : ℤ) - (chooseTwo m : ℤ) - (chooseTwo rt : ℤ) -
       (rx : ℤ) * (m : ℤ) - ((rx : ℤ) + (m : ℤ)) * (rt : ℤ)) =
@@ -973,10 +978,10 @@ theorem qmul_qplus_qdiag_qminus_apply (A Cq : QSer) (D : Ser) (c h : ℕ) :
     else 0) with hT
   have hval : ∀ rx m rt : ℕ, rx + m + rt ≤ c → rx + m + rt ≤ h →
       T rx m rt = G (rx + m) (h - rt) rx (h - rt - m) := fun rx m rt hc1 hc2 ↦ by
-    rw [hT, hG, qtripleTerm_eq A Cq D hc1 hc2]; exact if_pos ⟨hc1, hc2⟩
+    rw [hT, hG, qtripleTerm_eq A Cq D hc1 hc2]; exact ite_eq_left ⟨hc1, hc2⟩
   have hT0 : ∀ x : ℕ × ℕ × ℕ, T x.1 x.2.1 x.2.2 ≠ 0 →
       x.1 + x.2.1 + x.2.2 ≤ c ∧ x.1 + x.2.1 + x.2.2 ≤ h := fun x hne ↦ by
-    by_contra hc; exact hne (by simp only [hT]; rw [if_neg hc])
+    by_contra hc; exact hne (by simp only [hT]; rw [ite_eq_right hc])
   have hR : ∑ rx ∈ Finset.range (c + 1), ∑ m ∈ Finset.range (c + 1), ∑ rt ∈ Finset.range (c + 1),
       T rx m rt = ∑ x ∈ Finset.range (c + 1) ×ˢ (Finset.range (c + 1) ×ˢ Finset.range (c + 1)),
         T x.1 x.2.1 x.2.2 := by
@@ -1025,7 +1030,7 @@ theorem qcongr_qplus_qone (j : ℕ) (U : QSer) (hU : QPositive U) (h : QCongr (j
     simpa [chooseTwo, qpow_zero, qone] using h 0 0 (by omega)
   · rcases Nat.eq_zero_or_pos c with rfl | c0
     · rw [Nat.sub_zero, hU 0 k (Or.inl rfl) (by omega), mul_zero]
-    · rw [h c (k - c) (by omega), qone, if_neg (by omega), mul_zero]
+    · rw [h c (k - c) (by omega), qone, ite_eq_right (by omega), mul_zero]
   · omega
   · rfl
 

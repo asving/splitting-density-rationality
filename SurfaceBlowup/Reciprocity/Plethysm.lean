@@ -86,13 +86,13 @@ private theorem coeff_moebiusSum_sub_of_scongr (n : ℕ) (hn : 0 < n) (f g : Ser
 /-- Uniqueness for the linear ODE `g E' = w E` with `g(0) = 1`: a solution is determined by its
 constant term. -/
 theorem eq_of_mul_derivative_eq_mul (g w E F : Ser) (hg : PowerSeries.constantCoeff g = 1)
-    (hE : g * PowerSeries.derivative Coef E = w * E)
-    (hF : g * PowerSeries.derivative Coef F = w * F)
+    (hE : g * PowerSeries.derivative E = w * E)
+    (hF : g * PowerSeries.derivative F = w * F)
     (h0 : PowerSeries.constantCoeff E = PowerSeries.constantCoeff F) :
     E = F := by
-  have := IsAddTorsionFree.of_module_rat (M := Coef)
+  have := HasUniqueDiv.of_module_rat (M := Coef)
   set D : Ser := E - F with hDdef
-  have hD : g * PowerSeries.derivative Coef D = w * D := by
+  have hD : g * PowerSeries.derivative D = w * D := by
     simp only [hDdef, map_sub, mul_sub, hE, hF]
   have key : ∀ n, ∀ m ≤ n, PowerSeries.coeff m D = 0 := by
     intro n
@@ -115,7 +115,7 @@ theorem eq_of_mul_derivative_eq_mul (g w E F : Ser) (hg : PowerSeries.constantCo
       have hmem : ((0 : ℕ), n) ∈ Finset.HasAntidiagonal.antidiagonal n := by simp
       rw [hR, ← Finset.add_sum_erase _ _ hmem] at hc
       have hL : ∑ p ∈ (Finset.HasAntidiagonal.antidiagonal n).erase (0, n),
-          PowerSeries.coeff p.1 g * PowerSeries.coeff p.2 (PowerSeries.derivative Coef D) = 0 :=
+          PowerSeries.coeff p.1 g * PowerSeries.coeff p.2 (PowerSeries.derivative D) = 0 :=
         Finset.sum_eq_zero fun p hp ↦ by
           rw [Finset.mem_erase, Finset.HasAntidiagonal.mem_antidiagonal] at hp
           have : p.1 ≠ 0 := fun h0' ↦ hp.1 (by ext <;> simp <;> omega)
@@ -133,7 +133,7 @@ theorem expSer_add (f g : Ser) (hf : PowerSeries.constantCoeff f = 0)
     (hg : PowerSeries.constantCoeff g = 0) :
     expSer (f + g) = expSer f * expSer g := by
   have hfg : PowerSeries.constantCoeff (f + g) = 0 := by rw [map_add, hf, hg, add_zero]
-  apply eq_of_mul_derivative_eq_mul 1 (PowerSeries.derivative Coef (f + g)) _ _
+  apply eq_of_mul_derivative_eq_mul 1 (PowerSeries.derivative (f + g)) _ _
     PowerSeries.constantCoeff_one
   · rw [one_mul, derivative_expSer _ hfg]
   · rw [one_mul, Derivation.leibniz, derivative_expSer f hf, derivative_expSer g hg, map_add]
@@ -145,7 +145,7 @@ theorem expSer_add (f g : Ser) (hf : PowerSeries.constantCoeff f = 0)
 /-- `exp ∘ log = id` on series with constant term `1`. -/
 theorem expSer_logSer (g : Ser) (hg : PowerSeries.constantCoeff g = 1) : expSer (logSer g) = g := by
   have hL0 := constantCoeff_logSer g hg
-  apply eq_of_mul_derivative_eq_mul g (PowerSeries.derivative Coef g) _ _ hg
+  apply eq_of_mul_derivative_eq_mul g (PowerSeries.derivative g) _ _ hg
   · rw [derivative_expSer _ hL0, ← mul_assoc, mul_derivative_logSer g hg]
   · exact mul_comm _ _
   · rw [constantCoeff_expSer _ hL0, hg]
@@ -155,9 +155,9 @@ theorem logSer_expSer (f : Ser) (hf : PowerSeries.constantCoeff f = 0) : logSer 
   have hE0 := constantCoeff_expSer f hf
   have hu : IsUnit (expSer f) := by
     rw [PowerSeries.isUnit_iff_constantCoeff, hE0]; exact isUnit_one
-  have hd : PowerSeries.derivative Coef (logSer (expSer f)) = PowerSeries.derivative Coef f :=
+  have hd : PowerSeries.derivative (logSer (expSer f)) = PowerSeries.derivative f :=
     hu.mul_left_cancel (by rw [mul_derivative_logSer _ hE0, derivative_expSer f hf, mul_comm])
-  have := IsAddTorsionFree.of_module_rat (M := Coef)
+  have := HasUniqueDiv.of_module_rat (M := Coef)
   exact PowerSeries.derivative.ext hd (by rw [constantCoeff_logSer _ hE0, hf])
 
 /-- The formal power `g^c = exp(c log g)` has constant term `1` (for `g(0) = 1`). -/
@@ -170,10 +170,10 @@ private theorem constantCoeff_formalPow (c : RatFunc ℚ) (g : Ser)
 /-- The formal power solves the ODE `g (g^c)' = c g' g^c` (for `g(0) = 1`). -/
 private theorem mul_derivative_formalPow (c : RatFunc ℚ) (g : Ser)
     (hg : PowerSeries.constantCoeff g = 1) :
-    g * PowerSeries.derivative Coef (formalPow c g) =
-      PowerSeries.C (scalar c) * PowerSeries.derivative Coef g * formalPow c g := by
-  have hl : PowerSeries.derivative Coef (PowerSeries.C (scalar c) * logSer g) =
-      PowerSeries.C (scalar c) * PowerSeries.derivative Coef (logSer g) := by
+    g * PowerSeries.derivative (formalPow c g) =
+      PowerSeries.C (scalar c) * PowerSeries.derivative g * formalPow c g := by
+  have hl : PowerSeries.derivative (PowerSeries.C (scalar c) * logSer g) =
+      PowerSeries.C (scalar c) * PowerSeries.derivative (logSer g) := by
     rw [Derivation.leibniz, PowerSeries.derivative_C]; simp
   rw [formalPow, derivative_expSer _ (by rw [map_mul, PowerSeries.constantCoeff_C,
     constantCoeff_logSer g hg, mul_zero]), hl, ← mul_derivative_logSer g hg]
@@ -194,7 +194,7 @@ theorem coeff_formalPow (c : RatFunc ℚ) (g : Ser) (hg : PowerSeries.constantCo
   have hODE := binomial_series_ode c
   rw [← hB] at hODE
   have hEq : B.subst y = formalPow c g := by
-    refine eq_of_mul_derivative_eq_mul g (PowerSeries.C (scalar c) * PowerSeries.derivative Coef g)
+    refine eq_of_mul_derivative_eq_mul g (PowerSeries.C (scalar c) * PowerSeries.derivative g)
       _ _ hg ?_ (mul_derivative_formalPow c g hg) ?_
     · have hs := congrArg (fun f : Ser ↦ f.subst y) hODE
       rw [PowerSeries.subst_mul hy, PowerSeries.subst_mul hy, PowerSeries.subst_add hy,
@@ -204,8 +204,8 @@ theorem coeff_formalPow (c : RatFunc ℚ) (g : Ser) (hg : PowerSeries.constantCo
       have hC : (PowerSeries.C (scalar c)).subst y = PowerSeries.C (scalar c) :=
         PowerSeries.subst_C _
       rw [hone, hC, show (1 : Ser) + y = g by simp [y]] at hs
-      rw [PowerSeries.derivative_subst hy, show PowerSeries.derivative Coef y =
-        PowerSeries.derivative Coef g by simp [y], ← mul_assoc, hs]
+      rw [PowerSeries.derivative_subst hy, show PowerSeries.derivative y =
+        PowerSeries.derivative g by simp [y], ← mul_assoc, hs]
       ring
     · rw [constantCoeff_formalPow c g hg, ← PowerSeries.coeff_zero_eq_constantCoeff_apply,
         coeff_subst_eq_sum 0 B y hy0]
@@ -331,7 +331,7 @@ private theorem formalPow_adamsSer_clusterSer_scongr (ε : ℤ) (a m n : ℕ) (h
     rw [← mul_assoc, ← map_mul, PowerSeries.coeff_C_mul_X_pow]
   have hTzero : ∀ κ : Fin n → ℕ, n < ∑ r, κ r → PowerSeries.coeff d (T κ) = 0 := by
     intro κ hκ
-    rw [hTcoeff, if_neg]
+    rw [hTcoeff, ite_eq_right]
     have := hsum_le κ
     omega
   -- step 1: extend the k-range and replace g - 1 by S
@@ -352,7 +352,7 @@ private theorem formalPow_adamsSer_clusterSer_scongr (ε : ℤ) (a m n : ℕ) (h
         refine Finset.sum_eq_zero (fun r _ ↦ ?_)
         rw [map_mul, map_pow, PowerSeries.constantCoeff_X, zero_pow (by positivity), mul_zero]
       obtain ⟨u, hu⟩ := hX
-      rw [hu, PowerSeries.coeff_X_pow_mul', if_neg (by omega), mul_zero, smul_zero]
+      rw [hu, PowerSeries.coeff_X_pow_mul', ite_eq_right (by omega), mul_zero, smul_zero]
   -- step 2: multinomial expansion per k
   have h2 : ∀ k ∈ Finset.range (n + 1), ((k.factorial : ℚ)⁻¹) •
       ((∏ j ∈ Finset.range k, (scalar c - (j : ℚ) • (1 : Coef))) * PowerSeries.coeff d (S ^ k))
@@ -490,7 +490,7 @@ theorem sum_allowedPatterns_single (a n : ℕ) (ha : 0 < a)
     (fun d rt rx ↦ rx = 0 ∧ (0 < rt ↔ d < n)) (fun P ↦ by simp [allowedPatterns, Allowed])
     (fun d rt _ m ↦ F d rt m)]
   refine Finset.sum_congr rfl fun d _ ↦ Finset.sum_congr rfl fun r _ ↦ ?_
-  rw [Finset.sum_eq_single 0 (fun rx _ h0 ↦ if_neg fun h ↦ h0 h.1.1) (by simp)]
+  rw [Finset.sum_eq_single 0 (fun rx _ h0 ↦ ite_eq_right fun h ↦ h0 h.1.1) (by simp)]
   simp only [true_and, add_zero, Nat.sub_zero]
 
 private theorem otherChildren_length {N : ℕ} (a : ℕ) (m : Pattern N) :
@@ -529,14 +529,14 @@ private theorem otherChildren_eq_single_iff (a n N : ℕ) (hn : 1 ≤ n) (hnN : 
       Finset.sum_eq_single ij0 (fun b _ hb ↦ by by_contra h; exact hb (hsupp b h)) (by simp)
     intro ij
     by_cases h : ij = ij0
-    · subst h; rw [if_pos ((key _).2 rfl)]; omega
-    · rw [if_neg (by rw [key]; exact h)]
+    · subst h; rw [ite_eq_left ((key _).2 rfl)]; omega
+    · rw [ite_eq_right (by rw [key]; exact h)]
       by_contra h'; exact h (hsupp ij h')
   · intro hm
     constructor
     · rw [Finset.sum_eq_single ij0]
       · rw [hm]; simp [ij0]
-      · intro b _ hb; rw [hm, if_neg (by rw [key]; exact hb)]
+      · intro b _ hb; rw [hm, ite_eq_right (by rw [key]; exact hb)]
       · simp
     · intro b hb
       obtain ⟨ij, hij, rfl⟩ := (mem_otherChildren a m b).1 hb
@@ -566,9 +566,9 @@ theorem selfPattern_single_iff (a n : ℕ) (ha : 0 < a) (hn : 2 ≤ n)
     rw [hch] at hc
     have hrt0 : P.rt.val = 0 := by
       by_contra h
-      rw [if_neg h] at hc
+      rw [ite_eq_right h] at hc
       simp at hc
-    rw [if_pos hrt0, List.nil_append] at hc
+    rw [ite_eq_left hrt0, List.nil_append] at hc
     have hm := hO.1 hc
     refine ⟨?_, hrt0, hrx, hm⟩
     have hw : patternWeight P.other = n := by
@@ -577,14 +577,14 @@ theorem selfPattern_single_iff (a n : ℕ) (ha : 0 < a) (hn : 2 ≤ n)
           (State.single a n).degree)]
       · rw [hm]; simp; omega
       · intro b _ hb
-        rw [hm, if_neg]
+        rw [hm, ite_eq_right]
         · simp
         · rintro ⟨h1, h2⟩; exact hb (Prod.ext (Fin.ext h1) (Fin.ext h2))
       · simp
     omega
   · rintro ⟨hd, hrt0, _, hm⟩
     refine ⟨a, n, rfl, ?_⟩
-    rw [hch, if_pos hrt0, List.nil_append]
+    rw [hch, ite_eq_left hrt0, List.nil_append]
     exact hO.2 hm
 
 /-- For `n ≥ 2`, `S(a;n)` has exactly one allowed self pattern. -/
@@ -1000,8 +1000,8 @@ theorem coeff_lawCoef (L : Law) (hL : LawWf L) (σ : FactorType) :
     intro e he
     obtain ⟨z, hz, rfl⟩ := List.mem_map.mp he
     by_cases h : z.1 = σ
-    · simp only [h, if_true]; exact hL z hz
-    · simp only [h, if_false]; simp [Expr.wf]
+    · simp only [h, ite_true]; exact hL z hz
+    · simp only [h, ite_false]; simp [Expr.wf]
   unfold lawCoeff
   rw [(Expr.rational_sum) hw]
   clear hw
@@ -1014,7 +1014,7 @@ theorem coeff_lawCoef (L : Law) (hL : LawWf L) (σ : FactorType) :
     congr 1
     by_cases h : z.1 = σ
     · subst h; simp [AddMonoidAlgebra.coeff_single]
-    · simp only [h, if_false]
+    · simp only [h, ite_false]
       rw [(Expr.rational_const 0)]
       simp [AddMonoidAlgebra.coeff_single, h]
 

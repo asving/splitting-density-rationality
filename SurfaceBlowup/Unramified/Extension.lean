@@ -343,7 +343,7 @@ theorem base_ideal_pure (O : Type) [CommRing O] [IsLocalRing O] (Φ : Polynomial
   · intro h i
     by_cases hi : i = ⟨0, h0⟩
     · subst hi; simpa using h
-    · rw [Finsupp.single_apply, if_neg (Ne.symm hi)]; exact zero_mem _
+    · rw [Finsupp.single_apply, ite_eq_right (Ne.symm hi)]; exact zero_mem _
 
 /-- Frobenius conjugates of the distinct monic irreducible factors of `F` over `Frac O_δ` are
 monic irreducible and pairwise distinct, and they factor each conjugate of `F` and the
@@ -460,7 +460,7 @@ theorem dvr_extension_maximalIdeal_map_eq_pow (O B : Type) [CommRing O] [IsDomai
   set p := IsLocalRing.maximalIdeal O
   set q := IsLocalRing.maximalIdeal B
   have hcomap : q.comap (algebraMap O B) = p :=
-    IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal q)
+    IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_under_of_isIntegral_of_isMaximal q)
   have : q.LiesOver p := ⟨hcomap.symm⟩
   have hp : p ≠ ⊥ := IsDiscreteValuationRing.not_a_field O
   have hq : q ≠ ⊥ := IsDiscreteValuationRing.not_a_field B
@@ -497,7 +497,7 @@ theorem eval_at_pow_card (k K : Type) [Field k] [Finite k] [CommRing K] (ρ : k 
     P.eval₂ ρ (y ^ Nat.card k) = (P.eval₂ ρ y) ^ Nat.card k := by
   cases nonempty_fintype k
   rw [Nat.card_eq_fintype_card, Polynomial.eval₂_eq_eval_map, Polynomial.eval₂_eq_eval_map,
-    ← Polynomial.expand_eval, ← Polynomial.map_expand, FiniteField.expand_card,
+    ← Polynomial.expand_eval, ← Polynomial.map_expand, FiniteField.Polynomial.expand_card,
     Polynomial.map_pow, Polynomial.eval_pow]
 
 /-- The factor product map (coefficients of a product of monic polynomials) is continuous and
@@ -717,7 +717,7 @@ theorem form_product_maps_to_and_preserves (O : Type) [CommRing O] [IsLocalRing 
     exact one_ne_zero hm
   have hguard : ∀ b ∈ S, reducedFormProduct O d ν g μ b =
       dropCoord μ (normalizeAt μ (formProd d (fun i => insertOne (ν i) (b i)))) :=
-    fun b hb => if_pos fun i => Set.mem_univ_pi.mp hb i
+    fun b hb => ite_eq_left fun i => Set.mem_univ_pi.mp hb i
   refine ⟨?_, hres a ha, hunit a ha, ?_⟩
   · rw [hguard a ha]
     have hu := hunit a ha

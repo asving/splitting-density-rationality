@@ -50,7 +50,7 @@ private theorem count_otherChildren {n : ℕ} (a : ℕ) (m : Pattern n) (i j : F
   rw [Finset.sum_eq_single (i,j)]
   · simp
   · intro b _ hb
-    refine if_neg fun h ↦ hb ?_
+    refine ite_eq_right fun h ↦ hb ?_
     simp only [beq_iff_eq, Prod.mk.injEq, State.single.injEq, add_left_inj, true_and] at h
     exact Prod.ext (Fin.ext h.1) (Fin.ext h.2)
   · simp
@@ -69,8 +69,8 @@ private theorem sum_selfOther {n : ℕ} (c : ℕ) (hc : 0 < c) (hcn : c ≤ n) (
 private theorem weight_selfOther {n : ℕ} (c : ℕ) (hc : 0 < c) (hcn : c ≤ n) (m : Pattern n)
     (hm : IsSelfOther c m) : patternWeight m = c := by
   unfold patternWeight
-  rw [sum_selfOther c hc hcn _ fun ij h ↦ by rw [hm, if_neg h, mul_zero], hm,
-    if_pos ⟨rfl, show c - 1 + 1 = c by omega⟩]
+  rw [sum_selfOther c hc hcn _ fun ij h ↦ by rw [hm, ite_eq_right h, mul_zero], hm,
+    ite_eq_left ⟨rfl, show c - 1 + 1 = c by omega⟩]
   change (0+1)*((c-1)+1)*1 = c; omega
 
 private theorem otherChildren_selfOther {n : ℕ} (a c : ℕ) (hc : 0 < c) (hcn : c ≤ n)
@@ -79,10 +79,10 @@ private theorem otherChildren_selfOther {n : ℕ} (a c : ℕ) (hc : 0 < c) (hcn 
   have h1 : (otherChildren a m).length = 1 := by
     rw [otherChildren, List.length_flatMap, Finset.sum_map_toList]
     simp only [List.length_replicate]
-    rw [sum_selfOther c hc hcn _ fun ij h ↦ by rw [hm, if_neg h], hm,
-      if_pos ⟨rfl, show c - 1 + 1 = c by omega⟩]
+    rw [sum_selfOther c hc hcn _ fun ij h ↦ by rw [hm, ite_eq_right h], hm,
+      ite_eq_left ⟨rfl, show c - 1 + 1 = c by omega⟩]
   have h2 := count_otherChildren a m ⟨0, by omega⟩ ⟨c-1, by omega⟩
-  rw [hm, if_pos ⟨rfl, show c - 1 + 1 = c by omega⟩] at h2
+  rw [hm, ite_eq_left ⟨rfl, show c - 1 + 1 = c by omega⟩] at h2
   simp only [show c - 1 + 1 = c by omega] at h2
   obtain ⟨y, hy⟩ := List.length_eq_one_iff.1 h1
   rw [hy] at h2 ⊢
@@ -112,7 +112,7 @@ private theorem eq_selfPattern (a c : ℕ) (hc : 0 < c) (hca : c ≤ a * c)
   have hrt : P.rt.val = 0 := by
     by_contra h
     simp [children, h] at hch
-  simp only [children, hrt, if_true, List.nil_append] at hch
+  simp only [children, hrt, ite_true, List.nil_append] at hch
   have hm : IsSelfOther c P.other := by
     intro ij
     rw [← count_otherChildren a P.other ij.1 ij.2, hch]
@@ -163,7 +163,7 @@ private theorem tangentCount_selfPattern_eval (a c q : ℕ) (hc : 0 < c) (hca : 
       rw [Finset.sum_eq_single (⟨c-1, by change c-1 < a*c; omega⟩ :
         Fin (State.single a c).degree)]
       · simp; omega
-      · exact fun b _ hb ↦ if_neg fun h ↦ hb (Fin.ext (by simp; omega))
+      · exact fun b _ hb ↦ ite_eq_right fun h ↦ hb (Fin.ext (by simp; omega))
       · simp
     have hp : (∏ x : Fin (State.single a c).degree,
         (((if x.val + 1 = c then 1 else 0 : ℕ)).factorial : ℚ)) = 1 :=
@@ -487,7 +487,7 @@ private theorem stateLaw_terms_safe (s : State) (hs : s.Valid)
   have hA : Allowed s P := by simpa [allowedPatterns] using hP
   by_cases hself : SelfPattern s P
   · simp [hself] at hz
-  · rw [if_neg hself] at hz
+  · rw [ite_eq_right hself] at hz
     refine law_safe_scale _ _ (tangent_weight_safe s P) (lawProd_safe _ ?_) z hz
     simp only [List.mem_map]
     rintro _ ⟨w, hw, rfl⟩
@@ -522,7 +522,7 @@ theorem local_law_safe (s : State) (hs : s.Valid) :
                   (lawProd ((children (State.single a c) P).map fun z ↦
                     lawDescend z.1 (stateLawFuel (State.single a c).rank z.2)))) := by
         rw [stateLawFuel]
-        all_goals first | rfl | (intro a1 h; cases h; exact hc rfl)
+        all_goals (intro a1 h; cases h; exact hc rfl)
       rw [hfuel]
       refine law_safe_scale _ _ (fun q hq ↦ ?_) hT
       obtain ⟨hpos, -, hlt⟩ := return_weight_bounds q c hq hc2
@@ -568,7 +568,7 @@ theorem global_coefficients_safe (n : ℕ) (σ : FactorType) :
     refine expression_sum_safe _ _ fun x hx ↦ ?_
     obtain ⟨z, hz, rfl⟩ := List.mem_map.mp hx
     by_cases h : z.1 = σ
-    · simp only [h, if_true]; exact hL z hz q hq
+    · simp only [h, ite_true]; exact hL z hz q hq
     · simp [h, Expr.safe]
   exact ⟨hsafe _ (global_law_safe n false), hsafe _ (global_law_safe n true)⟩
 

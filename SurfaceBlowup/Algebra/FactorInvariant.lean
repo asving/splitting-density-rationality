@@ -51,7 +51,7 @@ theorem field_invariant_algEquiv (O : Type) [CommRing O] [IsDomain O]
   obtain ⟨hr, hi⟩ := dvr_algEquiv_ramification_inertia O _ _
     (algebraMap_injective_of_tower O _ L) (algebraMap_injective_of_tower O _ L') φ
   unfold fieldInvariant
-  rw [dif_pos h1, dif_pos h2, hr, hi]
+  rw [dite_eq_left h1, dite_eq_left h2, hr, hi]
 
 /-- `K`-isomorphic root fields of monic irreducibles `g, g'` (with finite closure) have the same
 factor invariant. -/

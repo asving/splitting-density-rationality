@@ -252,10 +252,11 @@ theorem exit_cell_type_mass (U : SurfaceUniverse) (i : U.ι) (hnt : (U.M i).s.te
   refine Finset.sum_congr rfl fun τ _ ↦ ?_
   simp only [g]
   by_cases hσ : σ = ∑ j, scaleType ((U.M i).childDelta c.1 j) (τ j)
-  · rw [if_pos hσ, if_pos (show σ = ∑ j, scaleType (((U.M i).childList c.1).get j).1 (τ j) from hσ)]
+  · rw [ite_eq_left hσ,
+      ite_eq_left (show σ = ∑ j, scaleType (((U.M i).childList c.1).get j).1 (τ j) from hσ)]
     ring
-  · rw [if_neg hσ, if_neg (show ¬σ = ∑ j, scaleType (((U.M i).childList c.1).get j).1 (τ j) from
-      hσ)]
+  · rw [ite_eq_right hσ,
+      ite_eq_right (show ¬σ = ∑ j, scaleType (((U.M i).childList c.1).get j).1 (τ j) from hσ)]
     ring
 
 /-! ### Return chains at single states -/

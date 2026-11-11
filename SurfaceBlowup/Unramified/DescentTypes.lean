@@ -95,7 +95,7 @@ theorem field_invariant_unramified_tower (O Oδ : Type) [CommRing O] [IsDomain O
     (algebraMap_injective_of_tower O _ L) (algebraMap_injective_of_tower O _ L)
     (integralClosureTowerEquiv O Oδ L)
   unfold fieldInvariant
-  rw [dif_pos h1, dif_pos h2]
+  rw [dite_eq_left h1, dite_eq_left h2]
   rw [hr, hi, ramificationIdx_unramified_tower O Oδ (integralClosure Oδ L) δ hrank pi hpi hpiδ,
     inertiaDeg_unramified_tower O Oδ (integralClosure Oδ L) δ hrank pi hpi hpiδ]
 

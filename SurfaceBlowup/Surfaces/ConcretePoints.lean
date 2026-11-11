@@ -337,9 +337,9 @@ private theorem sum_C_mul_X_pow_ne_zero {K : Type} [Field K] (d : ℕ) (r : Fin 
   apply hi
   have := congrArg (PowerSeries.coeff (d - i.val)) h
   rw [map_zero, map_sum, Finset.sum_eq_single i] at this
-  · rwa [PowerSeries.coeff_C_mul_X_pow, if_pos rfl] at this
+  · rwa [PowerSeries.coeff_C_mul_X_pow, ite_eq_left rfl] at this
   · intro j _ hj
-    rw [PowerSeries.coeff_C_mul_X_pow, if_neg]
+    rw [PowerSeries.coeff_C_mul_X_pow, ite_eq_right]
     intro h'; apply hj; ext; have := j.isLt; have := i.isLt; omega
   · simp
 

@@ -383,15 +383,17 @@ theorem two_chart_datum_concrete_transverse (O : Type) [CommRing O] [IsDomain O]
         (fun w : (CompletedLocalAt (tChart O pi u a b) (leftPoint D s)) ⧸ Ideal.span
           {(completedPointMap (tChart O pi u a b) (leftPoint D s))
             (tBase O pi u a b (surfaceT O pi u a b))} =>
-          Ideal.Quotient.mk (Ideal.span {(completedPointMap (tChart O pi u a b) (leftPoint D s))
-            (tBase O pi u a b (surfaceT O pi u a b))}) (leftData D s) * w)) ∧
+          Ideal.Quotient.mk (Ideal.span
+            {(completedPointMap (tChart O pi u a b) (leftPoint D s))
+              (tBase O pi u a b (surfaceT O pi u a b))}) (leftData D s) * w)) ∧
       ∀ s : D.ι ⊕ D.ιinf,
       Function.Injective
       (fun w : (CompletedLocalAt (xChart O pi u a b) (rightPoint D s)) ⧸ Ideal.span
         {(completedPointMap (xChart O pi u a b) (rightPoint D s))
           (xBase O pi u a b (surfaceX O pi u a b))} =>
-        Ideal.Quotient.mk (Ideal.span {(completedPointMap (xChart O pi u a b) (rightPoint D s))
-          (xBase O pi u a b (surfaceX O pi u a b))}) (rightData D s) * w) := by
+        Ideal.Quotient.mk (Ideal.span
+          {(completedPointMap (xChart O pi u a b) (rightPoint D s))
+            (xBase O pi u a b (surfaceX O pi u a b))}) (rightData D s) * w) := by
   have hmaxTX : (Ideal.span ({surfaceT O pi u a b, surfaceX O pi u a b} :
       Set (ConcreteSurface O pi u a b))).IsMaximal :=
     concrete_surface_parameterIdeal_isMaximal O pi hpi u a b ha
@@ -453,11 +455,11 @@ theorem concrete_strict_transforms_are_prescribed (O : Type) [CommRing O] [IsDom
     (hG : ∀ j : ℕ,
       Ideal.span
       {Ideal.Quotient.mk
-      ((chartExceptional (ConcreteSurface O pi u a b) (surfaceT O pi u a b)
-      (surfaceX O pi u a b))^j) (G.left j)} = leftLevelKernel D j ∧ Ideal.span
+         ((chartExceptional (ConcreteSurface O pi u a b) (surfaceT O pi u a b)
+         (surfaceX O pi u a b))^j) (G.left j)} = leftLevelKernel D j ∧ Ideal.span
       {Ideal.Quotient.mk
-      ((chartExceptional (ConcreteSurface O pi u a b) (surfaceX O pi u a b)
-      (surfaceT O pi u a b))^j) (G.right j)} = rightLevelKernel D j) :
+         ((chartExceptional (ConcreteSurface O pi u a b) (surfaceX O pi u a b)
+         (surfaceT O pi u a b))^j) (G.right j)} = rightLevelKernel D j) :
     (∀ s : D.ι ⊕ D.ι0,
         strictTransformAt (ConcreteSurface O pi u a b) (surfaceT O pi u a b) (surfaceX O pi u a b)
         (leftPoint D s) (curveDataDegree D) (Ideal.span {f}) = Ideal.span {leftData D s}) ∧

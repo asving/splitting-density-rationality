@@ -289,7 +289,7 @@ private theorem reducedFormProduct_of_mem (O : Type) [CommRing O] [IsLocalRing O
     reducedFormProduct O d ν g μ a j =
       Ring.inverse (formProd d (fun i => insertOne (ν i) (a i)) μ) *
         formProd d (fun i => insertOne (ν i) (a i)) (μ.succAbove j) := by
-  simp only [reducedFormProduct, if_pos ha, dropCoord, normalizeAt, Fin.removeNth_apply,
+  simp only [reducedFormProduct, ite_eq_left ha, dropCoord, normalizeAt, Fin.removeNth_apply,
     Pi.smul_apply, smul_eq_mul]
 
 /-- One step of congruence reflection: if two families `A, A'` of forms normalized at `ν`, with

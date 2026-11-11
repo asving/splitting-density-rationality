@@ -68,8 +68,8 @@ private theorem lawCoef_exitLaw_single_add_self (a n : ℕ) (ha : 0 < a) (hn : 2
   obtain ⟨P₀, hA₀, hS₀, huniq⟩ := exists_unique_selfPattern_single a n ha hn
   have hself : ∑ P ∈ allowedPatterns (State.single a n),
       (if SelfPattern (State.single a n) P then T P else 0) = T P₀ := by
-    rw [Finset.sum_eq_single P₀ (fun Q hQ hne ↦ if_neg fun hSQ ↦ hne (huniq Q (hA Q hQ) hSQ))
-      (fun h ↦ absurd (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hA₀⟩) h), if_pos hS₀]
+    rw [Finset.sum_eq_single P₀ (fun Q hQ hne ↦ ite_eq_right fun hSQ ↦ hne (huniq Q (hA Q hQ) hSQ))
+      (fun h ↦ absurd (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hA₀⟩) h), ite_eq_left hS₀]
   have hsplit : lawCoef (exitLaw (State.single a n)) + T P₀ =
       ∑ P ∈ allowedPatterns (State.single a n), T P := by
     rw [hexit, ← hself, ← Finset.sum_add_distrib]
@@ -86,8 +86,9 @@ private theorem lawCoef_exitLaw_single_add_self (a n : ℕ) (ha : 0 < a) (hn : 2
             (m ij).val))]
   refine Finset.sum_congr rfl fun d _ ↦ Finset.sum_congr rfl fun r _ ↦ ?_
   by_cases hcond : ((0 < r ↔ d < n) ∧ r ≤ d)
-  · rw [if_pos hcond, if_pos hcond]; exact sum_patterns_scalar_mul_eq_patternSum _ _ _ _ _ _
-  · rw [if_neg hcond, if_neg hcond]
+  · rw [ite_eq_left hcond, ite_eq_left hcond]
+    exact sum_patterns_scalar_mul_eq_patternSum _ _ _ _ _ _
+  · rw [ite_eq_right hcond, ite_eq_right hcond]
 
 /-- **Operator equation.** The cluster series is obtained from its Euler transform by the
 Gaussian twist and the contact representation: `B_a = ρ(U_{a,a}) Φ(G_a)`, coefficientwise. -/
@@ -109,7 +110,7 @@ theorem coeff_clusterSer_eq_coeff_qact (a n : ℕ) (ha : 0 < a) :
       have hd : (divisorProbability (State.single a 1) 1).rational =
           (RatFunc.X : RatFunc ℚ)⁻¹ := by
         rw [rational_divisorProbability_single a 1 1]; simp [tri]
-      simp only [hp, hd, lt_irrefl, iff_self, zero_le, and_self, if_true, one_ne_zero, if_false,
+      simp only [hp, hd, lt_irrefl, iff_self, zero_le, and_self, ite_true, one_ne_zero, ite_false,
         one_mul, Nat.sub_zero, zero_lt_one, iff_false, not_true, false_and, add_zero]
       rw [scalar_eq_algebraMap, hqp, ← mul_assoc, ← map_mul, zpow_one,
         inv_mul_cancel₀ RatFunc.X_ne_zero, map_one,
@@ -133,7 +134,7 @@ theorem coeff_clusterSer_eq_coeff_qact (a n : ℕ) (ha : 0 < a) :
         (RatFunc.X : RatFunc ℚ) ^ (-(tri n : ℤ)) * RatFunc.X ^ (1 : ℤ) := by
       rw [rational_returnWeight n, zpow_neg, zpow_natCast, zpow_one,
         mul_comm]
-    rw [← hreg, if_neg (by omega), add_zero, ← mul_assoc, hqp, hqp, ← map_mul, ← hlam,
+    rw [← hreg, ite_eq_right (by omega), add_zero, ← mul_assoc, hqp, hqp, ← map_mul, ← hlam,
       scalar_eq_algebraMap,
       ← mul_assoc, ← map_mul, ← one_add_mul, ← map_one (algebraMap (RatFunc ℚ) Coef), ← map_add]
     congr 2
@@ -290,7 +291,7 @@ theorem recip_main (n : ℕ) (hn : 0 < n) (σ : FactorType) :
       ((projectiveExpr n σ).subst (.inv .var)).rational := by
   have hv : (State.single 1 n).Valid := ⟨Nat.one_pos, hn⟩
   have hr : rootLaw n = stateLaw (State.single 1 n) := by
-    unfold rootLaw; rw [if_neg hn.ne']
+    unfold rootLaw; rw [ite_eq_right hn.ne']
   refine ⟨?_, ?_⟩
   · rw [← coeff_lawCoef_globalLaw_false, lawCoef_globalLaw_false_eq_recipCoef n hn, hr,
       coeff_recipCoef_lawCoef _ (lawWf_stateLaw (State.single 1 n) hv) σ]

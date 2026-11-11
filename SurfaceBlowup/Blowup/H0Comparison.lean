@@ -316,7 +316,7 @@ private theorem surface_layer_kernel_lift (R : Type) [CommRing R] (t x : R)
     rw [Submodule.Quotient.mk_eq_zero] at hred
     have hD : fullCechDifferential R t x beta 0 (a, b) ∈
         (Ideal.span {algebraMap (BlowupChart R t x) (BlowupOverlap R t x)
-          (chartBase R t x t)})^(j+1) := hw
+                       (chartBase R t x t)})^(j+1) := hw
     have ha : a ∈ (Ideal.span {chartBase R t x t})^j := hred.1
     have hb : b ∈ (Ideal.span {chartBase R x t x})^j := hred.2
     obtain ⟨r, hr, hA, hB⟩ := cech_layer_step R t x hreg beta hregSwap 0 j a b ha hb hD
@@ -577,7 +577,7 @@ private theorem mem_span_pow_succ_of_chartBase_mem (R : Type) [CommRing R] (t x 
     rw [Finset.sum_eq_single i] at this
     · simpa [Ideal.Quotient.eq_zero_iff_mem] using this
     · intro b _ hb
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h; exact hb (Fin.ext h.symm)
     · simp
   refine Ideal.sum_mem _ fun i _ => ?_
