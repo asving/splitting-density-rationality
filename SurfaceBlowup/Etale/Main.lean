@@ -9,7 +9,7 @@ import SurfaceBlowup.Main
 /-!
 # The étale convention agrees with the published densities
 
-The two conventions for the type of a polynomial (finite integral closures versus étale algebras)
+The two conventions for the type of a polynomial (reduced algebras versus étale algebras)
 agree off a Haar-null set (paper, Remark 1.3). Formally: the non-étale binary forms are null, the
 published densities equal the étale-convention densities, and hence Theorem 1.1 holds verbatim
 under the étale convention.

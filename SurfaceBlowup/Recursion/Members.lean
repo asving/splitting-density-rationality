@@ -9,7 +9,7 @@ import SurfaceBlowup.Unramified.DescentTypes
 /-!
 # Members of the recursion universe
 
-This file sets up the objects on which the measure-theoretic recursion of Theorem 8.1 runs.
+This file sets up the objects on which the measure-theoretic recursion of Theorem 6.2 runs.
 A `MeasuredSurface` is a regular local surface over a complete DVR with finite residue field,
 equipped with a state and an atlas of division charts, hence with a state measure; a
 `SurfaceUniverse` is a family of measured surfaces closed under passing to the children of
@@ -59,7 +59,7 @@ variable (k : Type) [Field k]
 
 open scoped Classical in
 /-- The child state at the point Q of a degree-d tangent divisor Dv of a parent in state s,
-equations (7.1)–(7.2): the point at infinity (old t-boundary) gives T(a,a; Dv(∞), c−d) resp.
+displays (4.7)–(4.8): the point at infinity (old t-boundary) gives T(a,a; Dv(∞), c−d) resp.
 T(a+b,a; Dv(∞), c−d); at a crossing the point Z = 0 (old x-boundary) gives T(a+b,b; Dv(Z), h−d);
 every other point gives S(a; Dv(Q)) resp. S(a+b; Dv(Q)). -/
 def pointChildState (s : State) (d : ℕ) (Dv : ExceptionalDivisor k) (Q : ClosedDirection k) :
@@ -151,7 +151,7 @@ def childState (c : M.cellIndex) (j : M.childIdx c) : State := ((M.childList c).
 def IsSelfCell (c : M.cellIndex) : Prop := SelfPattern M.s c.1.1
 end MeasuredSurface
 /-- The recursion interface record: a family of measured surfaces closed under passing to the
-children of every tangent cell, with the geometric inputs of Theorem 8.1 as explicit fields (facts
+children of every tangent cell, with the geometric inputs of Theorem 6.2 as explicit fields (facts
 about cells, child surfaces, the fixed-tangent bijections and types). No field mentions stateLaw. -/
 structure SurfaceUniverse where
   ι : Type 1
@@ -421,7 +421,7 @@ def badExitEvent : ℕ → ∀ i : U.ι, Set (Ideal (U.M i).R)
       U.childBox i c.1 (Function.update (fun _ => Set.univ) j₀
           (U.nonterminatingSet (U.child i c.1 j₀)))
   | k+1, i => ⋃ c : U.selfCells i, U.childBox i c.1 (fun j => badExitEvent k (U.child i c.1 j))
-/-- The inductive statement of Theorem 8.1 for one member: the terminating type events are
+/-- The inductive statement of Theorem 6.2 for one member: the terminating type events are
 measurable, the law coefficients are nonnegative and give the measures, the terminating set is
 measurable and the nonterminating set is null. -/
 def LawStatement (i : U.ι) : Prop :=

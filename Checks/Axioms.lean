@@ -11,3 +11,13 @@ import SurfaceBlowup
 #print axioms SurfaceBlowup.monicDensity_eq_etale
 #print axioms SurfaceBlowup.projectiveDensity_eq_etale
 #print axioms SurfaceBlowup.main_dvr_etale
+#print axioms SurfaceBlowup.monicExpr_eval_nonneg
+#print axioms SurfaceBlowup.projectiveExpr_eval_nonneg
+#print axioms SurfaceBlowup.clusterExpr_eval_nonneg
+#print axioms SurfaceBlowup.main_dvr_toReal
+#print axioms SurfaceBlowup.main_dvr_cluster_toReal
+#print axioms SurfaceBlowup.cluster_rational_eval
+#print axioms SurfaceBlowup.universal_type_laws
+#print axioms SurfaceBlowup.reciprocity_recipRat
+#print axioms SurfaceBlowup.reciprocity_ringHom
+#print axioms SurfaceBlowup.recip_main_all_degrees

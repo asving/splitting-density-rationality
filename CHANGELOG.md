@@ -5,6 +5,47 @@ All cycles: Lean v4.33.1, Mathlib `0df444a360eaa60ab8c11dca51a86af692955474`. Ma
 Quot.sound]` throughout; statements kernel-checked against the certified trees after every wave
 (`Checks/run_checks.sh`, 3x KERNEL_OK). Detailed logs: `CAPTAIN.md`.
 
+## v1.2.0 (2026-11-11) — exported corollaries, `ℤ_p` instance, docstring corrections
+
+A statement-faithfulness audit of v1.1.0 (Claude Fable 5.2, with a blind and a targeted second review by
+OpenAI's gpt-6.1-sol through Codex) found no definition that differs from the paper, but four places where the exported
+statements were weaker than the prose. This release closes them. No existing statement changed: `tools/StmtDump.lean`
+gives identical type and value hashes for all 1853 constants of v1.1.0, and 20 constants are new.
+
+- `SurfaceBlowup/Corollaries/Nonneg.lean` (199 lines): `divisorCount_eval_nonneg`, `globalLaw_coeff_eval_nonneg`,
+  `monicExpr_eval_nonneg`, `projectiveExpr_eval_nonneg`, `clusterExpr_eval_nonneg` — the universal expressions are
+  nonnegative at every prime power, so the `ENNReal.ofReal` in `densityValue` never clamps. `main_dvr_toReal`,
+  `main_dvr_cluster_toReal` are the real-valued forms. (Before: nonnegativity was available only through
+  `state_law_coeff_nonneg`, `law_coeff_nonneg_closure` and a local step in `Assembly/Formulas.lean`.)
+- `SurfaceBlowup/Corollaries/RationalForm.lean` (230 lines): `Expr.rational_eval_of_safe` (public copy of the private
+  `expression_rational_eval`), `clusterExpr_allSafe`, `cluster_rational_eval`; `universal_type_laws` (Theorem 1.1 in
+  one statement: `A, B, R : RatFunc ℚ`, regular and nonnegative at prime powers, each density of the form
+  `0 ≤ r ∧ density = ENNReal.ofReal r`); `reciprocity_recipRat`, `reciprocity_ringHom`, `recip_main_all_degrees`
+  (Theorem 1.2 in every degree, with the ring endomorphism `q ↦ q⁻¹` instead of a syntactic substitution), with the
+  helpers `lawWf_rootLaw`, `lawCoef_globalLaw_false_zero`, `lawCoef_rootLaw_zero`,
+  `lawCoef_globalLaw_false_eq_recipCoef_rootLaw`, `rational_subst_inv_lawCoeff`, `clusterExpr_subst_inv_rational`.
+- `Tests/PadicInt.lean` (121 lines): `isAdic_maximalIdeal_padicInt` (Mathlib's norm topology on `ℤ_[p]` is the
+  `(p)`-adic one), `card_residueField_padicInt`, `main_dvr_padicInt`, `universal_type_laws_padicInt`,
+  `monicDensity_padicInt_two_ramified`. First instance in mixed characteristic. The Borel `MeasurableSpace` on
+  `ℤ_[p]` is a local instance. No ramified extension of `ℤ_p` is instantiated.
+- Docstrings only, line counts unchanged: stale paper references from the blueprint numbering corrected in
+  `Basic.lean` (`Allowed`, the weights heading, `divisorProbability`, `stateLawFuel`, `projectiveExpr` — which was
+  labelled `B_n,σ` instead of `R_n,σ`), `Recursion/Members.lean`, `Recursion/Termination.lean`,
+  `Blowup/StrictNormalizer.lean`, `Blowup/FixedTangentCellBijection.lean`, `Formula/LawAlgebra.lean`,
+  `Reciprocity/Main.lean` ("Theorem R" is Theorem 1.2); `orig_monicDensity_eq` and the headers of
+  `Etale/Defs.lean`, `Etale/Main.lean` no longer describe the published type predicate as using finite integral
+  closures (that is the route-F predicate). `Basic.lean` is therefore no longer byte-identical to v1.0.0; the
+  statement dump is the evidence that its constants are unchanged.
+- `Checks/Axioms.lean` now prints 22 theorems and `tools/release_check.sh` expects 22;
+  `Checks/AxiomsCorollaries.lean` (new) prints the axioms of all 25 new public theorems and the elaborated
+  statements of the headline ones.
+- Verification (macOS, fresh clone, Mathlib cache): `lake build SurfaceBlowup Tests` 3480 jobs, 0 warnings; axioms
+  22/22 and 25/25 `[propext, Classical.choice, Quot.sound]`; forbidden-token scan clean; Mathlib standard linter set
+  0 hits on the new files. `Checks/run_checks.sh` could not run (the certified trees are not on that machine);
+  `tools/release_check.sh` was not run as written (it assumes the original workspace path and `taskset`).
+- Provenance: statements and proofs by Claude Fable 5.2 in one session; the second reviewer read the statements
+  and reported no defect, without rebuilding. Not on Prove2Me.
+
 ## v1.1.0 (2026-10-17) — Theorem 1.1 cluster clause and the étale convention
 
 Two gaps between the paper's Theorem 1.1 / Remark 1.3 and the formal statements are closed; no existing

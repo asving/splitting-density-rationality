@@ -6,9 +6,9 @@ Authors: Asvin G, Claude (Anthropic), GPT-6-Astra (OpenAI)
 import SurfaceBlowup.Reciprocity.Patterns
 
 /-!
-# The reciprocity law (Theorem R)
+# The reciprocity law (Theorem 1.2)
 
-This file assembles the proof of Theorem R: the universal monic density `monicExpr n σ` is the
+This file assembles the proof of Theorem 1.2: the universal monic density `monicExpr n σ` is the
 `σ`-coefficient of the root law `rootLaw n` with `q ↦ 1/q` substituted (`A_n(q) = B_n(1/q)`),
 and the universal projective density `projectiveExpr n σ` is self-reciprocal
 (`R_n(1/q) = R_n(q)`).
@@ -26,7 +26,7 @@ coefficients for `a = 1` gives both statements.
 * `cluster_reciprocity`: `G_a ≡ S(B_aᵛ)` in every degree.
 * `lawCoef_globalLaw_false_eq_recipCoef`, `recipCoef_lawCoef_globalLaw_true`: the coefficient
   forms.
-* `recip_main`: Theorem R.
+* `recip_main`: Theorem 1.2.
 
 Provenance: `Thm_SurfaceBlowupV2_recip_{single_exit_regroup, single_operator_equation,
 reciprocal_operator_equation, second_operator_equation, cluster_step, cluster_all, affine_coef,
@@ -216,7 +216,7 @@ theorem cluster_reciprocity (n a : ℕ) (ha : 0 < a) :
     · exact (SCongr.mono (cluster_reciprocity_one a) h)
     · exact cluster_reciprocity_step n (by omega) (fun a ha ↦ ih (n - 1) (by omega) a ha) a ha
 
-/-! ### Coefficient forms and Theorem R -/
+/-! ### Coefficient forms and Theorem 1.2 -/
 
 /-- **Affine reciprocity.** The global monic law is the reciprocal of the root law:
 `F_global(q) = F_{S(1;n)}(1/q)` as elements of `Coef`. -/
@@ -275,7 +275,7 @@ theorem recipCoef_lawCoef_globalLaw_true (n : ℕ) :
     hqp, ← mul_assoc, ← (scalar_mul _ D)] at hcQ
   exact (scalar_mul_left_cancel (mul_ne_zero (inv_ne_zero (pow_ne_zero _ hX)) hDne)) hcQ
 
-/-- **Theorem R (reciprocity).** For `n > 0` and every factorization type `σ`:
+/-- **Theorem 1.2 (reciprocity).** For `n > 0` and every factorization type `σ`:
 the universal monic density is the root-law coefficient with `q ↦ 1/q` substituted,
 `A_{n,σ}(q) = B_{n,σ}(1/q)` (where `B_{n,σ}` is the coefficient of `σ` in the root law
 `rootLaw n`), and the universal projective density is self-reciprocal,

@@ -57,7 +57,7 @@ namespace State
 
 /-- The contact of a state with the old boundary t = 0 (paper: c in S(a;c) and T(a,b;c,h));
 for a child produced by one blowup step this is its contact r_P with the exceptional divisor E,
-equation (5.1). -/
+display (4.6). -/
 def firstContact : State → ℕ
   | .single _ c => c
   | .crossing _ _ c _ => c

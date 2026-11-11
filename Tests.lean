@@ -6,6 +6,7 @@ Authors: Asvin G, Claude (Anthropic), GPT-6-Astra (OpenAI)
 import Tests.NonVacuity
 import Tests.Regression
 import Tests.Cluster
+import Tests.PadicInt
 
 /-!
 # Tests for `SurfaceBlowup`

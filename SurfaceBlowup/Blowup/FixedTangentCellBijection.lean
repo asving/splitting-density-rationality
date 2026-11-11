@@ -30,7 +30,7 @@ prescribed child ideals, it is a bijection onto the product of the child ideal s
 Statements about the concrete surfaces `ConcreteSurface O pi u a b` are written with the local
 notations `tChart`, `tExc`, ... for the blow-up charts and their data; see the notation section.
 
-Provenance: Lemma 4.2 and Proposition 5.1 of the source paper;
+Provenance: Lemma 4.2 and Proposition 5.1 of the source draft (now Lemma 4.3, Proposition 4.4);
 `Thm_SurfaceBlowupV2_{two_chart_level_one_coefficients_left,
 two_chart_right_level_one_kernel_polynomial, two_chart_level_one_coefficients_right,
 two_chart_level_one_normalization, two_chart_global_function_exists, concrete_two_chart_lemma_4_2,

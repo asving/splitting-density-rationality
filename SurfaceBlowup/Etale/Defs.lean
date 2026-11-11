@@ -9,7 +9,7 @@ import SurfaceBlowup.Basic
 # The étale convention for the type densities
 
 The published densities `monicDensity`, `projectiveDensity` (in `SurfaceBlowup.Basic`) define the
-type of a polynomial through finite integral closures (the reduced-algebra convention). This file
+type of a polynomial through integral closures (the reduced-algebra convention). This file
 defines the densities under the étale convention, where the event is restricted to separable
 polynomials (étale algebras `K[X]/(f_a)`), resp. to binary forms with finite étale zero scheme.
 

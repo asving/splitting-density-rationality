@@ -462,8 +462,8 @@ private theorem affine_bad_null (htop : IsAdic (IsLocalRing.maximalIdeal O)) (n 
   rw [← affine_snoc_eq, affine_resultant_eq] at this
   exact fun h => this (by rw [h, map_zero])
 
-/-- The original monic density equals the separable-type monic density: the two events agree
-off the Haar-null inseparable locus. -/
+/-- The original monic density equals the route-F (finite-closure) monic density: the two events
+agree off the Haar-null inseparable locus. -/
 theorem orig_monicDensity_eq (htop : IsAdic (IsLocalRing.maximalIdeal O)) (n : ℕ) (σ : FactorType) :
     monicDensity O n σ = monicDensityF O n σ :=
   measure_congr <| (measure_eq_zero_iff_ae_notMem.1 (monic_inseparable_null O htop n)).mono

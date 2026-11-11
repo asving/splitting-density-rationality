@@ -28,7 +28,7 @@ certified trees. They must not be edited beyond comments and docstrings.
 * Laws (`Law`: finite lists of type-weighted expressions), their algebra and coefficients
   `lawCoeff`.
 * The recursion states `State` (`S(a;c)` single-boundary, `T(a,b;c,h)` crossing), tangent patterns,
-  children, the weights of §7 and the recursion `stateLaw`, giving `monicExpr n σ` and
+  children, the weights of §6–§7 and the recursion `stateLaw`, giving `monicExpr n σ` and
   `projectiveExpr n σ`.
 * The densities: `monicDensity O n σ` is the normalized Haar measure of the set of monic degree-`n`
   polynomials over `O` whose factorization over `Frac O` has type `σ`; `projectiveDensity O n σ` is
@@ -232,7 +232,7 @@ structure TangentPattern (n : ℕ) where
   other : Pattern n
   deriving DecidableEq, Fintype
 
-/-- The admissible tangent patterns of a state (Proposition 5.1). -/
+/-- The admissible tangent patterns of a state (the conditions of displays (4.7)–(4.8)). -/
 def Allowed (s : State) (P : TangentPattern s.degree) : Prop :=
   0<P.d.val ∧ P.rt.val+P.rx.val+patternWeight P.other=P.d.val ∧
   match s with
@@ -265,7 +265,7 @@ open scoped Classical in
 noncomputable def allowedPatterns (s : State) : Finset (TangentPattern s.degree) :=
   (Finset.univ).filter (Allowed s)
 
-/-! ### Weights (§7) -/
+/-! ### Weights (§6, and the projective normalizer of §7) -/
 
 /-- `d(d+1)/2`. -/
 def tri (d : ℕ) : ℕ := d*(d+1)/2
@@ -284,7 +284,7 @@ def stateVolume : State → Expr
 /-- The self-return weight `q · q^{-tri c}` of `S(a;c)`. -/
 def returnWeight (c : ℕ) : Expr := .mul .var (.inv (.pow .var (tri c)))
 
-/-- The probability of the tangent divisor degree `d` (equation (7.2)). -/
+/-- The probability of one allowed tangent divisor of degree `d` (display (6.1)). -/
 def divisorProbability (s : State) (d : ℕ) : Expr :=
   match s with
   | .single _ c => .mul (.inv (.pow .var (tri d))) (.pow eminusOne (if d<c then 1 else 0))
@@ -324,7 +324,7 @@ def projectiveNormalizer (n : ℕ) : Expr :=
 /-! ### The recursion and the universal expressions -/
 
 open scoped Classical in
-/-- The measured recursion of §8 with explicit fuel. -/
+/-- The recursion of §6 (displays (6.6)–(6.8)) with explicit fuel. -/
 noncomputable def stateLawFuel : ℕ → State → Law
   | 0, _ => []
   | k+1, s =>
@@ -360,7 +360,7 @@ noncomputable def globalLaw (projective : Bool) (n : ℕ) : Law :=
 /-- The universal monic density expression `A_n,σ(q)`. -/
 noncomputable def monicExpr (n : ℕ) (σ : FactorType) : Expr := lawCoeff (globalLaw false n) σ
 
-/-- The universal projective density expression `B_n,σ(q)`. -/
+/-- The universal projective density expression `R_n,σ(q)`. -/
 noncomputable def projectiveExpr (n : ℕ) (σ : FactorType) : Expr := lawCoeff (globalLaw true n) σ
 
 /-! ### Densities -/

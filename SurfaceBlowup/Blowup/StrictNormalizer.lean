@@ -23,7 +23,7 @@ of quotient modules and transports strict transforms between the two blow-up cha
 * `concrete_strict_transform_multiplicity`: intersection length with the exceptional divisor
   equals the multiplicity of the corresponding factor of the tangent form.
 * `strict_transform_mapsTo_child_ideals`: strict transforms send a fixed tangent cell into the
-  child ideal sets (Proposition 5.1, maps-to part).
+  child ideal sets (Proposition 4.4, maps-to part).
 * `special_fiber_crossing_contact_regular`, `special_fiber_single_contact_regular`.
 * `strict_chart_coordinates_commute`, `strict_chart_preimage_set_identity`: the strict
   normalizer in chart coordinates.
@@ -252,7 +252,7 @@ theorem concrete_strict_transform_multiplicity (O : Type) [CommRing O] [IsDomain
   rw [order_coe_polynomial _ hH, ← Polynomial.rootMultiplicity_eq_natTrailingDegree,
     rootMultiplicity_map_eq_count_normalizedFactors _ _ ι Fbar hFne φ hφ alphaBar hroot]
 
-/-- Proposition 5.1 (maps-to part): taking strict transforms at all exceptional points sends the
+/-- Proposition 4.4 (maps-to part): taking strict transforms at all exceptional points sends the
 fixed tangent cell of state `s` and degree `d` into the product of the child ideal sets. -/
 theorem strict_transform_mapsTo_child_ideals (O : Type) [CommRing O] [IsDomain O]
     [IsDiscreteValuationRing O]

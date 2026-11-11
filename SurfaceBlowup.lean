@@ -6,6 +6,7 @@ Authors: Asvin G, Claude (Anthropic), GPT-6-Astra (OpenAI)
 import SurfaceBlowup.Main
 import SurfaceBlowup.Cluster.Main
 import SurfaceBlowup.Etale.Algebra
+import SurfaceBlowup.Corollaries.RationalForm
 
 /-!
 # SurfaceBlowup

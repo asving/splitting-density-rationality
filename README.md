@@ -24,6 +24,10 @@ All in namespace `SurfaceBlowup`:
 | `main_dvr_cluster` (v1.1) | `SurfaceBlowup/Cluster/Main.lean` | the cluster clause: `clusterDensity O n σ = densityValue (clusterExpr n σ) q`, where `clusterDensity` is the normalized Haar probability on monic polynomials reducing to `X^n` and `clusterExpr n σ = lawCoeff (rootLaw n) σ` is `B_{n,σ}` |
 | `cluster_formula_regular`, `recip_cluster` (v1.1) | `SurfaceBlowup/Cluster/Main.lean` | `B_{n,σ}` is regular at every prime power; `A_{n,σ}(q) = B_{n,σ}(1/q)` in the paper's notation |
 | `main_dvr_etale` (v1.1) | `SurfaceBlowup/Etale/Main.lean` | the monic and projective laws with the events restricted to étale algebras (`etaleMonicDensity`, `etaleProjectiveDensity`); with `monicDensity_eq_etale`, `projectiveDensity_eq_etale`, `clusterDensity_eq_etale` and `binary_nonEtale_null`: the reduced-algebra and étale type conventions agree off a Haar-null set |
+| `universal_type_laws` (v1.2) | `SurfaceBlowup/Corollaries/RationalForm.lean` | Theorem 1.1 in one statement: there are `A, B, R : RatFunc ℚ` (the rational functions of `monicExpr`, `clusterExpr`, `projectiveExpr`), regular and nonnegative at every prime power, such that over every `O` as above each of the three densities satisfies `0 ≤ r ∧ density = ENNReal.ofReal r` with `r` the value at `q` given by `RatFunc.eval` |
+| `monicExpr_eval_nonneg`, `projectiveExpr_eval_nonneg`, `clusterExpr_eval_nonneg` (v1.2) | `SurfaceBlowup/Corollaries/Nonneg.lean` | the universal expressions take nonnegative values at every prime power, so the `ENNReal.ofReal` in `main_dvr` and `main_dvr_cluster` never clamps; `main_dvr_toReal`, `main_dvr_cluster_toReal` are the real-valued forms |
+| `cluster_rational_eval` (v1.2) | `SurfaceBlowup/Corollaries/RationalForm.lean` | `RatFunc.eval q (clusterExpr n σ).rational = (clusterExpr n σ).eval q` at prime powers (the cluster analogue of `global_rational_eval`) |
+| `reciprocity_recipRat`, `reciprocity_ringHom`, `recip_main_all_degrees` (v1.2) | `SurfaceBlowup/Corollaries/RationalForm.lean` | reciprocity in every degree, including `n = 0`: `A = v(B)` and `v(R) = R` for the ring endomorphism `v` of `ℚ(q)` with `v(q) = q⁻¹`; `clusterExpr_subst_inv_rational` identifies the syntactic right side of `recip_main` with `v(B)` |
 
 `#print axioms` for all four: `[propext, Classical.choice, Quot.sound]` (`Checks/Axioms.lean`).
 
@@ -105,6 +109,11 @@ definitions, **`SurfaceBlowup/Cluster/Defs.lean`** (`clusterCell`, `clusterExpr`
 statements in `Cluster/Main.lean` / `Etale/Main.lean`. Every other file only contains proofs and auxiliary
 definitions that do not occur in the main statements.
 
+Version 1.2 adds no definition to the boundary. The corollaries in `SurfaceBlowup/Corollaries/` are stated
+with the definitions above and Mathlib's `RatFunc.eval`. `reciprocity_recipRat` also mentions `recipRat`
+(`Reciprocity/Defs.lean`), the ring endomorphism `q ↦ q⁻¹` of `ℚ(q)`; `reciprocity_ringHom` states the same
+fact without it. These corollaries were written after the release of v1.1.0.
+
 `Checks/run_checks.sh` verifies, at the kernel level, that the statements of `main_dvr`,
 `recip_main` and `main_field_form` as certified in the original one-theorem-per-file trees
 (`final/monolith_gen`, `final/monolith_recip`, `final/monolith`; read-only) follow from the unified
@@ -119,6 +128,9 @@ The regression guards in `Tests/` pin the definitions to known numbers, e.g.
 `Tests/Cluster.lean` derives the quadratic cluster law (`q/(q+1)`, `1/(2(q+1))`, `1/(2(q+1))`) from
 `main_dvr_cluster`. `Tests/NonVacuity.lean` shows that the hypotheses of `main_dvr` are satisfiable in equal
 characteristic: `𝔽_q⟦X⟧` with the coefficientwise topology, giving the formulas for `𝔽_p⟦X⟧`.
+`Tests/PadicInt.lean` (v1.2) does the same in mixed characteristic: `ℤ_[p]` with Mathlib's norm topology,
+which it proves to be the `(p)`-adic one, giving `main_dvr_padicInt`. No ramified extension of `ℤ_p` is
+instantiated.
 
 ## License
 
@@ -130,7 +142,8 @@ chosen to match Mathlib and confirmed by the owner on 2026-10-17.
 
     lake exe cache get        # Mathlib oleans (first time only)
     lake build                # builds SurfaceBlowup and Tests (~8800 jobs; ~8 min on 16 cores)
-    lake env lean Checks/Axioms.lean   # 12 main theorems, each [propext, Classical.choice, Quot.sound]
+    lake env lean Checks/Axioms.lean   # 22 main theorems, each [propext, Classical.choice, Quot.sound]
+    lake env lean Checks/AxiomsCorollaries.lean   # all 25 public theorems added in v1.2, same axioms
     ./Checks/run_checks.sh    # needs the certified trees next to this one (see the script)
 
 or all of it at once: `tools/release_check.sh` (build, axioms, statement preservation, forbidden-token
@@ -178,7 +191,7 @@ Dependencies flow roughly top to bottom. Each module has a docstring with its ma
   (`Directions`, depends only on `Basic`), charts and the exceptional line, curve orders,
   exceptional layers, point transport, nilpotent gluing, Čech comparison of global sections, strict transforms and the
   strict normalizer, curve sections, two-chart curve data, divisor points, and the bijection of
-  strict transforms of a fixed tangent cell (`FixedTangentCellBijection`, Proposition 5.1 of the paper).
+  strict transforms of a fixed tangent cell (`FixedTangentCellBijection`, Proposition 4.4 of the paper).
 - `Recursion/` — the recursion universe: members, order defects, child members, return/exit events,
   termination, and the root cell law.
 - `Assembly/` — type events and divisor counts, monic/projective cells, the Haar-null bridges from the
@@ -186,6 +199,9 @@ Dependencies flow roughly top to bottom. Each module has a docstring with its ma
 - `Reciprocity/` — independent of the surface tower (depends only on `Basic` and `Formula/`): series
   calculus, the quantum torus and reciprocal substitution, plethysm, pattern sums, the reciprocity law.
 - `Main` — the main theorems.
+- `Corollaries/` (v1.2) — nonnegativity of the universal expressions (`Nonneg`); the three laws as
+  rational functions, Theorem 1.1 in one statement, and reciprocity as an endomorphism of `ℚ(q)` in
+  every degree (`RationalForm`).
 
 ### Module table
 
@@ -211,6 +227,8 @@ Dependencies flow roughly top to bottom. Each module has a docstring with its ma
 | `Blowup/PointTransport` | 1284 | Transport of points between blow-up charts |
 | `Blowup/StrictNormalizer` | 1497 | Strict transforms and the strict normalizer |
 | `Blowup/TwoChartCurveData` | 1389 | Two-chart curve data |
+| `Corollaries/Nonneg` | 199 | v1.2: nonnegativity of the universal expressions, real-valued forms of the main theorems |
+| `Corollaries/RationalForm` | 230 | v1.2: the three laws as rational functions, and reciprocity as an automorphism of `ℚ(q)` |
 | `Cluster/Defs` | 56 | v1.1: the cluster cell, the cluster law `B_{n,σ}` and the cluster density |
 | `Cluster/Main` | 155 | v1.1: the cluster clause of the type-law theorem, its regularity and reciprocity |
 | `Etale/Defs` | 60 | v1.1: étale binary forms and the étale-convention densities |
@@ -261,7 +279,7 @@ Dependencies flow roughly top to bottom. Each module has a docstring with its ma
 | `Unramified/LocalDescent` | 190 | Local lengths and finite quotients of completions |
 | `Unramified/PolynomialTypes` | 1251 | Polynomial types, form products and residue cells |
 
-Total: 64 modules, 50141 lines (plus root `SurfaceBlowup.lean`); `Tests/`: 2 files, 2159 lines.
+Total: 71 modules, 51038 lines (plus root `SurfaceBlowup.lean`); `Tests/`: 4 files, 2339 lines.
 
 Internally the proof runs on route-F densities (`monicDensityF`, `projectiveDensityF`, defined at the
 end of `Basic.lean`, which add the condition that integral closures in root fields are finite); the

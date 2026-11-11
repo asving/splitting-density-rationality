@@ -11,7 +11,7 @@ import Mathlib.LinearAlgebra.Dimension.Torsion.Finite
 /-!
 # Termination of the recursion
 
-Inputs for the termination step of Theorem 8.1. We construct the index map of a curve on a
+Inputs for the termination step of Theorem 6.2. We construct the index map of a curve on a
 concrete surface, control division charts under perturbation, attach homogeneous tangent divisors
 and allowed patterns to initial forms, compute the volume of the state set of a concrete member,
 build the child member at the point at infinity, and prove that the recursion terminates outside
