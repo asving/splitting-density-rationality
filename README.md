@@ -214,8 +214,11 @@ Known gaps and stale spots, as of 2026-11-12. None of them changes a theorem.
 - **Prove2Me.** The public tree is this codebase at tag `v1.2.0`, because the platform runs Lean
   v4.33.1. The v1.3.0 port is not uploaded.
 - **Companion site.**
-  - The paper page says "(release v1.1.0)" next to the link to this repository. The Lean sources
-    shown on the site are newer; the footer of each page names their commit.
+  - The paper's [Lean] reference names commit `0965019` (since the editing pass of 2026-11-12). The
+    Lean sources shown on the site may be newer; the footer of each page names their commit.
+  - KaTeX output can now be regenerated: Node is installed on the working laptop, and the site's
+    vendored KaTeX 0.19.0 with default options reproduces every formula of the paper page byte for
+    byte (checked 2026-11-12, 1573 formulas).
   - `data/validation.json` keeps the checks of the original generator from 2026-10-17 (KaTeX, a
     browser self-test, with a browser path on the lost machine). They were not re-run. A refresh
     re-checks the internal links only.
