@@ -3,7 +3,8 @@
 # Run from the root:
 #   tools/release_check_local.sh
 #   (1) `lake build SurfaceBlowup Tests`, (2) `#print axioms` (Checks/Axioms.lean: 22 main theorems;
-#   Checks/AxiomsCorollaries.lean: the 25 public theorems added in v1.2.0), (3) statements:
+#   Checks/AxiomsCorollaries.lean: the 25 public theorems added in v1.2.0; Checks/AxiomsAdic.lean:
+#   the 13 added on 2026-11-12), (3) statements:
 #   (3a) source text of every statement compared with the v1.2.0 reference
 #   (tools/stmt_text.py, Checks/reference/stmt_text_v1_2_0.json; differences in whitespace are
 #   counted, any other difference must be listed in Checks/reference/stmt_text_rewrites_v1_3_0.json),
@@ -33,6 +34,10 @@ lake env lean Checks/AxiomsCorollaries.lean > logs/release_axioms_corollaries.lo
 n=$(grep -c "depends on axioms: \[propext, Classical.choice, Quot.sound\]" logs/release_axioms_corollaries.log)
 t=$(grep -c "depends on axioms\|does not depend on any axioms" logs/release_axioms_corollaries.log)
 [ "$n" = 25 ] && [ "$t" = 25 ] && ok "25/25 public theorems added in v1.2.0 use only [propext, Classical.choice, Quot.sound]" || bad "axioms of the v1.2.0 theorems ($n/25)"
+lake env lean Checks/AxiomsAdic.lean > logs/release_axioms_adic.log 2>&1
+n=$(grep -c "depends on axioms: \[propext, Classical.choice, Quot.sound\]" logs/release_axioms_adic.log)
+t=$(grep -c "depends on axioms\|does not depend on any axioms" logs/release_axioms_adic.log)
+[ "$n" = 13 ] && [ "$t" = 13 ] && ok "13/13 theorems added 2026-11-12 (adic topology, ramified test) use only [propext, Classical.choice, Quot.sound]" || bad "axioms of the 2026-11-12 theorems ($n/13)"
 echo "== (3) statements"
 python3 -I tools/stmt_text.py compare Checks/reference/stmt_text_v1_2_0.json \
   --allow Checks/reference/stmt_text_rewrites_v1_3_0.json > logs/release_stmt_text.log 2>&1 \

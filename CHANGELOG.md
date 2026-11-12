@@ -5,6 +5,21 @@ All cycles: Lean v4.33.1, Mathlib `0df444a360eaa60ab8c11dca51a86af692955474`. Ma
 Quot.sound]` throughout; statements kernel-checked against the certified trees after every wave
 (`Checks/run_checks.sh`, 3x KERNEL_OK). Detailed logs: `CAPTAIN.md`.
 
+## 2026-11-12 — the topological hypotheses are discharged; a ramified base is instantiated
+
+No change to any existing statement (release check: 1872/1872 kernel-term hashes of v1.3.0 identical).
+
+- `SurfaceBlowup/Corollaries/AdicCompact.lean` (new): for a complete DVR `O` with finite residue field and a
+  topology with `IsAdic 𝔪`, the instances `IsTopologicalRing`, `T2Space`, `CompactSpace`,
+  `SecondCountableTopology` are proved (`*_of_isAdic`). Completeness and the Hausdorff property come from
+  Mathlib's `IsAdic.isAdicComplete_iff`; total boundedness from the finiteness of `O/𝔪ⁿ`. Consequences:
+  `main_dvr_of_isAdic`, `main_dvr_adic` (the `𝔪`-adic topology and its Borel σ-algebra, no topological
+  hypothesis) and `main_field_form_ramified_adic` (every finite `K/ℚ_p`, ramified or not).
+- `Tests/Ramified.lean` (new): `K = ℚ_p(√p)`. `X² - p` is irreducible over `ℚ_p` (valuations), `K/ℚ_p` is
+  ramified (`p = √p · √p` in `𝒪_K`), and `main_field_form_sqrtP` applies the main theorem to `𝒪_K`.
+- `Checks/AxiomsAdic.lean` (new) and a step in `tools/release_check_local.sh`: the 13 new theorems use only
+  `[propext, Classical.choice, Quot.sound]`.
+
 ## 2026-11-12 — the original workspace is lost; the site generator and the Prove2Me tools move here
 
 No new version and no change to any Lean file under `SurfaceBlowup/` or `Tests/`.

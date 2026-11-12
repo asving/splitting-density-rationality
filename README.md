@@ -21,6 +21,7 @@ All in namespace `SurfaceBlowup`:
 | `main_dvr` | `SurfaceBlowup/Main.lean` | for `O` as above (adic topology, Borel σ-algebra, normalized Haar measure): `monicDensity O n σ = densityValue (monicExpr n σ) q` and `projectiveDensity O n σ = densityValue (projectiveExpr n σ) q` |
 | `main_field_form` | `SurfaceBlowup/Main.lean` | the published rational-function form for rings of integers of unramified finite `K/ℚ_p` |
 | `main_field_form_ramified` | `SurfaceBlowup/Main.lean` | the same for arbitrary finite `K/ℚ_p` |
+| `main_dvr_adic`, `main_field_form_ramified_adic` (2026-11-12) | `SurfaceBlowup/Corollaries/AdicCompact.lean` | `main_dvr` and `main_field_form_ramified` with no topological hypothesis: the `𝔪`-adic topology of a complete DVR with finite residue field is proved to be a compact, Hausdorff, second-countable ring topology |
 | `recip_main` | `SurfaceBlowup/Reciprocity/Main.lean` | reciprocity: `A_n(q) = B_n(1/q)` and `R_n(1/q) = R_n(q)` |
 | `main_dvr_cluster` (v1.1) | `SurfaceBlowup/Cluster/Main.lean` | the cluster clause: `clusterDensity O n σ = densityValue (clusterExpr n σ) q`, where `clusterDensity` is the normalized Haar probability on monic polynomials reducing to `X^n` and `clusterExpr n σ = lawCoeff (rootLaw n) σ` is `B_{n,σ}` |
 | `cluster_formula_regular`, `recip_cluster` (v1.1) | `SurfaceBlowup/Cluster/Main.lean` | `B_{n,σ}` is regular at every prime power; `A_{n,σ}(q) = B_{n,σ}(1/q)` in the paper's notation |
@@ -151,8 +152,12 @@ The regression guards in `Tests/` pin the definitions to known numbers, e.g.
 `main_dvr_cluster`. `Tests/NonVacuity.lean` shows that the hypotheses of `main_dvr` are satisfiable in equal
 characteristic: `𝔽_q⟦X⟧` with the coefficientwise topology, giving the formulas for `𝔽_p⟦X⟧`.
 `Tests/PadicInt.lean` (v1.2) does the same in mixed characteristic: `ℤ_[p]` with Mathlib's norm topology,
-which it proves to be the `(p)`-adic one, giving `main_dvr_padicInt`. No ramified extension of `ℤ_p` is
-instantiated.
+which it proves to be the `(p)`-adic one, giving `main_dvr_padicInt`. `Tests/Ramified.lean` (2026-11-12)
+does it over a ramified base: the ring of integers of `ℚ_p(√p)`, for every prime `p` including `2`, which it
+proves ramified (`not_padicUnramified`), giving `main_field_form_sqrtP`. Since
+`SurfaceBlowup/Corollaries/AdicCompact.lean` discharges the topological hypotheses for every complete DVR
+with finite residue field, these instances are no longer needed for non-vacuity; they remain as worked
+examples.
 
 ## License
 
@@ -204,7 +209,6 @@ Known gaps and stale spots, as of 2026-11-12. None of them changes a theorem.
 
 - **The check against the certified trees.** `Checks/run_checks.sh` cannot run again, because the
   trees are lost. Its last recorded pass is for v1.0.0 (see "Trust boundary").
-- **Ramified rings.** No ramified extension of `ℤ_p` is instantiated. This was not attempted.
 - **Module system.** The Lean files are not converted to Lean's module system. `lakefile.lean` sets
   `allowNonModules := true` instead.
 - **Prove2Me.** The public tree is this codebase at tag `v1.2.0`, because the platform runs Lean

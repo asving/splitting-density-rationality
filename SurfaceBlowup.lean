@@ -7,6 +7,7 @@ import SurfaceBlowup.Main
 import SurfaceBlowup.Cluster.Main
 import SurfaceBlowup.Etale.Algebra
 import SurfaceBlowup.Corollaries.RationalForm
+import SurfaceBlowup.Corollaries.AdicCompact
 
 /-!
 # SurfaceBlowup
@@ -24,5 +25,7 @@ The main theorems are `SurfaceBlowup.main_dvr`, `SurfaceBlowup.main_field_form`,
 `SurfaceBlowup.Cluster.Defs`) and the étale-convention form of the densities
 (`SurfaceBlowup.main_dvr_etale`, `SurfaceBlowup.monicDensity_eq_etale`,
 `SurfaceBlowup.projectiveDensity_eq_etale` in `SurfaceBlowup.Etale.Main`, definitions in
-`SurfaceBlowup.Etale.Defs`).
+`SurfaceBlowup.Etale.Defs`). `SurfaceBlowup.Corollaries.AdicCompact` (2026-11-12) proves that the
+`𝔪`-adic topology of a complete DVR with finite residue field satisfies the topological hypotheses
+of `main_dvr` (`main_dvr_adic`), including for every finite `K/ℚ_p` (`main_field_form_ramified_adic`).
 -/

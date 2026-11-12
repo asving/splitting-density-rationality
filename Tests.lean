@@ -7,6 +7,7 @@ import Tests.NonVacuity
 import Tests.Regression
 import Tests.Cluster
 import Tests.PadicInt
+import Tests.Ramified
 
 /-!
 # Tests for `SurfaceBlowup`
