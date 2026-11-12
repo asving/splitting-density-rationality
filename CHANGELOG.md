@@ -5,6 +5,37 @@ All cycles: Lean v4.33.1, Mathlib `0df444a360eaa60ab8c11dca51a86af692955474`. Ma
 Quot.sound]` throughout; statements kernel-checked against the certified trees after every wave
 (`Checks/run_checks.sh`, 3x KERNEL_OK). Detailed logs: `CAPTAIN.md`.
 
+## 2026-11-12 — the original workspace is lost; the site generator and the Prove2Me tools move here
+
+No new version and no change to any Lean file under `SurfaceBlowup/` or `Tests/`.
+
+- What was lost: the machine that held the original workspace. With it went the certified
+  one-theorem-per-file trees, `CAPTAIN.md` and the cycle logs that this file cites, the site generator
+  `site/build.py` and the paper's markdown source `PAPER_v2_narrative.md`. The header of this file and the
+  cycle entries below are left as they were written. They describe that workspace.
+- What evidence remains: this repository and its release check (`tools/release_check_local.sh`); the public
+  Prove2Me tree `TypeDensity`, verified by the platform, with a public export at
+  `github.com/prove2me/formalpedia`; the copies of the historical certificates on the companion site.
+- The statement-preservation check against the certified trees (`Checks/run_checks.sh`) can no longer be run.
+  Its last successful run is the one of cycle 4d below, for what became v1.0.0. `tools/release_check.sh`,
+  `Checks/run_checks.sh`, `Checks/template.lean` and `Checks/SP*.lean` are marked historical in their headers
+  and kept. `tools/release_check_local.sh` is the release check.
+- `site/` (new): a reconstruction of the lost site generator. `site/refresh.py REPO SITE_DIR` rebuilds the
+  derived parts of the companion site from this repository and the site folder's own files, and changes
+  nothing on a second run. `site/test_identity.sh` checks the reconstruction against the last output of the
+  original generator: from the sources of tag v1.1.0 it reproduces the site folder of 2026-10-17 byte for
+  byte, except for an added `lean/README.md`.
+- `tools/prove2me/` (new): the bundle builder, the uploader and the format notes used on 2026-11-11 to
+  publish the 25 theorems of v1.2.0 and one definition module in the Prove2Me tree. The platform's
+  environment is Lean v4.33.1 with Mathlib `0df444a`, so uploads come from tag `v1.2.0`. This closes the
+  "Not on Prove2Me" remark in the v1.2.0 entry.
+- `README.md` ("Trust boundary", "Building", "Provenance") and `HANDOFF.md` say the same.
+- Verification (macOS, build already in `.lake`): `tools/release_check_local.sh` on the working tree, ALL PASS,
+  with the same numbers as for v1.3.0: 3582 jobs, 0 warnings; axioms 22/22 and 25/25; statement text against
+  v1.2.0 2465 identical, 33 whitespace-only, 5 listed rewrites, 0 other; kernel-term hashes 1872/1872 identical
+  to the v1.3.0 dump; forbidden-token scan clean. `site/test_identity.sh` passes. `site/refresh.py` run twice on
+  the site folder changes nothing the second time, and its link check finds no broken link.
+
 ## v1.3.0 (2026-11-11) — Lean v4.35.0 / Mathlib v4.35.0; sign-off wording removed
 
 - Toolchain: Lean `v4.33.1` → `v4.35.0`, Mathlib `0df444a` → `56a0058` (tag `v4.35.0`). Proof repairs in 61 files:

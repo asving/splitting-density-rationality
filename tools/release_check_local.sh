@@ -1,6 +1,6 @@
 #!/bin/bash
-# Portable variant of tools/release_check.sh, for a machine that has this repository but not the
-# certified one-theorem-per-file trees. Run from the repository root:
+# The release check of this repository. It needs this repository, Lean and python3, nothing else.
+# Run from the root:
 #   tools/release_check_local.sh
 #   (1) `lake build SurfaceBlowup Tests`, (2) `#print axioms` (Checks/Axioms.lean: 22 main theorems;
 #   Checks/AxiomsCorollaries.lean: the 25 public theorems added in v1.2.0), (3) statements:
@@ -10,8 +10,11 @@
 #   (3b) kernel-term hashes (tools/StmtDump.lean) compared with the dump of v1.3.0
 #   (Checks/reference/stmt_dump_v1_3_0.tsv; same toolchain, so hashes are comparable),
 #   (4) grep for forbidden tokens, (5) zero build warnings.
-# Step (3) replaces the statement-preservation check against the certified trees (Checks/run_checks.sh),
-# which needs those trees. Hashes change with Lean and Mathlib, so across the port from Lean v4.33.1 to
+# The name is historical. The script began as the portable variant of tools/release_check.sh, which
+# is tied to the original workspace and checks statements against the certified one-theorem-per-file
+# trees (Checks/run_checks.sh). The workspace and the trees no longer exist (2026-11-12), so those two
+# scripts cannot be run any more. Step (3) stands in for their check: it compares statements from
+# release to release. Hashes change with Lean and Mathlib, so across the port from Lean v4.33.1 to
 # v4.35.0 the evidence is (3a); Checks/reference/stmt_dump_v1_1_0.tsv is the hash dump of v1.1.0 on the
 # old toolchain, kept for the record. Logs go to logs/. Exit code 0 iff everything passes.
 ref=${1:-Checks/reference/stmt_dump_v1_3_0.tsv}

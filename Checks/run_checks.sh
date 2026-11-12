@@ -1,4 +1,9 @@
 #!/bin/bash
+# HISTORICAL (2026-11-12): this check cannot be run any more. It needs the original workspace and the
+# certified one-theorem-per-file trees (monolith_gen, monolith_recip, monolith) below it. They no
+# longer exist. Its last successful run is recorded for v1.0.0: 3x KERNEL_OK (CHANGELOG.md, cycle 4d).
+# Since then statements are compared from release to release by tools/release_check_local.sh.
+#
 # Statement preservation: run from anywhere. Requires `lake build` of unified to be green.
 set -e
 U=~/prove2me_workspace/final/unified

@@ -96,7 +96,8 @@ Compared with the certified statements, the hypotheses `0 < n`, `ValidType σ`,
 `typeDegree σ = n` of `main_dvr` / `main_field_form` / `main_field_form_ramified` and `ValidType σ`,
 `typeDegree σ = n` of `recip_main` were dropped in cycle 4a (none was used by the proofs), so the
 theorems are strictly stronger; `0 < n` of `recip_main` is used and kept. `Checks/run_checks.sh`
-derives each certified statement, with its extra hypotheses, from the unified theorem in the kernel.
+derived each certified statement, with its extra hypotheses, from the unified theorem in the kernel.
+That check last ran for v1.0.0 and cannot be run any more (see "Trust boundary").
 
 ## Trust boundary
 
@@ -115,14 +116,33 @@ with the definitions above and Mathlib's `RatFunc.eval`. `reciprocity_recipRat` 
 (`Reciprocity/Defs.lean`), the ring endomorphism `q ↦ q⁻¹` of `ℚ(q)`; `reciprocity_ringHom` states the same
 fact without it. These corollaries were written after the release of v1.1.0.
 
-`Checks/run_checks.sh` verifies, at the kernel level, that the statements of `main_dvr`,
-`recip_main` and `main_field_form` as certified in the original one-theorem-per-file trees
-(`final/monolith_gen`, `final/monolith_recip`, `final/monolith`; read-only) follow from the unified
-theorems: it loads both environments in one Lean process, pairs every certified constant in the
-closure of the certified statement with an alpha-identical unified constant, checks that the
-conclusions are constant-for-constant identical and that the unified hypotheses are a subsequence of
-the certified ones (the rest being the dropped propositions), and type-checks
-`certified_statement := fun x₀ … => unified_theorem …` (implication form).
+**What was lost in November 2026, and what the evidence is now.** The original workspace no longer
+exists. With it went the certified one-theorem-per-file trees (`final/monolith_gen`,
+`final/monolith_recip`, `final/monolith`), the cycle logs that `CHANGELOG.md` names, the generator of
+the companion site and the markdown source of the paper. What remains:
+
+- This repository and its release check, `tools/release_check_local.sh`: a full build, the axioms of
+  the main theorems, and a comparison of every statement with the previous release.
+- The public Prove2Me tree `TypeDensity`: this codebase at tag `v1.2.0`, one node per theorem, each
+  verified by the platform. The platform exports its public trees as Lean files to
+  `github.com/prove2me/formalpedia`. On 2026-11-11 that export did not yet hold the v1.2 theorems.
+- The copies of the historical certificates on the companion site
+  (`https://asving.github.io/claude/splitting-type-density/formalization.html`, section 3): the three
+  monolith certificates and the release logs.
+
+The statement-preservation check against the certified trees can no longer be run.
+`Checks/run_checks.sh` verified, at the kernel level, that the statements of `main_dvr`,
+`recip_main` and `main_field_form` as certified in those trees follow from the unified theorems: it
+loaded both environments in one Lean process, paired every certified constant in the closure of the
+certified statement with an alpha-identical unified constant, checked that the conclusions are
+constant-for-constant identical and that the unified hypotheses are a subsequence of the certified
+ones (the rest being the dropped propositions), and type-checked
+`certified_statement := fun x₀ … => unified_theorem …` (implication form). Its last successful run is
+recorded for v1.0.0: `CHANGELOG.md`, cycle 4d, and the note in the v1.1 release log on the site.
+Since then statements are checked from release to release. v1.1.0 left `Basic.lean`, `Main.lean` and
+`Reciprocity/Main.lean` byte-identical to v1.0.0. v1.2.0 left the kernel-term hashes of all 1853
+constants of v1.1.0 unchanged (`tools/StmtDump.lean`). v1.3.0 changed the toolchain, so it compared the
+source text of every statement with v1.2.0 (`tools/stmt_text.py`).
 
 The regression guards in `Tests/` pin the definitions to known numbers, e.g.
 `(monicExpr 4 {(4,1)}).eval 2 = 107/1533`, and derive density corollaries from `main_dvr`.
@@ -145,12 +165,18 @@ chosen to match Mathlib and confirmed by the owner on 2026-10-17.
     lake build                # builds SurfaceBlowup and Tests (~8800 jobs; ~8 min on 16 cores)
     lake env lean Checks/Axioms.lean   # 22 main theorems, each [propext, Classical.choice, Quot.sound]
     lake env lean Checks/AxiomsCorollaries.lean   # all 25 public theorems added in v1.2, same axioms
-    ./Checks/run_checks.sh    # needs the certified trees next to this one (see the script)
 
-or all of it at once: `tools/release_check.sh` (build, axioms, statement preservation, forbidden-token
-grep, warning count; logs in `logs/release_*.log`). `tools/release_check_local.sh` is the variant for a
-machine without the certified trees: it compares the source text of every statement with v1.2.0
-(`tools/stmt_text.py`) and kernel-term hashes with the dump of the current release. Other tools: `tools/StmtDump.lean` (hashes of the
+or all of it at once: `tools/release_check_local.sh`. That script is the release check: build, axioms,
+the source text of every statement against v1.2.0 (`tools/stmt_text.py`), kernel-term hashes against
+the dump of the current release, forbidden-token grep, warning count; logs in `logs/release_*.log`.
+
+Historical, kept for the record: `tools/release_check.sh`, `Checks/run_checks.sh`,
+`Checks/template.lean` and `Checks/SP*.lean`. They need the original workspace and the certified
+trees, which no longer exist, so they cannot be run. Their last successful run is recorded for v1.0.0.
+
+`site/` rebuilds the derived parts of the companion site from this repository (`site/README.md`).
+`tools/prove2me/` holds the tools that exported the v1.2 theorems to Prove2Me
+(`tools/prove2me/README.md`). Other tools: `tools/StmtDump.lean` (hashes of the
 type of every public declaration and the body of every definition; diff two dumps to prove a
 refactor changed no statement), `tools/lint_census.sh` (Mathlib standard linters, per file),
 `tools/longest_decls.py`, `tools/chk.sh` (check a file against a private frozen olean directory).
@@ -292,5 +318,11 @@ densities because the exceptional loci are Haar-null.
 ## Provenance
 
 Obtained from a certified tree of ~1200 one-theorem files (`final/monolith_gen`) by mechanical merging
-along the usage DAG and three golfing cycles (see `CHANGELOG.md`, `CAPTAIN.md`, `HANDOFF.md`). Module docstrings end
+along the usage DAG and three golfing cycles (see `CHANGELOG.md`, `HANDOFF.md`). Module docstrings end
 with a `Provenance:` line naming the original nodes.
+
+That tree was in the original workspace, which was lost in November 2026. So were `CAPTAIN.md`, the
+`CYCLE4*_DONE.md` notes and the files under `logs/`, `scratch/` and `export/` that `CHANGELOG.md` and
+`HANDOFF.md` cite. They are named there as a record and cannot be consulted. What remains of the
+provenance is the history of this repository from v1.0.0, those two files, the public Prove2Me tree
+`TypeDensity` and the monolith certificates copied on the companion site.

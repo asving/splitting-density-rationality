@@ -1,4 +1,10 @@
 #!/bin/bash
+# HISTORICAL (2026-11-12): this script cannot be run any more. It is tied to the original workspace
+# (the `cd` below, `taskset`) and its step (3) needs the certified one-theorem-per-file trees. The
+# workspace and the trees no longer exist. Its last successful run is recorded for v1.0.0
+# (CHANGELOG.md, cycle 4d). It is kept as the record of what the releases up to v1.1.0 were checked
+# with. The release check is tools/release_check_local.sh.
+#
 # One-command release check for the unified SurfaceBlowup tree:
 #   (1) full `lake build` (SurfaceBlowup + Tests), (2) `#print axioms` of the four main theorems,
 #   (3) statement preservation vs the certified trees (Checks/run_checks.sh), (4) grep for forbidden tokens,

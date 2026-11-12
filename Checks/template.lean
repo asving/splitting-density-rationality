@@ -3,6 +3,10 @@ Copyright (c) 2026 Asvin G, Claude (Anthropic), GPT-6-Astra (OpenAI). All rights
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Asvin G, Claude (Anthropic), GPT-6-Astra (OpenAI)
 -/
+-- HISTORICAL (2026-11-12): this check cannot be run any more. Checks/run_checks.sh filled this
+-- template and compiled the result against a certified one-theorem-per-file tree in the original
+-- workspace. The workspace and the trees no longer exist. The last successful run is recorded for
+-- v1.0.0 (CHANGELOG.md, cycle 4d). The file is kept as the record of what was checked.
 import SurfaceBlowup
 import @CERT_IMPORT@
 /-!

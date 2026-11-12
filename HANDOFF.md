@@ -1,3 +1,21 @@
+> **Note 2026-11-12: the original workspace is lost.** The machine that held the workspace named
+> below is gone, and the owner decided to treat it as lost. Lost with it:
+> the certified one-theorem-per-file trees (`final/monolith_gen`, `final/monolith_recip`,
+> `final/monolith`), `CAPTAIN.md`, the `CYCLE4*_DONE.md` notes and the cycle logs cited below and in
+> `CHANGELOG.md`, the site generator `site/build.py`, and the paper's markdown source
+> `PAPER_v2_narrative.md`. Everything below this note describes that workspace and is history.
+>
+> What exists now: this repository, the companion site, and the public Prove2Me tree `TypeDensity`.
+> - Re-verify with `tools/release_check_local.sh` from the repository root. It is the release check.
+> - `tools/release_check.sh`, `Checks/run_checks.sh`, `Checks/template.lean` and `Checks/SP*.lean`
+>   cannot be run any more. They need the certified trees. Their last successful run is recorded for
+>   v1.0.0 (`CHANGELOG.md`, cycle 4d). The statement-preservation check against the certified trees
+>   can no longer be repeated. Since v1.0.0 statements are compared from release to release.
+> - The companion site is rebuilt from this repository by `site/refresh.py` (`site/README.md`). The
+>   paper text is kept in the site's `index.html`.
+> - The v1.2 theorems are on Prove2Me. The tools that exported them are in `tools/prove2me/`. The
+>   platform's environment is Lean v4.33.1 with Mathlib `0df444a`, so uploads come from tag `v1.2.0`.
+
 > **Update 2026-11-11 (v1.3.0).** No owner decision remains open: the license was confirmed on 2026-10-17, and
 > sign-off markers were dropped (what is published is taken charge of by the authors). The toolchain is now Lean
 > v4.35.0 with Mathlib v4.35.0. Re-verify with `tools/release_check_local.sh` from the repository root; the paths
