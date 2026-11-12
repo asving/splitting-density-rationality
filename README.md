@@ -163,7 +163,7 @@ chosen to match Mathlib and confirmed by the owner on 2026-10-17.
 ## Building
 
     lake exe cache get        # Mathlib oleans (first time only)
-    lake build                # builds SurfaceBlowup and Tests (~8800 jobs; ~8 min on 16 cores)
+    lake build                # builds SurfaceBlowup and Tests (3582 jobs; about 10 min on 10 cores)
     lake env lean Checks/Axioms.lean   # 22 main theorems, each [propext, Classical.choice, Quot.sound]
     lake env lean Checks/AxiomsCorollaries.lean   # all 25 public theorems added in v1.2, same axioms
 
@@ -197,6 +197,26 @@ refactor changed no statement), `tools/lint_census.sh` (Mathlib standard linters
 - Slowest modules (clean build, cycle 4c): `TwoChartCurveData` 67 s, `DivisorPoints` 66 s,
   `CurveOrders` 43 s, `Charts` 38 s (cycle 4a: 117, 86, 99, 152 s). No heartbeat options; the
   `TwoChartCurveData` proofs pass with `maxHeartbeats 85000`.
+
+## Left as is
+
+Known gaps and stale spots, as of 2026-11-12. None of them changes a theorem.
+
+- **The check against the certified trees.** `Checks/run_checks.sh` cannot run again, because the
+  trees are lost. Its last recorded pass is for v1.0.0 (see "Trust boundary").
+- **Ramified rings.** No ramified extension of `ℤ_p` is instantiated. This was not attempted.
+- **Module system.** The Lean files are not converted to Lean's module system. `lakefile.lean` sets
+  `allowNonModules := true` instead.
+- **Prove2Me.** The public tree is this codebase at tag `v1.2.0`, because the platform runs Lean
+  v4.33.1. The v1.3.0 port is not uploaded.
+- **Companion site.**
+  - The paper page says "(release v1.1.0)" next to the link to this repository. The Lean sources
+    shown on the site are newer; the footer of each page names their commit.
+  - `data/validation.json` keeps the checks of the original generator from 2026-10-17 (KaTeX, a
+    browser self-test, with a browser path on the lost machine). They were not re-run. A refresh
+    re-checks the internal links only.
+  - `site/refresh.py` cannot add an entry to `data/curation.json`, the map from the paper's
+    statements to Lean declarations. The other limits of the scripts are in `site/README.md`.
 
 ## Module hierarchy
 
