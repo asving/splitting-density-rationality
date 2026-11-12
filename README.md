@@ -125,7 +125,8 @@ the companion site and the markdown source of the paper. What remains:
   the main theorems, and a comparison of every statement with the previous release.
 - The public Prove2Me tree `TypeDensity`: this codebase at tag `v1.2.0`, one node per theorem, each
   verified by the platform. The platform exports its public trees as Lean files to
-  `github.com/prove2me/formalpedia`. On 2026-11-11 that export did not yet hold the v1.2 theorems.
+  `github.com/prove2me/formalpedia`. The v1.2 theorems, published on 2026-11-11, are in the export
+  of 2026-11-12.
 - The copies of the historical certificates on the companion site
   (`https://asving.github.io/claude/splitting-type-density/formalization.html`, section 3): the three
   monolith certificates and the release logs.
